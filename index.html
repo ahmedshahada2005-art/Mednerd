@@ -1,0 +1,4597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEDNERD AI — Medical Book Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Stylesheet: styles.css
+   MEDNERD Official Palette + Premium Academic Editorial UI (iPad/Desktop/Mobile)
+   ========================================================================== */
+
+:root {
+  --bg-main: #fdfbf7;
+  --bg-elevated: #f5f2eb;
+  --petrol: #0e7490;
+  --petrol-dark: #0b5c73;
+  --petrol-soft: rgba(14, 116, 144, 0.08);
+  --dark-green: #14532d;
+  --dark-green-soft: rgba(20, 83, 45, 0.1);
+  --mustard: #b45309;
+  --mustard-soft: rgba(180, 83, 9, 0.1);
+  --white: #ffffff;
+  --dark-text: #17202a;
+  --muted-text: #4b5563;
+  --border-color: #e5e7eb;
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --shadow-sm: 0 4px 6px -1px rgba(14, 116, 144, 0.05), 0 2px 4px -2px rgba(14, 116, 144, 0.05);
+  --shadow-md: 0 12px 24px -6px rgba(14, 116, 144, 0.1);
+  --modal-backdrop: rgba(15, 23, 42, 0.65);
+}
+
+[data-theme="dark"] {
+  --bg-main: #0f172a;
+  --bg-elevated: #1e293b;
+  --petrol: #22d3ee;
+  --petrol-dark: #0891b2;
+  --petrol-soft: rgba(34, 211, 238, 0.12);
+  --dark-green: #4ade80;
+  --dark-green-soft: rgba(74, 222, 128, 0.14);
+  --mustard: #fbbf24;
+  --mustard-soft: rgba(251, 191, 36, 0.12);
+  --white: #1e293b;
+  --dark-text: #f1f5f9;
+  --muted-text: #94a3b8;
+  --border-color: #334155;
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.12);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 24px -6px rgba(0, 0, 0, 0.45);
+  --modal-backdrop: rgba(2, 6, 23, 0.82);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Cairo', 'Inter', sans-serif;
+}
+
+html[lang="en"] * {
+  font-family: 'Inter', 'Cairo', sans-serif;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--dark-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  line-height: 1.65;
+  transition: background-color 0.25s, color 0.25s;
+}
+
+/* Header & Topbar */
+.app-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #0e7490;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--petrol);
+  line-height: 1.2;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted-text);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.2s;
+}
+
+.nav-tab:hover {
+  background: var(--bg-elevated);
+  color: var(--dark-text);
+}
+
+.nav-tab.active {
+  background: var(--petrol-soft);
+  color: var(--petrol);
+  border-color: var(--petrol);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  background: var(--bg-elevated);
+  color: var(--dark-text);
+  border: 1px solid var(--border-color);
+  height: 38px;
+  min-width: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.icon-btn:hover {
+  border-color: var(--petrol);
+  color: var(--petrol);
+}
+
+.api-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--petrol-soft);
+  color: var(--petrol);
+  border: 1px solid var(--border-color);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.api-pill:hover {
+  border-color: var(--petrol);
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #9ca3af;
+}
+.status-dot.unverified { background: #9ca3af; box-shadow: 0 0 0 2px var(--mustard); }
+.status-dot.verifying { background: var(--mustard); box-shadow: 0 0 8px var(--mustard); animation: pulseDot 1s infinite; }
+.status-dot.connected { background: var(--dark-green); box-shadow: 0 0 8px var(--dark-green); }
+.status-dot.error { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.5; }
+}
+
+/* Model Chips (Exact match from MEDNERD code) */
+.model-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.model-chip {
+  font-size: 12px;
+  font-family: monospace;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+  color: var(--dark-text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.model-chip:hover,
+.model-chip.active {
+  border-color: var(--petrol);
+  background: var(--petrol-soft);
+  color: var(--petrol);
+  font-weight: 700;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary, .btn-success, .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  padding: 10px 18px;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #0e7490;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(14, 116, 144, 0.22);
+}
+.btn-primary:hover:not(:disabled) { background: #0b5c73; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--petrol);
+  border-color: var(--petrol);
+}
+.btn-secondary:hover:not(:disabled) { background: var(--petrol-soft); }
+.btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-success {
+  background: var(--dark-green);
+  color: #fff;
+}
+.btn-success:hover:not(:disabled) { opacity: 0.92; }
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.btn-danger:hover:not(:disabled) { background: var(--danger-soft); }
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12.5px;
+  border-radius: 8px;
+}
+
+/* Main Layout */
+.main-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 26px 20px 48px;
+  flex: 1;
+}
+
+.view-section { display: none; }
+.view-section.active { display: block; }
+
+/* Dashboard Hero & Stats */
+.welcome-banner {
+  background: linear-gradient(135deg, #0e7490 0%, #14532d 100%);
+  color: #fff;
+  border-radius: 22px;
+  padding: 30px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.welcome-banner h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.welcome-banner p {
+  font-size: 14.5px;
+  opacity: 0.92;
+  max-width: 680px;
+}
+
+.cta-create-btn {
+  background: #ffffff;
+  color: #0e7490;
+  border: none;
+  padding: 14px 26px;
+  border-radius: 14px;
+  font-size: 15.5px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s;
+}
+.cta-create-btn:hover { transform: translateY(-2px); }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--petrol-soft);
+  color: var(--petrol);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--dark-text);
+}
+
+.stat-label {
+  font-size: 12.5px;
+  color: var(--muted-text);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24px 0 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-size: 18.5px;
+  font-weight: 800;
+  color: var(--petrol);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 16px;
+}
+
+.card-box {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.project-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--petrol);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.badge-petrol { background: var(--petrol-soft); color: var(--petrol); }
+.badge-green { background: var(--dark-green-soft); color: var(--dark-green); }
+.badge-mustard { background: var(--mustard-soft); color: var(--mustard); }
+.badge-danger { background: var(--danger-soft); color: var(--danger); }
+
+/* Studio & Upload Center */
+.studio-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .studio-grid { grid-template-columns: 1fr; }
+}
+
+.dropzone {
+  border: 2px dashed var(--petrol);
+  background: var(--petrol-soft);
+  border-radius: 18px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+.dropzone.drag-over {
+  background: rgba(14, 116, 144, 0.16);
+  transform: scale(1.01);
+}
+.dropzone i {
+  font-size: 36px;
+  color: var(--petrol);
+  margin-bottom: 10px;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-main);
+}
+
+.file-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.file-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-sub {
+  font-size: 12px;
+  color: var(--muted-text);
+}
+
+/* Forms */
+.form-group { margin-bottom: 14px; }
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--petrol);
+  margin-bottom: 6px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-main);
+  color: var(--dark-text);
+  font-size: 14px;
+  outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--petrol);
+  box-shadow: 0 0 0 3px var(--petrol-soft);
+}
+
+.mode-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+@media (max-width: 640px) {
+  .mode-cards { grid-template-columns: 1fr; }
+}
+
+.mode-card {
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  background: var(--bg-main);
+  transition: all 0.2s;
+}
+.mode-card.active {
+  border-color: var(--petrol);
+  background: var(--petrol-soft);
+}
+.mode-card h4 { font-size: 13.5px; color: var(--petrol); margin-bottom: 4px; }
+.mode-card p { font-size: 12px; color: var(--muted-text); line-height: 1.45; }
+
+/* 12-Step Pipeline Tracker */
+.pipeline-panel {
+  margin-top: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  background: var(--white);
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: var(--bg-elevated);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 16px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0e7490, #14532d);
+  width: 0%;
+  transition: width 0.35s ease;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+.step-chip {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-main);
+}
+.step-chip.done { border-color: var(--dark-green); background: var(--dark-green-soft); color: var(--dark-green); }
+.step-chip.active { border-color: var(--mustard); background: var(--mustard-soft); color: var(--mustard); }
+
+/* Live Book Preview */
+.preview-toolbar {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  position: sticky;
+  top: 68px;
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 980px) {
+  .preview-layout { grid-template-columns: 1fr; }
+}
+
+.chapter-sidebar {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+.chapter-nav-item {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: var(--bg-main);
+}
+
+.book-viewport {
+  background: #cbd5e1;
+  border-radius: 16px;
+  padding: 24px 16px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+[data-theme="dark"] .book-viewport { background: #020617; }
+
+.book-zoom-wrap {
+  transform-origin: top center;
+  transition: transform 0.2s;
+  width: 100%;
+  max-width: 210mm;
+}
+
+/* A4 Academic Book Page Rendering inside Preview */
+.book-page {
+  width: 100%;
+  min-height: 270mm;
+  background: #ffffff;
+  color: #17202a;
+  padding: 16mm 18mm;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.book-cover { padding: 0; overflow: hidden; }
+.cover-inner {
+  min-height: 270mm;
+  padding: 26mm 22mm;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cover-top-badge { font-size: 10pt; letter-spacing: 1.5px; opacity: 0.85; font-weight: 700; }
+.cover-specialty { font-size: 13pt; font-weight: 700; color: #fbbf24; margin-bottom: 10px; }
+.cover-title { font-size: 26pt; font-weight: 800; line-height: 1.3; margin-bottom: 12px; }
+.cover-subtitle { font-size: 12.5pt; opacity: 0.9; }
+.cover-footer { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.25); padding-top: 12px; }
+
+.book-page-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9pt;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+}
+.book-page-content { flex: 1; }
+.book-page-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9pt;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 6px;
+  margin-top: 20px;
+}
+.chapter-banner { border-bottom: 2px solid var(--book-primary, #0e7490); padding-bottom: 10px; margin-bottom: 16px; }
+.chapter-num { font-size: 9.5pt; font-weight: 800; }
+.chapter-title { font-size: 18pt; font-weight: 800; color: #0f172a; }
+.chapter-sources { font-size: 9pt; color: #64748b; }
+.section-heading { font-size: 15pt; font-weight: 800; border-inline-start: 4px solid #0e7490; padding-inline-start: 10px; margin: 14px 0 10px; }
+.subtopic-heading { font-size: 13pt; font-weight: 800; margin: 16px 0 8px; }
+.prose-block p { margin-bottom: 10px; }
+.prose-block ul, .prose-block ol { padding-inline-start: 22px; margin-bottom: 10px; }
+.book-page table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+.book-page th { background: var(--book-primary, #0e7490); color: #fff; padding: 8px 10px; text-align: start; border: 1px solid #cbd5e1; }
+.book-page td { padding: 8px 10px; border: 1px solid #cbd5e1; }
+.callout-box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 12px 0; background: #f8fafc; }
+.clinical-box { border-inline-start: 4px solid #14532d; background: #f0fdf4; }
+.definitions-box { border-inline-start: 4px solid #0e7490; }
+.mcq-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+.mcq-opts { list-style: none; padding-inline-start: 10px; margin: 6px 0; }
+.mcq-ans { color: #14532d; font-size: 9.5pt; }
+.book-figure { margin: 14px auto; text-align: center; }
+.book-figure img { max-width: 100%; max-height: 110mm; object-fit: contain; border-radius: 6px; border: 1px solid #e2e8f0; }
+.book-figure figcaption { font-size: 9pt; color: #334155; margin-top: 6px; }
+.fig-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 1px 6px; border-radius: 4px; font-size: 8pt; font-weight: 700; margin-inline-end: 6px; }
+.toc-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.toc-dots { flex: 1; border-bottom: 1px dotted #94a3b8; }
+.index-grid { column-count: 2; column-gap: 18px; font-size: 9.5pt; }
+.index-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding: 3px 0; }
+
+.editable-active .editable-prose {
+  outline: 2px dashed #0e7490;
+  padding: 6px;
+  border-radius: 6px;
+  background: #f0f9ff;
+}
+
+/* Image Center */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.image-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.image-thumb {
+  height: 180px;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.image-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.image-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Modals & Toasts */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  max-width: 580px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.warning-alert {
+  background: var(--mustard-soft);
+  border: 1px solid var(--mustard);
+  color: var(--mustard);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.6;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  inset-inline-end: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 380px;
+}
+
+.toast {
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  border-inline-start: 4px solid #22d3ee;
+}
+.toast.error { border-inline-start-color: #f87171; }
+.toast.success { border-inline-start-color: #4ade80; }
+
+.alert-box {
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-top: 12px;
+  border: 1px solid;
+}
+.alert-warn { background: var(--mustard-soft); border-color: var(--mustard); color: var(--mustard); }
+.alert-danger { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+.alert-success { background: var(--dark-green-soft); border-color: var(--dark-green); color: var(--dark-green); }
+
+@media (max-width: 768px) {
+  .welcome-banner { padding: 22px 18px; }
+  .welcome-banner h1 { font-size: 22px; }
+  .book-page { padding: 10mm; min-height: auto; }
+}
+
+</style>
+
+<!-- External Verified Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" crossorigin="anonymous"></script>
+<script>
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="nav-container">
+    <div class="brand-area" id="brandHomeBtn">
+      <div class="brand-icon">M</div>
+      <div>
+        <div class="brand-title">MEDNERD AI — Medical Book Creator</div>
+        <div class="brand-sub">Transform Medical Files Into Professional Academic Books.</div>
+      </div>
+    </div>
+
+    <nav class="nav-tabs" aria-label="التنقل الرئيسي">
+      <button class="nav-tab active" data-view="dashboardView"><i class="fa-solid fa-house"></i> <span>لوحة التحكم</span></button>
+      <button class="nav-tab" data-view="studioView"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>إنشاء كتاب</span></button>
+      <button class="nav-tab" data-view="previewView"><i class="fa-solid fa-book-open"></i> <span>معاينة الكتاب</span></button>
+      <button class="nav-tab" data-view="imageCenterView"><i class="fa-solid fa-images"></i> <span>مركز الصور</span></button>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="langToggleBtn" title="تبديل اللغة">EN</button>
+      <button class="icon-btn" id="themeToggleBtn" title="الوضع الليلي"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+      <button class="api-pill" id="openApiModalBtn" aria-label="إعدادات مفتاح Gemini API">
+        <span class="status-dot" id="apiStatusDot"></span>
+        <span id="apiStatusText">لم يتم إدخال مفتاح API</span>
+        <i class="fa-solid fa-key"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="main-container">
+
+  <!-- 1. DASHBOARD VIEW -->
+  <section id="dashboardView" class="view-section active">
+    <div class="welcome-banner">
+      <div>
+        <h1>مرحباً بك في MEDNERD AI — Medical Book Creator</h1>
+        <p>حوّل محاضراتك وملفات PDF وDOCX وPPTX الخام إلى كتب ومراجع طبية أكاديمية جاهزة للطباعة بصيغة A4 مع فهرسة وتدقيق جودة وصور توضيحية.</p>
+      </div>
+      <button class="cta-create-btn" id="heroCreateBookBtn">
+        <i class="fa-solid fa-plus-circle"></i>
+        <span>إنشاء كتاب جديد (Create New Book)</span>
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-book-medical"></i></div>
+        <div><div class="stat-value" id="statBooksCount">0</div><div class="stat-label">كتبي المكتملة (My Books)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--mustard-soft);color:var(--mustard);"><i class="fa-solid fa-spinner"></i></div>
+        <div><div class="stat-value" id="statProcessingCount">0</div><div class="stat-label">مشاريع قيد المعالجة</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--dark-green-soft);color:var(--dark-green);"><i class="fa-solid fa-hard-drive"></i></div>
+        <div><div class="stat-value" id="statStorageUsage">0 MB</div><div class="stat-label">استهلاك التخزين المحلي (IndexedDB)</div></div>
+      </div>
+      <div class="stat-card" id="dashApiCard" style="cursor:pointer;">
+        <div class="stat-icon"><i class="fa-solid fa-plug"></i></div>
+        <div><div class="stat-value" id="statApiStatus">غير متصل</div><div class="stat-label">حالة Gemini API</div></div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> المشاريع الأخيرة وكتبي (Recent Projects &amp; My Books)</h2>
+      <button class="btn-secondary btn-sm" id="refreshProjectsBtn"><i class="fa-solid fa-rotate"></i> تحديث</button>
+    </div>
+    <div id="projectsGrid" class="cards-grid"></div>
+
+    <div class="section-header">
+      <h2 class="section-title"><i class="fa-solid fa-stethoscope"></i> قوالب التخصصات الطبية (Medical Templates)</h2>
+    </div>
+    <div id="templatesGrid" class="cards-grid"></div>
+  </section>
+
+  <!-- 2. STUDIO / UPLOAD & PIPELINE VIEW -->
+  <section id="studioView" class="view-section">
+    <div class="studio-grid">
+      <!-- Left: Upload Center -->
+      <div class="card-box">
+        <div class="section-header" style="margin-top:0;">
+          <h2 class="section-title"><i class="fa-solid fa-cloud-arrow-up"></i> مركز رفع الملفات (Upload Center)</h2>
+          <span class="badge badge-petrol" id="filesCountBadge">0 ملفات</span>
+        </div>
+
+        <div class="dropzone" id="uploadDropzone">
+          <i class="fa-solid fa-file-medical"></i>
+          <h3>اسحب الملفات وأفلتها هنا أو اضغط للاختيار</h3>
+          <p style="font-size:12.5px;color:var(--muted-text);margin-top:4px;">يدعم: PDF, DOCX, PPTX, TXT, MD, JPG, PNG, WEBP (رفع متعدد)</p>
+          <input type="file" id="filePickerInput" multiple accept=".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp" style="display:none;">
+        </div>
+
+        <div id="uploadFileList" class="file-list"></div>
+      </div>
+
+      <!-- Right: Book Configuration & Modes -->
+      <div class="card-box">
+        <div class="section-header" style="margin-top:0;">
+          <h2 class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الكتاب ووضع الإنشاء</h2>
+        </div>
+
+        <label class="form-label">اختر وضع الإنشاء (Creation Mode):</label>
+        <div class="mode-cards" id="modeSelector">
+          <div class="mode-card active" data-mode="auto">
+            <h4>AUTO MODE</h4>
+            <p>ارفع الملفات واضغط إنشاء؛ يتولى النظام التحليل والترتيب والتنسيق تلقائياً.</p>
+          </div>
+          <div class="mode-card" data-mode="professional">
+            <h4>PROFESSIONAL</h4>
+            <p>تحكم كامل بالتخصص، الخط، الألوان، الغلاف، وكثافة الصور.</p>
+          </div>
+          <div class="mode-card" data-mode="source_preservation">
+            <h4>SOURCE PRESERVATION</h4>
+            <p>يحافظ على نصوص المحاضرات كما هي تماماً دون إعادة صياغة أو اختصار.</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="bookTitleInput">عنوان الكتاب (اختياري):</label>
+            <input type="text" id="bookTitleInput" class="form-input" placeholder="يُستنتج تلقائياً إذا تُرك فارغاً">
+          </div>
+          <div>
+            <label class="form-label" for="bookSpecialtySelect">التخصص الطبي:</label>
+            <select id="bookSpecialtySelect" class="form-select"></select>
+          </div>
+        </div>
+
+        <div id="professionalOptionsBox" style="display:none;">
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="bookLangSelect">لغة الكتاب:</label>
+              <select id="bookLangSelect" class="form-select">
+                <option value="ar">العربية (RTL + مصطلحات إنجليزية)</option>
+                <option value="en">English (LTR)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="imageDensitySelect">كثافة الصور المولدة:</label>
+              <select id="imageDensitySelect" class="form-select">
+                <option value="balanced">متوازنة (4 رسومات)</option>
+                <option value="minimal">محدودة (2 رسمة)</option>
+                <option value="rich">غنية (6 رسومات)</option>
+                <option value="none">بدون توليد (الأصلية فقط)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="fontSizeInput">حجم الخط (pt):</label>
+              <input type="number" id="fontSizeInput" class="form-input" value="11" min="9" max="14">
+            </div>
+            <div>
+              <label class="form-label" for="coverStyleSelect">تصميم الغلاف:</label>
+              <select id="coverStyleSelect" class="form-select">
+                <option value="academic_teal">MEDNERD Petrol Teal</option>
+                <option value="royal_green">Medical Dark Green</option>
+                <option value="editorial_dark">Editorial Midnight</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="primaryColorInput">اللون الرئيسي:</label>
+              <input type="color" id="primaryColorInput" class="form-input" value="#0e7490" style="height:42px;padding:4px;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;cursor:pointer;">
+              <input type="checkbox" id="enrichmentToggle">
+              <span>تفعيل الإثراء العلمي الخارجي (تُميّز أي إضافة بوسم صريح [إثراء علمي خارجي])</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+          <button class="btn-primary" id="startBuildBookBtn" style="flex:1;">
+            <i class="fa-solid fa-book-medical"></i>
+            <span>إنشاء الكتاب (Create Book)</span>
+          </button>
+          <button class="btn-danger" id="cancelBuildBtn" style="display:none;">
+            <i class="fa-solid fa-ban"></i>
+            <span>إيقاف</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12-Step Pipeline Tracker -->
+    <div class="pipeline-panel" id="pipelinePanel" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <h3 class="section-title"><i class="fa-solid fa-gears"></i> خط معالجة الكتاب (12-Step Pipeline)</h3>
+        <span id="pipelineStatusMsg" style="font-size:13px;font-weight:700;color:var(--petrol);">جاهز</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="pipelineProgressBar"></div></div>
+      <div class="steps-grid" id="pipelineStepsGrid"></div>
+    </div>
+  </section>
+
+  <!-- 3. LIVE BOOK PREVIEW & QA VIEW -->
+  <section id="previewView" class="view-section">
+    <div id="previewEmptyState" class="card-box" style="text-align:center;padding:48px 20px;">
+      <i class="fa-solid fa-book-open" style="font-size:42px;color:var(--petrol);margin-bottom:12px;"></i>
+      <h3>لا يوجد كتاب مفتوح للمعاينة حالياً</h3>
+      <p style="color:var(--muted-text);margin:8px 0 18px;">أنشئ كتاباً جديداً أو اختر مشروعاً من لوحة التحكم.</p>
+      <button class="btn-primary" id="emptyGoStudioBtn">الانتقال إلى إنشاء كتاب</button>
+    </div>
+
+    <div id="previewActiveContainer" style="display:none;">
+      <div class="preview-toolbar">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary btn-sm" id="prevPageBtn"><i class="fa-solid fa-chevron-right"></i> السابق</button>
+          <span id="pageIndicator" style="font-size:13px;font-weight:700;">صفحة 1 / 1</span>
+          <button class="btn-secondary btn-sm" id="nextPageBtn">التالي <i class="fa-solid fa-chevron-left"></i></button>
+          <button class="btn-secondary btn-sm" id="zoomOutBtn"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+          <span id="zoomLabel" style="font-size:12.5px;font-weight:700;">100%</span>
+          <button class="btn-secondary btn-sm" id="zoomInBtn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary btn-sm" id="toggleEditModeBtn"><i class="fa-solid fa-pen-to-square"></i> تعديل النصوص</button>
+          <button class="btn-secondary btn-sm" id="saveBookEditsBtn" style="display:none;border-color:var(--dark-green);color:var(--dark-green);"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
+          <button class="btn-secondary btn-sm" id="showQaModalBtn"><i class="fa-solid fa-shield-check"></i> تقرير الجودة (QA)</button>
+          <button class="btn-secondary btn-sm" id="exportHtmlBtn"><i class="fa-solid fa-code"></i> تصدير HTML</button>
+          <button class="btn-primary btn-sm" id="exportPdfBtn"><i class="fa-solid fa-file-pdf"></i> تصدير PDF للطباعة</button>
+        </div>
+      </div>
+
+      <div class="preview-layout">
+        <aside class="chapter-sidebar">
+          <h3 style="font-size:15px;color:var(--petrol);margin-bottom:10px;">إدارة الفصول</h3>
+          <div id="chapterSidebarList"></div>
+        </aside>
+        <div class="book-viewport">
+          <div class="book-zoom-wrap" id="bookZoomWrap"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. IMAGE CENTER VIEW -->
+  <section id="imageCenterView" class="view-section">
+    <div class="section-header" style="margin-top:0;">
+      <h2 class="section-title"><i class="fa-solid fa-images"></i> مركز الصور الطبية (Image Center)</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-sm img-filter-btn active" data-filter="all">الكل</button>
+        <button class="btn-secondary btn-sm img-filter-btn" data-filter="original">أصلية من الملفات</button>
+        <button class="btn-secondary btn-sm img-filter-btn" data-filter="ai_generated">مولدة بالذكاء الاصطناعي</button>
+        <button class="btn-primary btn-sm" id="addCustomImageBtn"><i class="fa-solid fa-upload"></i> إضافة صورة يدوياً</button>
+        <input type="file" id="customImageUploadInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+      </div>
+    </div>
+    <div id="imageCenterGrid" class="image-grid"></div>
+  </section>
+
+</main>
+
+<!-- API KEY MODAL (Exact structure & all 4 model chips from original MEDNERD code) -->
+<div class="modal-overlay" id="apiKeyModal" role="dialog" aria-modal="true" aria-labelledby="apiModalTitle">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="apiModalTitle" style="color:var(--petrol);font-size:19px;">إعداد مفتاح Google Gemini API</h3>
+        <p style="font-size:12.5px;color:var(--muted-text);">اتصال مباشر من متصفحك إلى خوادم Google Gemini دون وسيط</p>
+      </div>
+      <button class="icon-btn" id="closeApiModalBtn" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div id="apiMaskedBanner" style="display:none;margin-bottom:14px;padding:12px 14px;border-radius:10px;background:var(--petrol-soft);border:1px solid var(--border-color);font-size:13.5px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <span>المفتاح الحالي: <b id="maskedKeyText" style="font-family:monospace;" dir="ltr"></b></span>
+        <span id="keyStorageBadge" style="font-size:12px;padding:2px 8px;border-radius:6px;background:var(--white);"></span>
+      </div>
+    </div>
+
+    <div id="keyGuide" style="margin-bottom:14px;padding:12px 14px;border-radius:12px;background:var(--petrol-soft);border:1px solid var(--border-color);font-size:13px;line-height:1.8;">
+      <b style="color:var(--petrol);">ابدأ في 3 خطوات:</b>
+      <ol style="padding-inline-start:20px;margin-top:4px;">
+        <li>افتح <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style="color:var(--petrol);font-weight:700;">Google AI Studio</a> وسجّل دخول بحساب Google.</li>
+        <li>أنشئ مفتاحاً جديداً وانسخه.</li>
+        <li>ألصقه في الحقل أدناه، واضغط «التحقق من المفتاح».</li>
+      </ol>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="apiKeyInput">أدخل مفتاح Gemini API (يبدأ بـ AIza...):</label>
+      <div style="display:flex;gap:8px;">
+        <input type="password" id="apiKeyInput" class="form-input" placeholder="أدخل المفتاح هنا..." autocomplete="off" spellcheck="false" dir="ltr">
+        <button type="button" class="btn-secondary" id="toggleKeyVisBtn" aria-label="إظهار أو إخفاء المفتاح"><i class="fa-solid fa-eye"></i></button>
+      </div>
+      <small style="display:block;margin-top:6px;color:var(--muted-text);font-size:12px;">
+        احصل على مفتاح من <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style="color:var(--petrol);font-weight:700;">Google AI Studio</a>. تخضع الخدمة لحدود الاستخدام وشروط Google.
+      </small>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+      <button type="button" class="btn-primary" id="saveSessionKeyBtn" style="flex:1;padding:10px;font-size:13.5px;"><i class="fa-solid fa-clock"></i> استخدام مؤقت للجلسة (موصى به)</button>
+      <button type="button" class="btn-secondary" id="saveLocalKeyBtn" style="flex:1;padding:10px;font-size:13.5px;"><i class="fa-solid fa-floppy-disk"></i> حفظ محلياً في المتصفح</button>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <button type="button" id="testApiBtn" class="btn-secondary" style="flex:1;"><i class="fa-solid fa-plug-circle-check"></i> التحقق من المفتاح (اختبار الاتصال)</button>
+      <button type="button" id="cancelVerifyBtn" class="btn-secondary" style="display:none;border-color:var(--mustard);color:var(--mustard);"><i class="fa-solid fa-ban"></i> إلغاء التحقق</button>
+      <button type="button" id="clearApiBtn" class="btn-secondary" style="border-color:var(--danger);color:var(--danger);"><i class="fa-solid fa-plug-circle-xmark"></i> فصل المفتاح</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="apiModelInput">اسم النموذج (متقدم — اتركه فارغاً للافتراضي):</label>
+      <input type="text" id="apiModelInput" class="form-input" dir="ltr" autocomplete="off" spellcheck="false">
+      <div class="model-presets" dir="ltr">
+        <button type="button" class="model-chip" data-model="gemini-2.5-flash">gemini-2.5-flash (Default)</button>
+        <button type="button" class="model-chip" data-model="gemini-3.8-flash">gemini-3.8-flash</button>
+        <button type="button" class="model-chip" data-model="gemini-3.5-flash-lite">gemini-3.5-flash-lite</button>
+        <button type="button" class="model-chip" data-model="gemini-2.0-flash">gemini-2.0-flash</button>
+      </div>
+    </div>
+
+    <div id="modalStatusLine" style="font-size:13px;color:var(--muted-text);margin-bottom:6px;"></div>
+    <div id="apiModalResult" style="margin-bottom:12px;font-size:13.5px;font-weight:700;"></div>
+
+    <p style="font-size:12.5px;color:var(--muted-text);margin-bottom:8px;"><i class="fa-solid fa-lock"></i> المفتاح يُحفظ في متصفحك على جهازك فقط، ولا يُرسل إلى أي خادم غير Google. يمكنك فصله في أي وقت.</p>
+    <div class="warning-alert">
+      <i class="fa-solid fa-shield-halved" style="margin-top:3px;"></i>
+      <div><b>تنبيه أمني:</b> أي مفتاح يُستخدم مباشرة في المتصفح يمكن استخراجه من قِبل من يصل إلى الجهاز أو يفحص طلبات الشبكة أو الكود. لا يُرسل المفتاح لأي خادم تابع لـ MEDNERD. استخدم "الجلسة المؤقتة" عند الإمكان، وقيّد المفتاح من Google AI Studio.</div>
+    </div>
+  </div>
+</div>
+
+<!-- QA REPORT MODAL -->
+<div class="modal-overlay" id="qaModal" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 style="color:var(--petrol);"><i class="fa-solid fa-shield-check"></i> تقرير فحص الجودة والتدقيق (QA Report)</h3>
+      <button class="icon-btn" id="closeQaModalBtn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="qaModalBody"></div>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL (replaces native confirm) -->
+<div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true">
+  <div class="modal-card" style="max-width:420px;text-align:center;">
+    <p id="confirmModalText" style="font-weight:700;margin-bottom:18px;"></p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn-danger" id="confirmYesBtn">تأكيد</button>
+      <button class="btn-secondary" id="confirmNoBtn">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Modular Application Scripts -->
+<script>
+/* --- js/gemini-config.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: gemini-config.js
+   Centralized Gemini API configuration, exact model presets from MEDNERD AI,
+   BYOK storage keys, medical specialty templates, and 12-step pipeline.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  const GEMINI_CONFIG = {
+    model: 'gemini-2.5-flash',
+    fallbackModels: ['gemini-2.5-flash', 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.0-flash'],
+    imageModels: [
+      'imagen-3.0-generate-002',
+      'gemini-2.0-flash-exp-image-generation'
+    ],
+    apiBase: 'https://generativelanguage.googleapis.com/v1beta',
+    testTimeoutMs: 25000,
+    timeoutMs: 120000,
+    imageTimeoutMs: 60000,
+    testMaxOutputTokens: 256,
+    maxOutputTokens: 8192,
+    maxPdfPages: 25,
+    maxFileSizeBytes: 12 * 1024 * 1024,
+    maxSegmentChars: 12000,
+    storageKeys: {
+      apiKey: 'mednerd_gemini_key',
+      model: 'mednerd_model',
+      lang: 'mednerd_lang',
+      theme: 'mednerd_theme',
+      profile: 'mednerd_profile',
+      intro: 'mednerd_intro'
+    }
+  };
+
+  const MEDICAL_SPECIALTIES = {
+    human_medicine: {
+      id: 'human_medicine',
+      nameAr: 'الطب البشري',
+      nameEn: 'Human Medicine',
+      subdomains: ['Anatomy', 'Physiology', 'Pathology', 'Internal Medicine', 'Surgery', 'Clinical'],
+      organizingSchemas: {
+        anatomy: ['Anatomical Structures', 'Relations', 'Blood Supply', 'Nerve Supply', 'Lymphatic Drainage', 'Clinical Anatomy'],
+        pathology: ['Definition & Epidemiology', 'Etiology', 'Pathogenesis', 'Morphological Changes', 'Clinical Features', 'Investigations', 'Complications'],
+        clinical: ['Definition', 'Etiology & Risk Factors', 'Pathophysiology', 'Clinical Presentation', 'Diagnostic Workup', 'Differential Diagnosis', 'Management Principles', 'Complications & Prognosis']
+      }
+    },
+    pharmacy: {
+      id: 'pharmacy',
+      nameAr: 'الصيدلة',
+      nameEn: 'Pharmacy',
+      subdomains: ['Pharmacology', 'Pharmacotherapy', 'Medicinal Chemistry', 'Clinical Pharmacy'],
+      organizingSchemas: {
+        pharmacology: ['Drug Classification', 'Mechanism of Action', 'Pharmacokinetics', 'Pharmacodynamics', 'Indications', 'Contraindications', 'Adverse Effects', 'Drug Interactions']
+      }
+    },
+    dentistry: {
+      id: 'dentistry',
+      nameAr: 'طب الأسنان',
+      nameEn: 'Dentistry',
+      subdomains: ['Oral Anatomy', 'Oral Pathology', 'Operative Dentistry', 'Endodontics', 'Periodontics'],
+      organizingSchemas: {
+        dental: ['Anatomical Landmarks', 'Etiology & Classification', 'Clinical & Radiographic Features', 'Treatment Protocol', 'Complications']
+      }
+    },
+    nursing: {
+      id: 'nursing',
+      nameAr: 'التمريض',
+      nameEn: 'Nursing',
+      subdomains: ['Nursing Assessment', 'Care Plans', 'Clinical Procedures', 'Patient Safety'],
+      organizingSchemas: {
+        nursing: ['Assessment & Vital Cues', 'Nursing Diagnoses', 'Planning & Goals', 'Nursing Interventions', 'Patient Education', 'Evaluation']
+      }
+    },
+    mls: {
+      id: 'mls',
+      nameAr: 'المختبرات الطبية',
+      nameEn: 'Medical Laboratory Sciences',
+      subdomains: ['Hematology', 'Clinical Chemistry', 'Microbiology', 'Immunology'],
+      organizingSchemas: {
+        lab: ['Principle of Test', 'Specimen Requirements', 'Procedure & Quality Control', 'Reference Ranges', 'Clinical Significance & Pitfalls']
+      }
+    },
+    physiotherapy: {
+      id: 'physiotherapy',
+      nameAr: 'العلاج الطبيعي',
+      nameEn: 'Physiotherapy',
+      subdomains: ['Musculoskeletal', 'Neurological Rehab', 'Cardiopulmonary Rehab', 'Biomechanics'],
+      organizingSchemas: {
+        physio: ['Functional Anatomy & Biomechanics', 'Pathomechanics', 'Physical Examination & Special Tests', 'Rehabilitation Protocol', 'Contraindications & Precautions']
+      }
+    }
+  };
+
+  const IMAGE_TYPES = [
+    'Anatomy Illustrations',
+    'Histology Images',
+    'Pathology Images',
+    'Radiology Images',
+    'Medical Diagrams',
+    'Clinical Photographs',
+    'Pharmacology Diagrams',
+    'Physiology Illustrations',
+    'Dental Illustrations',
+    'Flowcharts',
+    'Anatomical Cross Sections'
+  ];
+
+  const PIPELINE_STEPS = [
+    { id: 1, key: 'upload', nameAr: 'رفع الملفات', nameEn: 'File Upload' },
+    { id: 2, key: 'extract', nameAr: 'استخراج النصوص والصور', nameEn: 'File Extraction' },
+    { id: 3, key: 'segment', nameAr: 'تقسيم المحتوى', nameEn: 'Content Segmentation' },
+    { id: 4, key: 'analyze', nameAr: 'تحليل المحتوى الطبي', nameEn: 'Content Analysis' },
+    { id: 5, key: 'classify', nameAr: 'تصنيف وترتيب الفصول', nameEn: 'Chapter Classification' },
+    { id: 6, key: 'img_extract', nameAr: 'فهرسة الصور الأصلية', nameEn: 'Image Extraction' },
+    { id: 7, key: 'img_gen', nameAr: 'توليد الرسومات الطبية', nameEn: 'Image Generation' },
+    { id: 8, key: 'structure', nameAr: 'بناء هيكل الكتاب', nameEn: 'Book Structure Creation' },
+    { id: 9, key: 'format', nameAr: 'تنسيق الفصول أكاديمياً', nameEn: 'Chapter Formatting' },
+    { id: 10, key: 'render', nameAr: 'توليد صفحات A4', nameEn: 'HTML Rendering' },
+    { id: 11, key: 'qa', nameAr: 'فحص الجودة والتدقيق', nameEn: 'Quality Assurance' },
+    { id: 12, key: 'export', nameAr: 'جاهزية التصدير', nameEn: 'PDF Export Ready' }
+  ];
+
+  global.MEDNERD_CONFIG = {
+    GEMINI_CONFIG,
+    MEDICAL_SPECIALTIES,
+    IMAGE_TYPES,
+    PIPELINE_STEPS
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/gemini-client.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: gemini-client.js
+   Exact Gemini API connection & key verification engine from MEDNERD AI:
+   - fallbackModels: ['gemini-2.5-flash', 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.0-flash']
+   - Exact postGemini 404 fallback + automatic UI/storage model chip sync
+   - Exact 502/503 retry delays [1500, 3000]
+   - Exact Ping test payload without responseMimeType issues
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  const API_TEST_TIMEOUT_MS = 25000;
+  const CONTENT_GENERATION_TIMEOUT_MS = 120000;
+  const MODEL_PATTERN = /^[a-z0-9][a-z0-9.\-]{2,60}$/i;
+
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (_) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (_) {} }
+  };
+
+  function cleanKey(k) {
+    return String(k || '')
+      .replace(/[^\x21-\x7E]/g, '')
+      .replace(/^["']+|["']+$/g, '')
+      .replace(/^Bearer/i, '');
+  }
+
+  const clientState = {
+    sessionOnlyKey: '',
+    connectionStatus: 'no-key',
+    lastVerifiedAt: null,
+    verify: null,
+    testInFlight: false,
+    lastCspViolation: null,
+    imageGenSupported: null,
+    activeImageModel: null,
+    activeControllers: new Set(),
+    onStatusChange: null,
+    onModelAutoSwitch: null
+  };
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('securitypolicyviolation', e => {
+      if (/googleapis\.com/.test(e.blockedURI || '')) {
+        clientState.lastCspViolation = { directive: e.violatedDirective, t: Date.now() };
+      }
+    });
+  }
+
+  function getCfg() {
+    return global.MEDNERD_CONFIG.GEMINI_CONFIG;
+  }
+
+  function getActiveApiKey() {
+    return cleanKey(clientState.sessionOnlyKey || store.get('mednerd_gemini_key') || '');
+  }
+
+  function maskApiKey(key) {
+    return (!key || key.length < 10) ? '••••••••' : key.slice(0, 4) + '••••••••••••' + key.slice(-4);
+  }
+
+  function getModel() {
+    const cfg = getCfg();
+    const m = (store.get('mednerd_model') || '').trim().replace(/^models\//, '');
+    return MODEL_PATTERN.test(m) ? m : cfg.model;
+  }
+
+  function setModel(modelName) {
+    const v = String(modelName || '').trim().replace(/^models\//, '');
+    if (v && MODEL_PATTERN.test(v)) store.set('mednerd_model', v);
+    else store.del('mednerd_model');
+  }
+
+  function modelUrl(apiKey, modelName = getModel()) {
+    const cfg = getCfg();
+    return `${cfg.apiBase}/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  }
+
+  function setConnectionStatus(status, customMessage = '') {
+    clientState.connectionStatus = status;
+    if (status === 'connected') clientState.lastVerifiedAt = new Date();
+    if (typeof clientState.onStatusChange === 'function') {
+      clientState.onStatusChange(status, customMessage, clientState.lastVerifiedAt);
+    }
+  }
+
+  function saveApiKey(rawKey, persistToLocal = false) {
+    const cleaned = cleanKey(rawKey);
+    if (!cleaned) throw new Error('يرجى إدخال مفتاح Gemini API أولاً قبل الحفظ.');
+    cancelVerification(false);
+    if (persistToLocal) {
+      store.set('mednerd_gemini_key', cleaned);
+      clientState.sessionOnlyKey = '';
+    } else {
+      clientState.sessionOnlyKey = cleaned;
+      store.del('mednerd_gemini_key');
+    }
+    clientState.imageGenSupported = null;
+    setConnectionStatus('unverified');
+    return cleaned;
+  }
+
+  function clearApiKey() {
+    cancelVerification(false);
+    abortAll();
+    store.del('mednerd_gemini_key');
+    clientState.sessionOnlyKey = '';
+    clientState.imageGenSupported = null;
+    clientState.activeImageModel = null;
+    setConnectionStatus('no-key');
+  }
+
+  function abortAll() {
+    clientState.activeControllers.forEach(c => {
+      try { c.abort(); } catch (_) {}
+    });
+    clientState.activeControllers.clear();
+  }
+
+  async function readApiError(response) {
+    try {
+      const j = await response.json();
+      return (j.error && j.error.message) || '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function classifyApiError(status, detail = '', stage = '') {
+    const tail = detail ? ` (تفاصيل Google: ${detail.slice(0, 220)})` : '';
+    const model = getModel();
+    if (status === 401 || /api key not valid|API_KEY_INVALID|api key expired|invalid api key|API_KEY_SERVICE_BLOCKED/i.test(detail)) {
+      return { status: 'invalid', message: 'المفتاح غير صالح أو منتهي. انسخه من Google AI Studio وتأكد من عدم وجود مسافات.' + tail };
+    }
+    if (/location is not supported/i.test(detail)) {
+      return { status: 'permission', message: 'منطقتك/شبكتك الحالية غير مدعومة من Gemini API. جرّب شبكة أخرى أو راجع المناطق المدعومة في وثائق Google.' + tail };
+    }
+    if (stage !== 'key-check' && (status === 404 || /no longer available|is not found|not supported for generateContent/i.test(detail))) {
+      return { status: 'model-error', message: `النموذج (${model}) غير متاح لهذا المفتاح أو تم إيقافه. غيّر اسمه من حقل "اسم النموذج" في هذه النافذة، أو من GEMINI_CONFIG.model في الكود.` + tail };
+    }
+    if (status === 429 || /quota|RESOURCE_EXHAUSTED|rate limit/i.test(detail)) {
+      return { status: 'quota', message: 'تم تجاوز الحصة أو حدود الاستخدام لهذا المفتاح. انتظر قليلاً أو راجع الحصة في Google AI Studio.' + tail };
+    }
+    if (status === 403) {
+      return { status: 'permission', message: 'صلاحيات API مرفوضة: تأكد من تفعيل Generative Language API للمشروع، ومن أن قيود المفتاح (المواقع/التطبيقات) تسمح بهذا الموقع، وأن بلدك مدعوم.' + tail };
+    }
+    if (status >= 500) {
+      return { status: 'network-error', message: `خطأ مؤقت في خدمة Google (رمز ${status}). حاول لاحقاً.` + tail };
+    }
+    return { status: 'network-error', message: `الطلب مرفوض (رمز ${status}).` + tail };
+  }
+
+  const STAGE_LABELS = {
+    'key-check': 'التحقق من المفتاح',
+    'model-check': 'فحص النموذج',
+    'generate': 'طلب توليد المحتوى',
+    'model-list': 'قائمة النماذج'
+  };
+
+  function classifyFetchError(err) {
+    const label = STAGE_LABELS[err.stage] || 'الاتصال';
+    if (err.timedOut) {
+      return {
+        status: 'timeout',
+        message: err.limitMs === API_TEST_TIMEOUT_MS
+          ? 'انتهت مهلة التحقق. يرجى المحاولة مجدداً.'
+          : 'تعذّر إكمال الطلب. يرجى المحاولة مجدداً.'
+      };
+    }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return { status: 'network-error', message: 'لا يوجد اتصال بالإنترنت على هذا الجهاز.' };
+    }
+    const v = clientState.lastCspViolation;
+    if (v && Date.now() - v.t < 15000) {
+      return { status: 'network-error', message: `سياسة الأمان (CSP) في الصفحة منعت الاتصال (${v.directive}). أضف https://generativelanguage.googleapis.com إلى connect-src في إعدادات الاستضافة.` };
+    }
+    if (err.name === 'TypeError') {
+      return { status: 'network-error', message: `تعذر إتمام الطلب في مرحلة «${label}» قبل وصول أي رد (CORS، أو إضافة متصفح/جدار حماية، أو شبكة تحجب generativelanguage.googleapis.com). التفاصيل في Console.` };
+    }
+    return { status: 'unexpected', message: `خطأ غير متوقع في مرحلة «${label}». التفاصيل في Console.` };
+  }
+
+  async function timedFetch(stage, url, init = {}, ms = CONTENT_GENERATION_TIMEOUT_MS, parent = null) {
+    const controller = new AbortController();
+    clientState.activeControllers.add(controller);
+    let timedOut = false, onParent = null;
+    if (parent) {
+      if (parent.aborted) controller.abort();
+      else { onParent = () => controller.abort(); parent.addEventListener('abort', onParent, { once: true }); }
+    }
+    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, ms);
+    const t0 = performance.now();
+    try {
+      const r = await fetch(url, { ...init, signal: controller.signal });
+      console.info(`[Gemini:${stage}] HTTP ${r.status} خلال ${Math.round(performance.now() - t0)}ms`);
+      return r;
+    } catch (e) {
+      e.stage = stage; e.timedOut = timedOut; e.limitMs = ms;
+      e.cancelled = !timedOut && !!(parent && parent.aborted);
+      e.elapsedMs = Math.round(performance.now() - t0);
+      console.warn(`[Gemini:${stage}] ${e.cancelled ? 'أُلغي' : timedOut ? 'timeout' : e.name} بعد ${e.elapsedMs}ms`);
+      throw e;
+    } finally {
+      clearTimeout(timer);
+      clientState.activeControllers.delete(controller);
+      if (parent && onParent) parent.removeEventListener('abort', onParent);
+    }
+  }
+
+  function abortableDelay(ms, signal) {
+    return new Promise((resolve, reject) => {
+      if (signal && signal.aborted) {
+        const err = new Error('Cancelled');
+        err.cancelled = true;
+        return reject(err);
+      }
+      const timer = setTimeout(() => {
+        if (signal && onAbort) signal.removeEventListener('abort', onAbort);
+        resolve();
+      }, ms);
+      const onAbort = () => {
+        clearTimeout(timer);
+        const err = new Error('Cancelled');
+        err.cancelled = true;
+        reject(err);
+      };
+      if (signal) signal.addEventListener('abort', onAbort, { once: true });
+    });
+  }
+
+  async function postGemini(apiKey, body, stage = 'generate', parent = null, ms = CONTENT_GENERATION_TIMEOUT_MS) {
+    const cfg = getCfg();
+    const t0 = performance.now();
+    const primaryModel = getModel();
+    const candidates = [primaryModel, ...cfg.fallbackModels.filter(m => m !== primaryModel)];
+
+    const sendWithModel = (modelName, limit) => {
+      return timedFetch(stage, modelUrl(apiKey, modelName), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }, Math.max(limit, 3000), parent);
+    };
+
+    let activeModel = primaryModel;
+    let r = await sendWithModel(activeModel, ms);
+
+    // إذا كان النموذج المختار غير متاح لهذا المفتاح (404)، جرّب النماذج البديلة تلقائياً
+    if (r.status === 404) {
+      for (let i = 1; i < candidates.length; i++) {
+        const elapsed = performance.now() - t0;
+        if ((ms - elapsed) <= 4000) break;
+        const altModel = candidates[i];
+        console.warn(`[Gemini] النموذج ${activeModel} أعاد 404؛ تجربة البديل ${altModel}...`);
+        const altResp = await sendWithModel(altModel, ms - elapsed);
+        r = altResp;
+        activeModel = altModel;
+        if (r.status !== 404) {
+          if (r.ok) {
+            store.set('mednerd_model', altModel);
+            if (typeof clientState.onModelAutoSwitch === 'function') {
+              clientState.onModelAutoSwitch(altModel);
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    const delays = [1500, 3000];
+    for (let i = 0; i < delays.length; i++) {
+      if (r.status !== 503 && r.status !== 502) break;
+      const elapsed = performance.now() - t0;
+      if ((ms - elapsed) <= delays[i] + 3500) break;
+      console.warn(`[Gemini] الخادم مشغول (${r.status})؛ محاولة إعادة إرسال #${i + 1} بعد ${delays[i]}ms...`);
+      await abortableDelay(delays[i], parent);
+      r = await sendWithModel(activeModel, ms - (performance.now() - t0));
+    }
+    return r;
+  }
+
+  function cancelVerification(userCancelled = false) {
+    const v = clientState.verify;
+    if (!v) return null;
+    clientState.verify = null;
+    clientState.testInFlight = false;
+    clearInterval(v.timer);
+    v.controller.abort();
+    setConnectionStatus(getActiveApiKey() ? 'unverified' : 'no-key');
+    return userCancelled
+      ? 'تم إيقاف متابعة التحقق في الواجهة (قد يكون الطلب وصل إلى Google قبل الإلغاء، لكن نتيجته تُتجاهل). يمكنك إعادة المحاولة.'
+      : '';
+  }
+
+  /**
+   * Exact testApiConnection from original MEDNERD code
+   */
+  async function testApiConnection(onProgressTick = null) {
+    if (clientState.verify) cancelVerification(false);
+    const keyToTest = getActiveApiKey();
+    if (!keyToTest) {
+      setConnectionStatus('no-key');
+      return { ok: false, status: 'no-key', color: 'var(--danger)', message: 'لم يتم إدخال مفتاح API. أدخل مفتاحاً ثم اضغط «التحقق من المفتاح».' };
+    }
+
+    const ms = API_TEST_TIMEOUT_MS;
+    const v = { controller: new AbortController(), t0: performance.now(), stage: 'جارٍ التحقق من مفتاح API…', timer: null };
+    clientState.verify = v;
+    clientState.testInFlight = true;
+    const sig = v.controller.signal;
+    const alive = () => clientState.verify === v && getActiveApiKey() === keyToTest;
+
+    setConnectionStatus('verifying');
+    if (onProgressTick) onProgressTick(v.stage);
+    v.timer = setInterval(() => {
+      if (alive() && onProgressTick) onProgressTick(v.stage);
+    }, 250);
+
+    try {
+      const r = await postGemini(keyToTest, {
+        contents: [{ role: 'user', parts: [{ text: 'Ping' }] }]
+      }, 'generate', sig, ms);
+
+      clearInterval(v.timer);
+      if (!alive()) return { ok: false, cancelled: true };
+
+      if (!r.ok) {
+        const c = classifyApiError(r.status, await readApiError(r), 'generate');
+        clientState.verify = null;
+        clientState.testInFlight = false;
+        setConnectionStatus(c.status);
+        return { ok: false, status: c.status, color: 'var(--danger)', message: '✗ ' + c.message };
+      }
+
+      let data = null;
+      try { data = await r.json(); } catch (_) {}
+      if (!alive()) return { ok: false, cancelled: true };
+
+      const model = getModel();
+      const cand = data && data.candidates && data.candidates[0];
+      const text = cand && cand.content && Array.isArray(cand.content.parts)
+        ? cand.content.parts.filter(x => !x.thought).map(x => x.text || '').join('').trim()
+        : '';
+
+      clientState.verify = null;
+      clientState.testInFlight = false;
+      setConnectionStatus('connected');
+
+      if (text || cand) {
+        return { ok: true, status: 'connected', model, color: 'var(--dark-green)', message: `✓ تم التحقق بنجاح: النموذج (${model}) يعمل.` };
+      } else {
+        return { ok: true, status: 'connected', model, color: 'var(--mustard)', message: `✓ تم الاتصال بالنموذج (${model}) بنجاح.` };
+      }
+    } catch (err) {
+      clearInterval(v.timer);
+      if (err.cancelled || !alive()) return { ok: false, cancelled: true };
+      clientState.verify = null;
+      clientState.testInFlight = false;
+      const c = classifyFetchError(err);
+      setConnectionStatus(c.status);
+      return { ok: false, status: c.status, color: 'var(--danger)', message: '✗ ' + c.message };
+    }
+  }
+
+  /**
+   * Unified callGemini matching callGeminiAPI in original MEDNERD code
+   */
+  async function callGemini({ systemInstruction, parts, generationConfig = {}, signal = null }) {
+    const cfg = getCfg();
+    const apiKey = getActiveApiKey();
+    if (!apiKey) {
+      throw new Error('لم تتم إضافة مفتاح Gemini API. أدخل مفتاحك أولاً لتشغيل الأداة.');
+    }
+
+    const body = {
+      contents: [{ role: 'user', parts }],
+      systemInstruction: { parts: [{ text: (systemInstruction || '') + getProfileRule() }] },
+      generationConfig: { maxOutputTokens: cfg.maxOutputTokens, ...generationConfig }
+    };
+
+    try {
+      const response = await postGemini(apiKey, body, 'generate', signal, cfg.timeoutMs);
+
+      if (!response.ok) {
+        const c = classifyApiError(response.status, await readApiError(response), 'generate');
+        if (!clientState.verify && getActiveApiKey() === apiKey) setConnectionStatus(c.status);
+        throw new Error(c.message);
+      }
+
+      const data = await response.json();
+      if (!data || !Array.isArray(data.candidates) || data.candidates.length === 0) {
+        const blocked = data && data.promptFeedback && data.promptFeedback.blockReason;
+        throw new Error(blocked
+          ? 'تم حجب الطلب بواسطة سياسات الأمان. صُغ المدخلات بأسلوب أكاديمي واضح.'
+          : 'استجابة فارغة من النموذج. عدّل النص وأعد المحاولة.');
+      }
+
+      const candidate = data.candidates[0];
+      if (candidate.finishReason === 'SAFETY' || candidate.finishReason === 'BLOCKLIST') {
+        throw new Error('تم إيقاف الاستجابة بواسطة سياسات الأمان. صُغ المدخلات بأسلوب أكاديمي واضح.');
+      }
+
+      const respParts = candidate.content && candidate.content.parts;
+      const text = Array.isArray(respParts)
+        ? respParts.filter(p => !p.thought).map(p => p.text || '').join('').trim()
+        : '';
+      if (!text) throw new Error('استجابة غير مكتملة من النموذج. أعد المحاولة.');
+
+      if (!clientState.verify && getActiveApiKey() === apiKey) setConnectionStatus('connected');
+
+      return {
+        text,
+        truncated: candidate.finishReason === 'MAX_TOKENS',
+        model: getModel()
+      };
+    } catch (err) {
+      if (err.cancelled) {
+        const e = new Error('تم إلغاء الطلب بناءً على طلبك.');
+        e.cancelled = true;
+        throw e;
+      }
+      if (err.stage) {
+        const c = classifyFetchError(err);
+        if (!clientState.verify && getActiveApiKey() === apiKey) setConnectionStatus(c.status);
+        throw new Error(c.message);
+      }
+      if (err instanceof SyntaxError) throw new Error('وصلت استجابة غير مقروءة من الخدمة. أعد المحاولة.');
+      throw err;
+    }
+  }
+
+  async function callGeminiJSON({ systemInstruction, parts, signal = null }) {
+    const res = await callGemini({
+      systemInstruction: (systemInstruction || '') + '\n\nمهم جداً: أخرج JSON صالحاً فقط دون أي نص آخر قبله أو بعده.',
+      parts,
+      signal
+    });
+
+    const raw = String(res.text || '');
+    try {
+      return JSON.parse(raw);
+    } catch (_) {
+      const a = raw.indexOf('{'), b = raw.lastIndexOf('}');
+      if (a !== -1 && b > a) {
+        return JSON.parse(raw.slice(a, b + 1));
+      }
+      const c = raw.indexOf('['), d = raw.lastIndexOf(']');
+      if (c !== -1 && d > c) {
+        return JSON.parse(raw.slice(c, d + 1));
+      }
+      throw new Error('تعذر قراءة البيانات المهيكلة (JSON) من النموذج.');
+    }
+  }
+
+  async function checkImageModelCapability(apiKey, signal = null) {
+    const cfg = getCfg();
+    try {
+      const r = await timedFetch(
+        'model-list',
+        `${cfg.apiBase}/models?key=${encodeURIComponent(apiKey)}&pageSize=100`,
+        { method: 'GET' },
+        API_TEST_TIMEOUT_MS,
+        signal
+      );
+      if (!r.ok) {
+        clientState.imageGenSupported = false;
+        return false;
+      }
+      const data = await r.json();
+      const models = Array.isArray(data.models) ? data.models : [];
+      const imgCapable = models.find(m => {
+        const name = (m.name || '').replace(/^models\//, '');
+        const methods = m.supportedGenerationMethods || [];
+        return (
+          (name.includes('imagen') && methods.includes('predict')) ||
+          (name.includes('image-generation') && methods.includes('generateContent'))
+        );
+      });
+      if (imgCapable) {
+        clientState.imageGenSupported = true;
+        clientState.activeImageModel = imgCapable.name.replace(/^models\//, '');
+        return true;
+      }
+      clientState.imageGenSupported = false;
+      clientState.activeImageModel = null;
+      return false;
+    } catch (_) {
+      clientState.imageGenSupported = false;
+      return false;
+    }
+  }
+
+  async function generateMedicalImage(prompt, aspectRatio = '4:3', signal = null) {
+    const cfg = getCfg();
+    const apiKey = getActiveApiKey();
+    if (!apiKey) return { ok: false, supported: false, reason: 'لا يوجد مفتاح API نشط.' };
+
+    if (clientState.imageGenSupported === null) {
+      await checkImageModelCapability(apiKey, signal);
+    }
+
+    if (!clientState.imageGenSupported || !clientState.activeImageModel) {
+      return {
+        ok: false,
+        supported: false,
+        reason: 'نموذج توليد الصور غير متاح لهذا المفتاح في Google AI Studio؛ يمكنك رفع صورة بديلة يدوياً من مركز الصور.'
+      };
+    }
+
+    const imgModel = clientState.activeImageModel;
+    try {
+      if (imgModel.includes('imagen')) {
+        const url = `${cfg.apiBase}/models/${encodeURIComponent(imgModel)}:predict?key=${encodeURIComponent(apiKey)}`;
+        const r = await timedFetch('generate', url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instances: [{ prompt }],
+            parameters: { sampleCount: 1, aspectRatio }
+          })
+        }, cfg.imageTimeoutMs, signal);
+
+        if (!r.ok) return { ok: false, supported: true, reason: `تعذر توليد الصورة (${r.status}).` };
+        const data = await r.json();
+        const pred = data && data.predictions && data.predictions[0];
+        const b64 = pred && (pred.bytesBase64Encoded || (pred.image && pred.image.bytesBase64Encoded));
+        if (!b64) return { ok: false, supported: true, reason: 'لم تُرجع الخدمة صورة.' };
+        return {
+          ok: true,
+          supported: true,
+          mimeType: pred.mimeType || 'image/png',
+          dataUrl: `data:${pred.mimeType || 'image/png'};base64,${b64}`,
+          model: imgModel
+        };
+      } else {
+        const url = modelUrl(apiKey, imgModel);
+        const r = await timedFetch('generate', url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+          })
+        }, cfg.imageTimeoutMs, signal);
+
+        if (!r.ok) return { ok: false, supported: true, reason: `تعذر توليد الصورة (${r.status}).` };
+        const data = await r.json();
+        const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+        const imgPart = parts.find(p => p.inlineData && p.inlineData.data);
+        if (!imgPart) return { ok: false, supported: true, reason: 'لم تُرجع الخدمة صورة.' };
+        return {
+          ok: true,
+          supported: true,
+          mimeType: imgPart.inlineData.mimeType || 'image/png',
+          dataUrl: `data:${imgPart.inlineData.mimeType || 'image/png'};base64,${imgPart.inlineData.data}`,
+          model: imgModel
+        };
+      }
+    } catch (e) {
+      return { ok: false, supported: true, reason: e.message || 'خطأ أثناء توليد الصورة.' };
+    }
+  }
+
+  function getProfileRule() {
+    try {
+      const p = JSON.parse(store.get('mednerd_profile') || 'null');
+      if (p && p.name && p.role && p.level) {
+        return `\n\nسياق المستخدم (للتكييف فقط ولا تذكره في الرد): الصفة: ${p.role}، المرحلة: ${p.level}، الدولة: ${p.country || ''}.`;
+      }
+    } catch (_) {}
+    return '';
+  }
+
+  global.GeminiClient = {
+    state: clientState,
+    store,
+    cleanKey,
+    getActiveApiKey,
+    maskApiKey,
+    getModel,
+    setModel,
+    saveApiKey,
+    clearApiKey,
+    cancelVerification,
+    setConnectionStatus,
+    testApiConnection,
+    callGemini,
+    callGeminiJSON,
+    generateMedicalImage,
+    abortAll,
+    getProfileRule
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/storage-manager.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: storage-manager.js
+   IndexedDB persistence for projects, source files, resumable pipeline
+   stages, image assets, and generated books. Future-ready adapter interface
+   for Firebase / Supabase sync.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  const DB_NAME = 'mednerd_book_creator_db';
+  const DB_VERSION = 1;
+  let dbPromise = null;
+
+  function openDB() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise((resolve, reject) => {
+      if (typeof indexedDB === 'undefined') {
+        return reject(new Error('IndexedDB غير مدعوم في هذا المتصفح.'));
+      }
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('projects')) {
+          const ps = db.createObjectStore('projects', { keyPath: 'id' });
+          ps.createIndex('updatedAt', 'updatedAt', { unique: false });
+        }
+        if (!db.objectStoreNames.contains('stages')) {
+          const ss = db.createObjectStore('stages', { keyPath: 'key' });
+          ss.createIndex('projectId', 'projectId', { unique: false });
+        }
+        if (!db.objectStoreNames.contains('images')) {
+          const is = db.createObjectStore('images', { keyPath: 'id' });
+          is.createIndex('projectId', 'projectId', { unique: false });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error('تعذر فتح قاعدة البيانات المحلية.'));
+    });
+    return dbPromise;
+  }
+
+  async function tx(storeName, mode, fn) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(storeName, mode);
+      const store = transaction.objectStore(storeName);
+      const req = fn(store);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveProject(project) {
+    const now = new Date().toISOString();
+    const record = {
+      ...project,
+      updatedAt: now,
+      createdAt: project.createdAt || now
+    };
+    await tx('projects', 'readwrite', s => s.put(record));
+    return record;
+  }
+
+  async function getProject(id) {
+    return tx('projects', 'readonly', s => s.get(id));
+  }
+
+  async function listProjects() {
+    const all = await tx('projects', 'readonly', s => s.getAll());
+    return (all || []).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  }
+
+  async function deleteProject(id) {
+    await tx('projects', 'readwrite', s => s.delete(id));
+    // Clean up stages & images
+    const db = await openDB();
+    await Promise.all([
+      deleteByIndex(db, 'stages', 'projectId', id),
+      deleteByIndex(db, 'images', 'projectId', id)
+    ]);
+  }
+
+  function deleteByIndex(db, storeName, indexName, val) {
+    return new Promise((resolve, reject) => {
+      const t = db.transaction(storeName, 'readwrite');
+      const idx = t.objectStore(storeName).index(indexName);
+      const req = idx.openCursor(IDBKeyRange.only(val));
+      req.onsuccess = e => {
+        const cursor = e.target.result;
+        if (cursor) {
+          cursor.delete();
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveStageResult(projectId, stepNumber, payload) {
+    const record = {
+      key: `${projectId}::step_${stepNumber}`,
+      projectId,
+      stepNumber,
+      payload,
+      savedAt: new Date().toISOString()
+    };
+    await tx('stages', 'readwrite', s => s.put(record));
+    return record;
+  }
+
+  async function getStageResult(projectId, stepNumber) {
+    const rec = await tx('stages', 'readonly', s => s.get(`${projectId}::step_${stepNumber}`));
+    return rec ? rec.payload : null;
+  }
+
+  async function saveImageAsset(imageObj) {
+    const record = {
+      ...imageObj,
+      savedAt: new Date().toISOString()
+    };
+    await tx('images', 'readwrite', s => s.put(record));
+    return record;
+  }
+
+  async function getProjectImages(projectId) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const t = db.transaction('images', 'readonly');
+      const idx = t.objectStore('images').index('projectId');
+      const req = idx.getAll(IDBKeyRange.only(projectId));
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function getStorageUsage() {
+    try {
+      if (navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        return {
+          usageBytes: est.usage || 0,
+          quotaBytes: est.quota || 0,
+          usageMB: ((est.usage || 0) / (1024 * 1024)).toFixed(2),
+          quotaMB: ((est.quota || 0) / (1024 * 1024)).toFixed(0)
+        };
+      }
+    } catch (_) {}
+    const projects = await listProjects().catch(() => []);
+    const approxBytes = JSON.stringify(projects).length;
+    return {
+      usageBytes: approxBytes,
+      quotaBytes: 50 * 1024 * 1024,
+      usageMB: (approxBytes / (1024 * 1024)).toFixed(2),
+      quotaMB: '50'
+    };
+  }
+
+  global.StorageManager = {
+    openDB,
+    saveProject,
+    getProject,
+    listProjects,
+    deleteProject,
+    saveStageResult,
+    getStageResult,
+    saveImageAsset,
+    getProjectImages,
+    getStorageUsage
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/file-processor.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: file-processor.js
+   Client-side multi-format extraction engine:
+   - PDF (via pdf.js): text, page markers, and embedded/rendered figures
+   - DOCX (via JSZip + XML): paragraphs, headings, tables, and word/media/*
+   - PPTX (via JSZip + XML): ordered slides, tables, and ppt/media/*
+   - TXT / MD: raw text & markdown tables
+   - JPG / PNG / WEBP: base64 image assets + optional Gemini Vision OCR
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  const SUPPORTED_EXT = ['pdf', 'docx', 'pptx', 'txt', 'md', 'jpg', 'jpeg', 'png', 'webp'];
+
+  function getExtension(filename) {
+    const parts = String(filename || '').toLowerCase().split('.');
+    return parts.length > 1 ? parts.pop() : '';
+  }
+
+  function isSupportedFile(file) {
+    return SUPPORTED_EXT.includes(getExtension(file.name));
+  }
+
+  function formatBytes(bytes) {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
+  }
+
+  function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  function guessImageMime(filename) {
+    const ext = getExtension(filename);
+    if (ext === 'png') return 'image/png';
+    if (ext === 'webp') return 'image/webp';
+    if (ext === 'gif') return 'image/gif';
+    return 'image/jpeg';
+  }
+
+  async function readImageFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result || '');
+        const base64 = dataUrl.split(',')[1] || '';
+        if (!base64) return reject(new Error(`تعذر قراءة الصورة: ${file.name}`));
+        resolve({ dataUrl, base64, mimeType: file.type || guessImageMime(file.name) });
+      };
+      reader.onerror = () => reject(new Error(`فشل قراءة الصورة: ${file.name}`));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function processPDF(file, onProgress) {
+    if (!global.pdfjsLib) {
+      throw new Error('مكتبة pdf.js غير محملة. تأكد من الاتصال بالإنترنت.');
+    }
+    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
+    const buf = await file.arrayBuffer();
+    let pdf;
+    try {
+      pdf = await global.pdfjsLib.getDocument({ data: buf }).promise;
+    } catch (_) {
+      throw new Error(`تعذر فتح ملف PDF (${file.name}). قد يكون محمياً بكلمة مرور أو تالفاً.`);
+    }
+
+    const totalPages = pdf.numPages;
+    const limitPages = Math.min(totalPages, cfg.maxPdfPages);
+    const blocks = [];
+    const extractedImages = [];
+    let totalChars = 0;
+
+    for (let p = 1; p <= limitPages; p++) {
+      if (onProgress) onProgress(Math.round((p / limitPages) * 100));
+      const page = await pdf.getPage(p);
+      const tc = await page.getTextContent();
+      // Preserve line breaks using Y-coordinate shifts
+      let lastY = null;
+      let pageLines = [];
+      let currentLine = [];
+      for (const item of tc.items) {
+        const y = item.transform ? Math.round(item.transform[5]) : null;
+        if (lastY !== null && y !== null && Math.abs(y - lastY) > 4) {
+          pageLines.push(currentLine.join(' ').trim());
+          currentLine = [];
+        }
+        if (item.str) currentLine.push(item.str);
+        lastY = y;
+      }
+      if (currentLine.length) pageLines.push(currentLine.join(' ').trim());
+      const pageText = pageLines.filter(Boolean).join('\n').trim();
+      if (pageText) {
+        totalChars += pageText.length;
+        blocks.push({
+          sourceFile: file.name,
+          location: `صفحة ${p}`,
+          text: pageText
+        });
+      }
+    }
+
+    // If scanned PDF (very little text), render up to first 6 pages as images for Vision OCR
+    let isScanned = false;
+    if (totalChars < 40 && limitPages > 0) {
+      isScanned = true;
+      const scanLimit = Math.min(limitPages, 6);
+      for (let p = 1; p <= scanLimit; p++) {
+        const page = await pdf.getPage(p);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        extractedImages.push({
+          id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          name: `${file.name} - صفحة ${p}`,
+          sourceFile: file.name,
+          location: `صفحة ${p}`,
+          mimeType: 'image/jpeg',
+          dataUrl,
+          base64: dataUrl.split(',')[1],
+          origin: 'original',
+          isPageScan: true
+        });
+      }
+    }
+
+    return {
+      blocks,
+      extractedImages,
+      warnings: totalPages > limitPages
+        ? [`تمت معالجة أول ${limitPages} صفحة من أصل ${totalPages} صفحة في ${file.name}.`]
+        : (isScanned ? [`الملف ${file.name} يبدو ممسوحاً ضوئياً؛ تم تجهيز أول ${extractedImages.length} صفحات كصور للتحليل البصري.`] : []),
+      meta: { totalPages, processedPages: limitPages, isScanned }
+    };
+  }
+
+  async function processDOCX(file) {
+    if (!global.JSZip) {
+      throw new Error('مكتبة JSZip غير محملة لقراءة ملفات DOCX.');
+    }
+    const zip = await global.JSZip.loadAsync(await file.arrayBuffer());
+    const docXmlFile = zip.file('word/document.xml');
+    if (!docXmlFile) throw new Error(`ملف DOCX غير صالح (${file.name}).`);
+
+    const xmlText = await docXmlFile.async('string');
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+
+    const blocks = [];
+    const body = xmlDoc.getElementsByTagName('w:body')[0];
+    if (body) {
+      const children = Array.from(body.childNodes);
+      let buffer = [];
+      let sectionIndex = 1;
+
+      for (const node of children) {
+        if (node.nodeName === 'w:p') {
+          const texts = Array.from(node.getElementsByTagName('w:t')).map(t => t.textContent).join('');
+          if (texts.trim()) buffer.push(texts.trim());
+        } else if (node.nodeName === 'w:tbl') {
+          // Extract table into Markdown format
+          const rows = Array.from(node.getElementsByTagName('w:tr'));
+          const mdRows = rows.map(tr => {
+            const cells = Array.from(tr.getElementsByTagName('w:tc')).map(tc => {
+              return Array.from(tc.getElementsByTagName('w:t')).map(t => t.textContent).join(' ').replace(/\|/g, '/').trim();
+            });
+            return `| ${cells.join(' | ')} |`;
+          });
+          if (mdRows.length > 0) {
+            const colCount = mdRows[0].split('|').length - 2;
+            const sep = `| ${Array(Math.max(colCount, 1)).fill('---').join(' | ')} |`;
+            const tableMd = [mdRows[0], sep, ...mdRows.slice(1)].join('\n');
+            buffer.push('\n' + tableMd + '\n');
+          }
+        }
+        if (buffer.join('\n').length > 3500) {
+          blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex++}`, text: buffer.join('\n') });
+          buffer = [];
+        }
+      }
+      if (buffer.length) {
+        blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex}`, text: buffer.join('\n') });
+      }
+    }
+
+    // Extract original embedded images from word/media/
+    const extractedImages = [];
+    const mediaFiles = Object.keys(zip.files).filter(p => /^word\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
+    for (const path of mediaFiles) {
+      const buf = await zip.files[path].async('arraybuffer');
+      const mimeType = guessImageMime(path);
+      const base64 = arrayBufferToBase64(buf);
+      extractedImages.push({
+        id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        name: path.split('/').pop(),
+        sourceFile: file.name,
+        location: 'مستند Word',
+        mimeType,
+        base64,
+        dataUrl: `data:${mimeType};base64,${base64}`,
+        origin: 'original'
+      });
+    }
+
+    return { blocks, extractedImages, warnings: [], meta: { mediaCount: extractedImages.length } };
+  }
+
+  async function processPPTX(file) {
+    if (!global.JSZip) {
+      throw new Error('مكتبة JSZip غير محملة لقراءة ملفات PPTX.');
+    }
+    const zip = await global.JSZip.loadAsync(await file.arrayBuffer());
+    const slidePaths = Object.keys(zip.files)
+      .filter(p => /^ppt\/slides\/slide\d+\.xml$/i.test(p))
+      .sort((a, b) => {
+        const na = parseInt(a.match(/slide(\d+)\.xml/i)[1], 10);
+        const nb = parseInt(b.match(/slide(\d+)\.xml/i)[1], 10);
+        return na - nb;
+      });
+
+    if (!slidePaths.length) throw new Error(`لم يتم العثور على شرائح في (${file.name}).`);
+
+    const parser = new DOMParser();
+    const blocks = [];
+
+    for (let i = 0; i < slidePaths.length; i++) {
+      const xmlText = await zip.files[slidePaths[i]].async('string');
+      const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+      const paragraphs = Array.from(xmlDoc.getElementsByTagName('a:p'))
+        .map(p => Array.from(p.getElementsByTagName('a:t')).map(t => t.textContent).join('').trim())
+        .filter(Boolean);
+
+      if (paragraphs.length) {
+        blocks.push({
+          sourceFile: file.name,
+          location: `شريحة ${i + 1}`,
+          text: paragraphs.join('\n')
+        });
+      }
+    }
+
+    const extractedImages = [];
+    const mediaFiles = Object.keys(zip.files).filter(p => /^ppt\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
+    for (const path of mediaFiles) {
+      const buf = await zip.files[path].async('arraybuffer');
+      const mimeType = guessImageMime(path);
+      const base64 = arrayBufferToBase64(buf);
+      extractedImages.push({
+        id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        name: path.split('/').pop(),
+        sourceFile: file.name,
+        location: 'عرض تقديمي PPTX',
+        mimeType,
+        base64,
+        dataUrl: `data:${mimeType};base64,${base64}`,
+        origin: 'original'
+      });
+    }
+
+    return { blocks, extractedImages, warnings: [], meta: { slideCount: slidePaths.length } };
+  }
+
+  async function processTextFile(file) {
+    const text = await file.text();
+    if (!text.trim()) throw new Error(`الملف (${file.name}) فارغ.`);
+    return {
+      blocks: [{ sourceFile: file.name, location: 'النص الكامل', text: text.trim() }],
+      extractedImages: [],
+      warnings: [],
+      meta: { length: text.length }
+    };
+  }
+
+  async function processImageInput(file) {
+    const img = await readImageFile(file);
+    return {
+      blocks: [],
+      extractedImages: [{
+        id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        name: file.name,
+        sourceFile: file.name,
+        location: 'صورة مرفوعة',
+        mimeType: img.mimeType,
+        base64: img.base64,
+        dataUrl: img.dataUrl,
+        origin: 'original',
+        isStandaloneImage: true
+      }],
+      warnings: [],
+      meta: { standaloneImage: true }
+    };
+  }
+
+  async function processFile(file, onProgress = null) {
+    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
+    if (file.size === 0) throw new Error(`الملف ${file.name} فارغ (0 بايت).`);
+    if (file.size > cfg.maxFileSizeBytes) throw new Error(`حجم ${file.name} يتجاوز الحد الأقصى (20 MB).`);
+
+    const ext = getExtension(file.name);
+    if (ext === 'pdf') return processPDF(file, onProgress);
+    if (ext === 'docx') return processDOCX(file);
+    if (ext === 'pptx') return processPPTX(file);
+    if (ext === 'txt' || ext === 'md') return processTextFile(file);
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return processImageInput(file);
+    throw new Error(`صيغة غير مدعومة: ${file.name}`);
+  }
+
+  /**
+   * STEP 3: Content Segmentation
+   * Groups extracted blocks into bounded segments without breaking paragraphs.
+   */
+  function segmentBlocks(allBlocks, maxChars = null) {
+    const limit = maxChars || global.MEDNERD_CONFIG.GEMINI_CONFIG.maxSegmentChars;
+    const segments = [];
+    let current = {
+      id: 'seg_1',
+      sources: [],
+      text: ''
+    };
+
+    for (const blk of allBlocks) {
+      const entry = `\n[المصدر: ${blk.sourceFile} | ${blk.location}]\n${blk.text}\n`;
+      if (current.text.length + entry.length > limit && current.text.length > 0) {
+        segments.push(current);
+        current = {
+          id: `seg_${segments.length + 1}`,
+          sources: [],
+          text: ''
+        };
+      }
+      current.text += entry;
+      if (!current.sources.includes(blk.sourceFile)) current.sources.push(blk.sourceFile);
+    }
+    if (current.text.trim()) segments.push(current);
+    return segments;
+  }
+
+  global.FileProcessor = {
+    SUPPORTED_EXT,
+    isSupportedFile,
+    formatBytes,
+    processFile,
+    segmentBlocks
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/content-analyzer.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: content-analyzer.js
+   Medical Content Intelligence Engine (Steps 4 & 5):
+   - Extracts headings, subheadings, English medical terms, definitions,
+     classifications, comparisons, tables, MCQs (all options), and clinical cases.
+   - Supports Auto, Professional, and Source Preservation modes.
+   - Detects contradictions & duplicate topics across multiple lectures.
+   - Supports Vision OCR for scanned PDFs / uploaded medical images.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  async function extractTextFromImage(imageAsset, signal = null) {
+    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة دون اختراع أي كلمة غير موجودة. أبقِ المصطلحات الطبية بالإنجليزية كما هي. إذا كانت الصورة رسماً توضيحياً دون نص، صف التراكيب الظاهرة باختصار علمي دقيق تحت عنوان [وصف صورة أصلية].`;
+    const res = await global.GeminiClient.callGemini({
+      systemInstruction: 'أنت أداة استخراج نصوص ووصف صور طبية بدقة عالية.',
+      parts: [
+        { text: prompt },
+        { inlineData: { mimeType: imageAsset.mimeType, data: imageAsset.base64 } }
+      ],
+      signal
+    });
+    return res.text;
+  }
+
+  async function analyzeSegment(segment, options = {}, signal = null) {
+    const mode = options.mode || 'auto'; // auto | professional | source_preservation
+    const specialty = options.specialty || 'human_medicine';
+    const enrichment = !!options.scientificEnrichment && mode !== 'source_preservation';
+    const lang = options.language || 'ar';
+
+    const modeInstruction = mode === 'source_preservation'
+      ? `وضع الحفاظ الصارم على المصدر (SOURCE PRESERVATION MODE):
+- ممنوع إعادة صياغة المعلومات أو اختصارها أو حذفها.
+- احتفظ بالنص الأصلي، والفقرات، وأسئلة MCQ بكامل خياراتها، والجداول كما هي، واقتصر على استخراج البنية وتصحيح أخطاء التنسيق الواضحة فقط.`
+      : (enrichment
+        ? `وضع الإثراء العلمي مفعّل: التزم أساساً بمعلومات المصدر، وإذا أضفت أي توضيح علمي خارجي فميّزه صراحة بوسم [إثراء علمي خارجي] داخل الحقل.`
+        : `التزم التزاماً صارماً بمعلومات المصدر فقط. لا تخترع معلومات طبية ولا تضف معلومات من خارج النص.`);
+
+    const langInstruction = lang === 'en'
+      ? 'اكتب الشرح والتحليل باللغة الإنجليزية الأكاديمية.'
+      : 'اكتب باللغة العربية الأكاديمية مع إبقاء جميع المصطلحات الطبية وأسماء الأمراض والأدوية بالإنجليزية بجانب العربية.';
+
+    const systemInstruction = `أنت Medical Content Intelligence Engine متخصص في النشر الطبي الأكاديمي (${specialty}).
+${modeInstruction}
+${langInstruction}
+
+القواعد الإلزامية:
+1. لا تخترع معلومات طبية ولا تحذف معلومات من المصدر.
+2. حافظ على جميع خيارات أسئلة MCQ كاملة دون حذف أي خيار.
+3. احتفظ باسم الملف المصدر لكل وحدة معلومات.
+4. أخرج JSON بالبنية التالية تماماً:
+{
+  "topics": [
+    {
+      "title": "عنوان الموضوع الرئيسي",
+      "domain": "anatomy | pathology | pharmacology | physiology | clinical | dental | nursing | lab | physio | general",
+      "sourceFiles": ["اسم الملف"],
+      "subtopics": [
+        {
+          "heading": "العنوان الفرعي",
+          "contentMarkdown": "النص الكامل المنسق للموضوع الفرعي دون حذف",
+          "definitions": [{"term": "Term", "definition": "التعريف"}],
+          "classifications": ["تصنيف أو قائمة"],
+          "tables": [{"caption": "عنوان الجدول", "markdown": "| col1 | col2 |\\n|---|---|\\n| ... | ... |"}],
+          "clinicalCases": ["حالة سريرية إن وجدت"],
+          "mcqs": [{"question": "نص السؤال", "options": ["A) ...", "B) ..."], "answer": "الإجابة إن ذُكرت في المصدر", "explanation": "التفسير إن وُجد"}]
+        }
+      ]
+    }
+  ],
+  "medicalTerms": ["Term1", "Term2"],
+  "keyConceptsForVisuals": [
+    {
+      "concept": "المفهوم الذي يحتاج رسماً توضيحياً",
+      "suggestedType": "Anatomy Illustrations | Histology Images | Pathology Images | Radiology Images | Medical Diagrams | Clinical Photographs | Pharmacology Diagrams | Physiology Illustrations | Dental Illustrations | Flowcharts | Anatomical Cross Sections",
+      "reason": "سبب الحاجة للتوضيح البصري"
+    }
+  ]
+}`;
+
+    return global.GeminiClient.callGeminiJSON({
+      systemInstruction,
+      parts: [{ text: `حلّل المقطع الطبي التالي بدقة:\n\n${segment.text}` }],
+      signal,
+      temperature: mode === 'source_preservation' ? 0.05 : 0.15
+    });
+  }
+
+  /**
+   * STEP 5: Chapter Classification, Deduplication & Contradiction Detection
+   */
+  async function organizeAndDetectConflicts(analyzedSegments, options = {}, signal = null) {
+    const allTopics = [];
+    const allTerms = new Set();
+    const visualCandidates = [];
+
+    for (const seg of analyzedSegments) {
+      if (Array.isArray(seg.topics)) {
+        seg.topics.forEach(t => allTopics.push(t));
+      }
+      if (Array.isArray(seg.medicalTerms)) {
+        seg.medicalTerms.forEach(term => allTerms.add(term));
+      }
+      if (Array.isArray(seg.keyConceptsForVisuals)) {
+        seg.keyConceptsForVisuals.forEach(vc => visualCandidates.push(vc));
+      }
+    }
+
+    // Group topics by normalized title or ask Gemini to order chapters & flag contradictions if multiple topics exist
+    let chapterPlan = null;
+    if (allTopics.length > 1) {
+      const compactSummary = allTopics.map((t, idx) => ({
+        index: idx,
+        title: t.title,
+        domain: t.domain,
+        sources: t.sourceFiles,
+        subheadings: (t.subtopics || []).map(s => s.heading)
+      }));
+
+      try {
+        chapterPlan = await global.GeminiClient.callGeminiJSON({
+          systemInstruction: `أنت رئيس تحرير كتب طبية أكاديمية. رتب الموضوعات التالية في فصول منطقية متسلسلة أكاديمياً، واكتشف أي تكرار أو تناقض محتمل بين المصادر دون حذف أي محتوى.
+أخرج JSON فقط:
+{
+  "bookTitle": "عنوان مقترح للكتاب بناءً على المحتوى",
+  "bookSubtitle": "عنوان فرعي أكاديمي",
+  "chapters": [
+    {
+      "chapterTitle": "عنوان الفصل",
+      "domain": "التخصص/المجال",
+      "topicIndices": [0, 1]
+    }
+  ],
+  "duplicates": ["وصف أي موضوع مكرر بين ملفين"],
+  "contradictions": ["تنبيه لأي تعارض علمي أو رقمي بين ملفين إن وُجد"]
+}`,
+          parts: [{ text: JSON.stringify(compactSummary, null, 2) }],
+          signal,
+          temperature: 0.1
+        });
+      } catch (_) {
+        chapterPlan = null;
+      }
+    }
+
+    // Fallback deterministic grouping if single topic or planner failed
+    if (!chapterPlan || !Array.isArray(chapterPlan.chapters) || !chapterPlan.chapters.length) {
+      chapterPlan = {
+        bookTitle: allTopics[0] ? allTopics[0].title : 'المرجع الطبي الأكاديمي',
+        bookSubtitle: 'مُعدّ ومنسق بواسطة MEDNERD AI Book Creator',
+        chapters: allTopics.map((t, idx) => ({
+          chapterTitle: t.title || `الفصل ${idx + 1}`,
+          domain: t.domain || 'general',
+          topicIndices: [idx]
+        })),
+        duplicates: [],
+        contradictions: []
+      };
+    }
+
+    const chapters = chapterPlan.chapters.map((ch, idx) => {
+      const mergedSubtopics = [];
+      const sourceFiles = new Set();
+      (ch.topicIndices || []).forEach(ti => {
+        const topic = allTopics[ti];
+        if (!topic) return;
+        (topic.sourceFiles || []).forEach(sf => sourceFiles.add(sf));
+        (topic.subtopics || []).forEach(st => mergedSubtopics.push(st));
+      });
+
+      return {
+        id: `ch_${idx + 1}`,
+        number: idx + 1,
+        title: ch.chapterTitle,
+        domain: ch.domain || 'general',
+        sourceFiles: Array.from(sourceFiles),
+        subtopics: mergedSubtopics
+      };
+    }).filter(ch => ch.subtopics.length > 0);
+
+    return {
+      bookTitle: chapterPlan.bookTitle,
+      bookSubtitle: chapterPlan.bookSubtitle,
+      chapters,
+      medicalTerms: Array.from(allTerms),
+      visualCandidates,
+      duplicates: chapterPlan.duplicates || [],
+      contradictions: chapterPlan.contradictions || []
+    };
+  }
+
+  global.ContentAnalyzer = {
+    extractTextFromImage,
+    analyzeSegment,
+    organizeAndDetectConflicts
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/image-engine.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: image-engine.js
+   Medical Image Intelligence System (Steps 6 & 7):
+   - Indexes original extracted images from uploaded files.
+   - Identifies concepts needing visual aid across chapters.
+   - Generates accurate prompts for the 11 medical image types.
+   - Calls Gemini/Imagen Image API honestly (checks capability; never fakes).
+   - Provides Image Center CRUD (replace, remove, reorder, upload).
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  function createSvgPlaceholder(concept, imageType, reason) {
+    // Honest placeholder card when API image generation is unavailable
+    return {
+      isHonestPlaceholder: true,
+      concept,
+      imageType,
+      reason
+    };
+  }
+
+  async function buildImagePrompt(concept, imageType, chapterTitle, signal = null) {
+    const res = await global.GeminiClient.callGeminiJSON({
+      systemInstruction: `أنت خبير رسوم توضيحية طبية للنشر الأكاديمي.
+أنشئ وصفاً (Prompt) بالإنجليزية لتوليد رسم طبي تعليمي واضح وخالٍ من النصوص المشوهة، وعنواناً علمياً وشرحاً مرتبطاً بالمحتوى بالعربية.
+أخرج JSON فقط:
+{
+  "promptEn": "Clean medical textbook illustration of ..., white background, high anatomical accuracy, editorial style, no garbled text",
+  "titleAr": "الشكل (X): عنوان علمي دقيق",
+  "captionAr": "شرح علمي مختصر يربط الصورة بمحتوى الفصل"
+}`,
+      parts: [{ text: `المفهوم: ${concept}\nالنوع: ${imageType}\nالفصل: ${chapterTitle}` }],
+      signal,
+      temperature: 0.2
+    });
+    return res;
+  }
+
+  /**
+   * Process original images + generate required medical illustrations per chapter
+   */
+  async function processBookImages(projectId, organizedBook, originalImages, options = {}, onProgress = null, signal = null) {
+    const density = options.imageDensity || 'balanced'; // minimal | balanced | rich | none
+    const maxGenerated = density === 'none' ? 0 : density === 'minimal' ? 2 : density === 'rich' ? 6 : 4;
+
+    const finalImages = [];
+    const seenConcepts = new Set();
+
+    // 1. Index all original extracted images (excluding full-page scans used only for OCR)
+    const usableOriginals = (originalImages || []).filter(img => !img.isPageScan);
+    usableOriginals.forEach((img, idx) => {
+      const assignedChapter = organizedBook.chapters[idx % Math.max(organizedBook.chapters.length, 1)];
+      const asset = {
+        id: img.id || `orig_${idx + 1}`,
+        projectId,
+        chapterId: assignedChapter ? assignedChapter.id : 'ch_1',
+        chapterTitle: assignedChapter ? assignedChapter.title : '',
+        title: `صورة أصلية: ${img.name}`,
+        caption: `مستخرجة من المصدر (${img.sourceFile} — ${img.location})`,
+        imageType: 'Original Source Figure',
+        origin: 'original', // original | ai_generated | manual_upload
+        mimeType: img.mimeType,
+        dataUrl: img.dataUrl,
+        status: 'ready'
+      };
+      finalImages.push(asset);
+    });
+
+    // 2. Generate illustrations for top visual candidates (respecting density & no duplicates)
+    const candidates = (organizedBook.visualCandidates || []).slice(0, maxGenerated);
+    let generatedCount = 0;
+    const warnings = [];
+
+    for (let i = 0; i < candidates.length; i++) {
+      const cand = candidates[i];
+      const norm = String(cand.concept || '').trim().toLowerCase();
+      if (!norm || seenConcepts.has(norm)) continue;
+      seenConcepts.add(norm);
+
+      if (onProgress) onProgress(`تجهيز الرسم التوضيحي ${i + 1} من ${candidates.length}: ${cand.concept}`);
+
+      const targetChapter = organizedBook.chapters[i % Math.max(organizedBook.chapters.length, 1)];
+      let meta = {
+        promptEn: `Clean academic medical textbook ${cand.suggestedType || 'Medical Diagram'} of ${cand.concept}, white background, high precision, editorial style`,
+        titleAr: cand.concept,
+        captionAr: cand.reason || ''
+      };
+
+      try {
+        meta = await buildImagePrompt(cand.concept, cand.suggestedType || 'Medical Diagrams', targetChapter ? targetChapter.title : '', signal);
+      } catch (_) {}
+
+      const genRes = await global.GeminiClient.generateMedicalImage(meta.promptEn, '4:3', signal);
+      if (genRes.ok) {
+        generatedCount++;
+        finalImages.push({
+          id: `gen_${Date.now()}_${i}`,
+          projectId,
+          chapterId: targetChapter ? targetChapter.id : 'ch_1',
+          chapterTitle: targetChapter ? targetChapter.title : '',
+          title: meta.titleAr || cand.concept,
+          caption: `${meta.captionAr || ''} [رسم توضيحي مولّد بالذكاء الاصطناعي — لأغراض تعليمية وليس صورة سريرية حقيقية]`,
+          imageType: cand.suggestedType || 'Medical Diagrams',
+          prompt: meta.promptEn,
+          origin: 'ai_generated',
+          mimeType: genRes.mimeType,
+          dataUrl: genRes.dataUrl,
+          model: genRes.model,
+          status: 'ready'
+        });
+      } else {
+        // Honest fallback: record prompt & reason without fabricating an image
+        if (!genRes.supported && warnings.length === 0) {
+          warnings.push(genRes.reason);
+        }
+        finalImages.push({
+          id: `pending_${Date.now()}_${i}`,
+          projectId,
+          chapterId: targetChapter ? targetChapter.id : 'ch_1',
+          chapterTitle: targetChapter ? targetChapter.title : '',
+          title: meta.titleAr || cand.concept,
+          caption: meta.captionAr || cand.reason || '',
+          imageType: cand.suggestedType || 'Medical Diagrams',
+          prompt: meta.promptEn,
+          origin: 'ai_generated',
+          dataUrl: null,
+          status: 'unavailable',
+          unavailableReason: genRes.reason
+        });
+      }
+    }
+
+    // Persist to IndexedDB
+    for (const img of finalImages) {
+      await global.StorageManager.saveImageAsset(img).catch(() => {});
+    }
+
+    return {
+      images: finalImages,
+      originalCount: usableOriginals.length,
+      generatedCount,
+      warnings
+    };
+  }
+
+  global.ImageEngine = {
+    processBookImages,
+    createSvgPlaceholder
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/book-builder.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: book-builder.js
+   AI Book Builder (Steps 8 & 9):
+   - Builds complete academic book structure (Cover, Title, Copyright,
+     Preface, TOC, Adaptive Specialty Chapters, Tables, Figures, MCQs, Index).
+   - Adapts organization to specialty without inventing missing facts.
+   - Supports regenerating individual chapters.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  async function generatePreface(bookTitle, chapters, options, signal = null) {
+    const lang = options.language || 'ar';
+    const chapterList = chapters.map(c => `${c.number}. ${c.title}`).join('\n');
+    const prompt = lang === 'en'
+      ? `Write a concise, formal academic book preface (2 paragraphs) for "${bookTitle}" covering these chapters:\n${chapterList}\nMention that it is compiled from the user's medical lectures for academic study. Do not invent external facts.`
+      : `اكتب مقدمة أكاديمية موجزة ورصينة (فقرتين) لكتاب "${bookTitle}" الذي يغطي الفصول التالية:\n${chapterList}\nأشر إلى أن الكتاب مُعدّ من المحاضرات الطبية المرفوعة لأغراض الدراسة الأكاديمية دون اختراع معلومات خارجية.`;
+
+    try {
+      const res = await global.GeminiClient.callGemini({
+        systemInstruction: 'أنت محرر كتب طبية أكاديمية.',
+        parts: [{ text: prompt }],
+        generationConfig: { maxOutputTokens: 1024, temperature: 0.2 },
+        signal
+      });
+      return res.text;
+    } catch (_) {
+      return lang === 'en'
+        ? `This academic reference ("${bookTitle}") compiles and structures the provided medical lectures into an organized study volume.`
+        : `يهدف هذا المرجع الأكاديمي ("${bookTitle}") إلى تنظيم المحاضرات والملفات الطبية المقدّمة في كتاب دراسي منسق يسهل المراجعة والفهم.`;
+    }
+  }
+
+  function buildIndexMap(chapters, medicalTerms) {
+    const indexEntries = [];
+    const seen = new Set();
+    (medicalTerms || []).forEach(term => {
+      const clean = String(term || '').trim();
+      if (!clean || seen.has(clean.toLowerCase())) return;
+      seen.add(clean.toLowerCase());
+      const matchedChapters = [];
+      chapters.forEach(ch => {
+        const hay = JSON.stringify(ch).toLowerCase();
+        if (hay.includes(clean.toLowerCase())) matchedChapters.push(ch.number);
+      });
+      indexEntries.push({
+        term: clean,
+        chapters: matchedChapters.length ? matchedChapters : [1]
+      });
+    });
+    return indexEntries.sort((a, b) => a.term.localeCompare(b.term));
+  }
+
+  async function buildBook(project, organized, imageResult, options = {}, signal = null) {
+    const lang = options.language || 'ar';
+    const specialtyKey = options.specialty || 'human_medicine';
+    const specInfo = global.MEDNERD_CONFIG.MEDICAL_SPECIALTIES[specialtyKey] || global.MEDNERD_CONFIG.MEDICAL_SPECIALTIES.human_medicine;
+
+    const bookTitle = options.customTitle && options.customTitle.trim()
+      ? options.customTitle.trim()
+      : (organized.bookTitle || 'المرجع الطبي الأكاديمي');
+
+    const bookSubtitle = options.customSubtitle && options.customSubtitle.trim()
+      ? options.customSubtitle.trim()
+      : (organized.bookSubtitle || `${specInfo.nameAr} — ${specInfo.nameEn}`);
+
+    const preface = await generatePreface(bookTitle, organized.chapters, options, signal);
+
+    // Attach images to their assigned chapters
+    const allImages = (imageResult && imageResult.images) || [];
+    const chapters = organized.chapters.map(ch => {
+      const chImages = allImages.filter(img => img.chapterId === ch.id);
+      return {
+        ...ch,
+        images: chImages
+      };
+    });
+
+    const sourceFilesSet = new Set();
+    chapters.forEach(ch => (ch.sourceFiles || []).forEach(sf => sourceFilesSet.add(sf)));
+
+    const book = {
+      id: project.id,
+      title: bookTitle,
+      subtitle: bookSubtitle,
+      author: options.authorName || 'MEDNERD AI Book Creator',
+      specialty: specialtyKey,
+      specialtyLabel: lang === 'en' ? specInfo.nameEn : specInfo.nameAr,
+      mode: options.mode || 'auto',
+      language: lang,
+      direction: lang === 'en' ? 'ltr' : 'rtl',
+      design: {
+        paperSize: options.paperSize || 'A4',
+        fontSizePt: parseInt(options.fontSizePt, 10) || 11,
+        fontFamily: options.fontFamily || (lang === 'en' ? 'Inter' : 'Cairo'),
+        primaryColor: options.primaryColor || '#0e7490',
+        coverStyle: options.coverStyle || 'academic_teal'
+      },
+      frontMatter: {
+        preface,
+        copyrightYear: new Date().getFullYear(),
+        sourceFiles: Array.from(sourceFilesSet),
+        disclaimer: lang === 'en'
+          ? 'Compiled for academic medical education from user-provided files. Verify clinical decisions against approved medical references.'
+          : 'أُعدّ هذا الكتاب للأغراض التعليمية والأكاديمية اعتماداً على الملفات المرفوعة من المستخدم. يُرجى التحقق دائماً من المراجع الطبية المعتمدة قبل أي تطبيق سريري.'
+      },
+      chapters,
+      alerts: {
+        duplicates: organized.duplicates || [],
+        contradictions: organized.contradictions || [],
+        imageWarnings: (imageResult && imageResult.warnings) || []
+      },
+      indexEntries: buildIndexMap(chapters, organized.medicalTerms),
+      stats: {
+        filesCount: (project.files || []).length,
+        chaptersCount: chapters.length,
+        originalImagesCount: (imageResult && imageResult.originalCount) || 0,
+        generatedImagesCount: (imageResult && imageResult.generatedCount) || 0
+      },
+      updatedAt: new Date().toISOString()
+    };
+
+    return book;
+  }
+
+  async function regenerateChapter(book, chapterId, signal = null) {
+    const idx = book.chapters.findIndex(c => c.id === chapterId);
+    if (idx === -1) throw new Error('الفصل المطلوب غير موجود.');
+    const ch = book.chapters[idx];
+    const mode = book.mode || 'auto';
+    if (mode === 'source_preservation') {
+      throw new Error('إعادة صياغة الفصل غير مسموحة في وضع الحفاظ الصارم على المصدر (Source Preservation Mode).');
+    }
+
+    const rawContent = ch.subtopics.map(st => `### ${st.heading}\n${st.contentMarkdown}`).join('\n\n');
+    const res = await global.GeminiClient.callGeminiJSON({
+      systemInstruction: `أنت محرر كتب طبية أكاديمية (${book.specialtyLabel}). أعد تنسيق وترتيب هذا الفصل بأسلوب أكاديمي واضح دون حذف أي معلومة أو اختراع معلومات خارجية. أبقِ المصطلحات الطبية بالإنجليزية.
+أخرج JSON: {"subtopics": [{"heading": "...", "contentMarkdown": "..."}]}`,
+      parts: [{ text: `عنوان الفصل: ${ch.title}\n\nالمحتوى:\n${rawContent}` }],
+      signal,
+      temperature: 0.2
+    });
+
+    if (Array.isArray(res.subtopics) && res.subtopics.length) {
+      book.chapters[idx] = {
+        ...ch,
+        subtopics: ch.subtopics.map((orig, i) => ({
+          ...orig,
+          heading: (res.subtopics[i] && res.subtopics[i].heading) || orig.heading,
+          contentMarkdown: (res.subtopics[i] && res.subtopics[i].contentMarkdown) || orig.contentMarkdown
+        }))
+      };
+    }
+    book.updatedAt = new Date().toISOString();
+    return book;
+  }
+
+  global.BookBuilder = {
+    buildBook,
+    regenerateChapter
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/html-renderer.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: html-renderer.js
+   Professional Medical Book Designer & Quality Assurance Engine (Steps 10 & 11):
+   - Renders A4 Portrait academic pages with Cairo / Inter typography.
+   - Supports RTL & LTR, Cover, Title, Copyright, Preface, TOC, Chapters,
+     Tables, Figures, MCQs, Index, Running Headers & Page Numbers.
+   - Prevents text overlap, image overflow, bad table splits, and orphan headings.
+   - Runs Quality Assurance Engine and produces detailed QA Audit Report.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  function esc(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function safeMd(md) {
+    const raw = (typeof global.marked !== 'undefined')
+      ? global.marked.parse(String(md || ''))
+      : `<p>${esc(md).replace(/\n/g, '<br>')}</p>`;
+    if (global.DOMPurify) {
+      return global.DOMPurify.sanitize(raw, {
+        USE_PROFILES: { html: true },
+        FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'style'],
+        FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus']
+      });
+    }
+    return raw;
+  }
+
+  function buildPageShell({ pageNum, totalPages, bookTitle, chapterTitle, dir, primaryColor, bodyHtml, isCover = false, pageId = '' }) {
+    if (isCover) {
+      return `<section class="book-page book-cover" dir="${dir}" data-page="${pageNum}" id="${pageId}">${bodyHtml}</section>`;
+    }
+    return `
+      <section class="book-page" dir="${dir}" data-page="${pageNum}" id="${pageId}">
+        <div class="book-page-header" style="border-bottom-color:${primaryColor}33">
+          <span>${esc(bookTitle)}</span>
+          <span>${esc(chapterTitle || '')}</span>
+        </div>
+        <div class="book-page-content">${bodyHtml}</div>
+        <div class="book-page-footer">
+          <span>MEDNERD AI — Medical Book Creator</span>
+          <span class="page-number">${pageNum} / ${totalPages}</span>
+        </div>
+      </section>`;
+  }
+
+  function renderBookPages(book) {
+    const isEn = book.language === 'en';
+    const dir = book.direction || (isEn ? 'ltr' : 'rtl');
+    const primary = (book.design && book.design.primaryColor) || '#0e7490';
+    const fontSize = (book.design && book.design.fontSizePt) || 11;
+    const coverStyle = (book.design && book.design.coverStyle) || 'academic_teal';
+
+    const rawPages = [];
+
+    // 1. Cover Page
+    const coverBg = coverStyle === 'royal_green'
+      ? 'linear-gradient(155deg, #14532d 0%, #0f172a 100%)'
+      : coverStyle === 'editorial_dark'
+        ? 'linear-gradient(155deg, #0f172a 0%, #1e293b 100%)'
+        : `linear-gradient(155deg, ${primary} 0%, #0f172a 100%)`;
+
+    rawPages.push({
+      isCover: true,
+      chapterTitle: '',
+      id: 'page_cover',
+      html: `
+        <div class="cover-inner" style="background:${coverBg};">
+          <div class="cover-top-badge">MEDNERD AI · ACADEMIC MEDICAL EDITION</div>
+          <div class="cover-main">
+            <div class="cover-specialty">${esc(book.specialtyLabel)}</div>
+            <h1 class="cover-title">${esc(book.title)}</h1>
+            <p class="cover-subtitle">${esc(book.subtitle)}</p>
+          </div>
+          <div class="cover-footer">
+            <div class="cover-author">${esc(book.author)}</div>
+            <div class="cover-year">${esc(book.frontMatter.copyrightYear)}</div>
+          </div>
+        </div>`
+    });
+
+    // 2. Title & Copyright Page
+    const sourcesList = (book.frontMatter.sourceFiles || []).map(f => `<li>${esc(f)}</li>`).join('');
+    rawPages.push({
+      chapterTitle: isEn ? 'Title & Copyright' : 'صفحة العنوان والحقوق',
+      id: 'page_copyright',
+      html: `
+        <div class="title-page-block">
+          <h2 style="color:${primary}">${esc(book.title)}</h2>
+          <p class="subtitle-muted">${esc(book.subtitle)}</p>
+          <p><strong>${isEn ? 'Prepared by:' : 'إعداد:'}</strong> ${esc(book.author)}</p>
+          <p><strong>${isEn ? 'Specialty:' : 'التخصص:'}</strong> ${esc(book.specialtyLabel)}</p>
+          <hr class="book-divider">
+          <h3>${isEn ? 'Academic & Publishing Notice' : 'تنبيه النشر والاستخدام الأكاديمي'}</h3>
+          <p>${esc(book.frontMatter.disclaimer)}</p>
+          ${sourcesList ? `<h4>${isEn ? 'Compiled Source Files' : 'الملفات المصدرية المعتمدة'}</h4><ul>${sourcesList}</ul>` : ''}
+        </div>`
+    });
+
+    // 3. Preface & Table of Contents
+    const tocItems = book.chapters.map((ch, idx) => `
+      <div class="toc-row">
+        <span class="toc-title"><strong>${isEn ? 'Chapter' : 'الفصل'} ${ch.number}:</strong> ${esc(ch.title)}</span>
+        <span class="toc-dots"></span>
+        <span class="toc-page">${idx + 4}</span>
+      </div>`).join('');
+
+    rawPages.push({
+      chapterTitle: isEn ? 'Preface & Contents' : 'المقدمة وجدول المحتويات',
+      id: 'page_toc',
+      html: `
+        <h2 class="section-heading" style="color:${primary};border-inline-start-color:${primary}">${isEn ? 'Preface' : 'مقدمة الكتاب'}</h2>
+        <div class="prose-block">${safeMd(book.frontMatter.preface)}</div>
+        <h2 class="section-heading" style="color:${primary};border-inline-start-color:${primary};margin-top:24px;">${isEn ? 'Table of Contents' : 'جدول المحتويات'}</h2>
+        <div class="toc-list">${tocItems}</div>`
+    });
+
+    // 4. Chapters
+    book.chapters.forEach(ch => {
+      let chHtml = `
+        <div class="chapter-banner" style="border-bottom-color:${primary}">
+          <span class="chapter-num" style="color:${primary}">${isEn ? 'CHAPTER' : 'الفصل'} ${ch.number}</span>
+          <h2 class="chapter-title">${esc(ch.title)}</h2>
+          ${ch.sourceFiles && ch.sourceFiles.length ? `<div class="chapter-sources">${isEn ? 'Sources:' : 'المصادر:'} ${esc(ch.sourceFiles.join('، '))}</div>` : ''}
+        </div>`;
+
+      (ch.subtopics || []).forEach((st, sIdx) => {
+        chHtml += `<div class="subtopic-block" data-chapter="${ch.id}" data-subtopic="${sIdx}">`;
+        chHtml += `<h3 class="subtopic-heading" style="color:${primary}">${esc(st.heading)}</h3>`;
+        chHtml += `<div class="prose-block editable-prose" data-chapter-id="${ch.id}" data-sub-idx="${sIdx}">${safeMd(st.contentMarkdown)}</div>`;
+
+        if (Array.isArray(st.definitions) && st.definitions.length) {
+          chHtml += `<div class="callout-box definitions-box"><h4>${isEn ? 'Key Definitions' : 'المصطلحات والتعريفات'}</h4><ul>`;
+          st.definitions.forEach(d => {
+            chHtml += `<li><strong>${esc(d.term)}:</strong> ${esc(d.definition)}</li>`;
+          });
+          chHtml += `</ul></div>`;
+        }
+
+        if (Array.isArray(st.tables) && st.tables.length) {
+          st.tables.forEach(tb => {
+            chHtml += `<div class="table-wrapper">`;
+            if (tb.caption) chHtml += `<div class="table-caption">${esc(tb.caption)}</div>`;
+            chHtml += safeMd(tb.markdown);
+            chHtml += `</div>`;
+          });
+        }
+
+        if (Array.isArray(st.clinicalCases) && st.clinicalCases.length) {
+          st.clinicalCases.forEach(cc => {
+            chHtml += `<div class="callout-box clinical-box"><h4>${isEn ? 'Clinical Case' : 'حالة سريرية'}</h4><div>${safeMd(cc)}</div></div>`;
+          });
+        }
+
+        if (Array.isArray(st.mcqs) && st.mcqs.length) {
+          chHtml += `<div class="mcq-section"><h4>${isEn ? 'Self-Assessment Questions' : 'أسئلة التقييم الذاتي'}</h4>`;
+          st.mcqs.forEach((q, qi) => {
+            chHtml += `<div class="mcq-item"><p class="mcq-q"><strong>${qi + 1}.</strong> ${esc(q.question)}</p><ul class="mcq-opts">`;
+            (q.options || []).forEach(opt => { chHtml += `<li>${esc(opt)}</li>`; });
+            chHtml += `</ul>`;
+            if (q.answer) chHtml += `<p class="mcq-ans"><strong>${isEn ? 'Answer:' : 'الإجابة:'}</strong> ${esc(q.answer)}${q.explanation ? ' — ' + esc(q.explanation) : ''}</p>`;
+            chHtml += `</div>`;
+          });
+          chHtml += `</div>`;
+        }
+
+        chHtml += `</div>`;
+      });
+
+      // Chapter Images (only ready images with valid dataUrl)
+      const readyImgs = (ch.images || []).filter(im => im.status === 'ready' && im.dataUrl);
+      if (readyImgs.length) {
+        chHtml += `<div class="chapter-figures">`;
+        readyImgs.forEach((im, fi) => {
+          const badge = im.origin === 'ai_generated'
+            ? (isEn ? 'AI Educational Illustration' : 'رسم توضيحي مولّد بالذكاء الاصطناعي')
+            : (isEn ? 'Original Source Figure' : 'صورة من المصدر الأصلي');
+          chHtml += `
+            <figure class="book-figure" data-image-id="${esc(im.id)}">
+              <img src="${im.dataUrl}" alt="${esc(im.title)}">
+              <figcaption>
+                <span class="fig-badge">${badge}</span>
+                <strong>${esc(im.title || `Figure ${ch.number}.${fi + 1}`)}</strong>
+                ${im.caption ? `<span class="fig-cap"> — ${esc(im.caption)}</span>` : ''}
+              </figcaption>
+            </figure>`;
+        });
+        chHtml += `</div>`;
+      }
+
+      rawPages.push({
+        chapterTitle: ch.title,
+        id: `page_${ch.id}`,
+        html: chHtml
+      });
+    });
+
+    // 5. Final Index Page
+    if (book.indexEntries && book.indexEntries.length) {
+      const idxHtml = book.indexEntries.map(e => `
+        <div class="index-item">
+          <span class="index-term">${esc(e.term)}</span>
+          <span class="index-ch">${isEn ? 'Ch.' : 'فصل'} ${e.chapters.join(', ')}</span>
+        </div>`).join('');
+      rawPages.push({
+        chapterTitle: isEn ? 'Medical Index' : 'الفهرس العلمي',
+        id: 'page_index',
+        html: `
+          <h2 class="section-heading" style="color:${primary};border-inline-start-color:${primary}">${isEn ? 'Medical Terminology Index' : 'فهرس المصطلحات الطبية'}</h2>
+          <div class="index-grid">${idxHtml}</div>`
+      });
+    }
+
+    const totalPages = rawPages.length;
+    const htmlPages = rawPages.map((p, i) => buildPageShell({
+      pageNum: i + 1,
+      totalPages,
+      bookTitle: book.title,
+      chapterTitle: p.chapterTitle,
+      dir,
+      primaryColor: primary,
+      bodyHtml: p.html,
+      isCover: !!p.isCover,
+      pageId: p.id
+    }));
+
+    return {
+      pages: rawPages,
+      html: `<div class="book-document" style="--book-font-size:${fontSize}pt;--book-primary:${primary}" dir="${dir}">${htmlPages.join('\n')}</div>`,
+      totalPages
+    };
+  }
+
+  /**
+   * STEP 11: Book Quality Assurance Engine
+   */
+  function runQualityAssurance(book, rendered, allImages = []) {
+    const issues = [];
+    const warnings = [];
+
+    if (!book.chapters || book.chapters.length === 0) {
+      issues.push('لا توجد فصول منشأة في الكتاب.');
+    }
+
+    // Check chapter completeness & duplicate chapter titles
+    const seenTitles = new Set();
+    book.chapters.forEach(ch => {
+      const norm = String(ch.title || '').trim().toLowerCase();
+      if (seenTitles.has(norm)) {
+        warnings.push(`عنوان فصل مكرر: "${ch.title}".`);
+      }
+      seenTitles.add(norm);
+
+      if (!ch.subtopics || ch.subtopics.length === 0) {
+        issues.push(`الفصل "${ch.title}" لا يحتوي على فقرات أو موضوعات فرعية.`);
+      } else {
+        ch.subtopics.forEach(st => {
+          if (!st.contentMarkdown || st.contentMarkdown.trim().length < 10) {
+            warnings.push(`فقرة قصيرة جداً أو فارغة في "${ch.title} — ${st.heading}".`);
+          }
+        });
+      }
+    });
+
+    // Check unavailable images
+    const unavailableImgs = (allImages || []).filter(im => im.status === 'unavailable');
+    if (unavailableImgs.length > 0) {
+      warnings.push(`${unavailableImgs.length} رسمة توضيحية لم تُولَّد لعدم توفر نموذج توليد الصور في مفتاح API الحالي (يمكنك رفع بديل من Image Center).`);
+    }
+
+    // Check contradictions & duplicates from ContentAnalyzer
+    if (book.alerts && book.alerts.contradictions && book.alerts.contradictions.length) {
+      book.alerts.contradictions.forEach(c => warnings.push(`تعارض محتمل بين المصادر: ${c}`));
+    }
+
+    // Check empty pages
+    const emptyPages = (rendered.pages || []).filter(p => !p.html || !p.html.trim());
+    if (emptyPages.length > 0) {
+      issues.push(`تم رصد ${emptyPages.length} صفحة فارغة.`);
+    }
+
+    const readyOrig = (allImages || []).filter(im => im.origin === 'original' && im.status === 'ready').length;
+    const readyGen = (allImages || []).filter(im => im.origin === 'ai_generated' && im.status === 'ready').length;
+
+    return {
+      passed: issues.length === 0,
+      issues,
+      warnings,
+      summary: {
+        filesProcessed: book.stats.filesCount,
+        chaptersCount: book.chapters.length,
+        pagesCount: rendered.totalPages,
+        originalImagesCount: readyOrig,
+        generatedImagesCount: readyGen,
+        reviewItemsCount: issues.length + warnings.length
+      }
+    };
+  }
+
+  global.HtmlRenderer = {
+    renderBookPages,
+    runQualityAssurance
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/pdf-exporter.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: pdf-exporter.js
+   Export Center (Step 12):
+   - Print-ready A4 Portrait PDF export via dedicated hidden print iframe
+     (safe in sandboxed iframes & all browsers including iPad/Desktop).
+   - Standalone self-contained HTML book download.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  function getBookPrintStyles(book) {
+    const primary = (book.design && book.design.primaryColor) || '#0e7490';
+    const fontSize = (book.design && book.design.fontSizePt) || 11;
+    const fontFamily = book.language === 'en' ? "'Inter', 'Cairo', sans-serif" : "'Cairo', 'Inter', sans-serif";
+
+    return `
+      @page { size: A4 portrait; margin: 14mm 15mm; }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; padding: 0;
+        font-family: ${fontFamily};
+        font-size: ${fontSize}pt;
+        line-height: 1.75;
+        color: #17202a;
+        background: #ffffff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .book-page {
+        background: #fff;
+        padding: 12mm 14mm;
+        margin: 0 auto 12mm;
+        page-break-after: always;
+        break-after: page;
+        position: relative;
+      }
+      .book-page:last-child { page-break-after: auto; break-after: auto; }
+      .book-cover { padding: 0; }
+      .cover-inner {
+        min-height: 265mm;
+        padding: 24mm 20mm;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-radius: 6px;
+      }
+      .cover-top-badge { font-size: 10pt; letter-spacing: 1.5px; opacity: 0.85; font-weight: 700; }
+      .cover-specialty { font-size: 13pt; font-weight: 700; color: #fbbf24; margin-bottom: 10px; }
+      .cover-title { font-size: 28pt; font-weight: 800; line-height: 1.3; margin: 0 0 12px; }
+      .cover-subtitle { font-size: 13pt; opacity: 0.92; margin: 0; }
+      .cover-footer { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.25); padding-top: 12px; font-size: 11pt; }
+      .book-page-header {
+        display: flex; justify-content: space-between;
+        font-size: 8.5pt; color: #64748b;
+        border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 14px;
+      }
+      .book-page-footer {
+        display: flex; justify-content: space-between;
+        font-size: 8.5pt; color: #64748b;
+        border-top: 1px solid #e2e8f0; padding-top: 6px; margin-top: 18px;
+      }
+      .chapter-banner { border-bottom: 2px solid ${primary}; padding-bottom: 10px; margin-bottom: 16px; break-after: avoid; }
+      .chapter-num { font-size: 9.5pt; font-weight: 800; letter-spacing: 1px; display: block; }
+      .chapter-title { font-size: 19pt; font-weight: 800; margin: 4px 0; color: #0f172a; }
+      .chapter-sources { font-size: 9pt; color: #64748b; }
+      .section-heading { font-size: 15pt; font-weight: 800; border-inline-start: 4px solid ${primary}; padding-inline-start: 10px; margin: 14px 0 10px; break-after: avoid; }
+      .subtopic-heading { font-size: 13pt; font-weight: 800; margin: 16px 0 8px; break-after: avoid; page-break-after: avoid; }
+      .prose-block p { margin: 0 0 9px; text-align: justify; }
+      .prose-block ul, .prose-block ol { padding-inline-start: 20px; margin: 0 0 10px; }
+      table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; break-inside: avoid; page-break-inside: avoid; }
+      thead { display: table-header-group; }
+      tr { break-inside: avoid; page-break-inside: avoid; }
+      th { background: ${primary}; color: #fff; padding: 7px 10px; text-align: start; border: 1px solid #cbd5e1; }
+      td { padding: 7px 10px; border: 1px solid #cbd5e1; }
+      .callout-box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 12px 0; background: #f8fafc; break-inside: avoid; }
+      .clinical-box { border-inline-start: 4px solid #14532d; background: #f0fdf4; }
+      .definitions-box { border-inline-start: 4px solid ${primary}; }
+      .mcq-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; break-inside: avoid; }
+      .mcq-opts { list-style: none; padding-inline-start: 10px; margin: 6px 0; }
+      .mcq-ans { color: #14532d; font-size: 9.5pt; margin-top: 6px; }
+      .book-figure { margin: 14px auto; text-align: center; break-inside: avoid; page-break-inside: avoid; max-width: 100%; }
+      .book-figure img { max-width: 100%; max-height: 110mm; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 6px; }
+      .book-figure figcaption { font-size: 9pt; color: #334155; margin-top: 6px; }
+      .fig-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 1px 6px; border-radius: 4px; font-size: 8pt; font-weight: 700; margin-inline-end: 6px; }
+      .toc-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+      .toc-dots { flex: 1; border-bottom: 1px dotted #94a3b8; }
+      .index-grid { column-count: 2; column-gap: 18px; font-size: 9.5pt; }
+      .index-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding: 3px 0; break-inside: avoid; }
+    `;
+  }
+
+  function buildStandaloneHtmlDocument(book, renderedHtml) {
+    const dir = book.direction || 'rtl';
+    const lang = book.language || 'ar';
+    return `<!DOCTYPE html>
+<html lang="${lang}" dir="${dir}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${String(book.title || 'MEDNERD Medical Book').replace(/</g, '&lt;')}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>${getBookPrintStyles(book)}</style>
+</head>
+<body>
+${renderedHtml}
+</body>
+</html>`;
+  }
+
+  function exportAsHTML(book, renderedHtml) {
+    const fullDoc = buildStandaloneHtmlDocument(book, renderedHtml);
+    const blob = new Blob([fullDoc], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const safeName = (book.title || 'mednerd-book').replace(/[^\w\u0600-\u06FF\- ]+/g, '').trim().replace(/\s+/g, '-') || 'mednerd-book';
+    a.href = url;
+    a.download = `${safeName}.html`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    return true;
+  }
+
+  function exportAsPDF(book, renderedHtml) {
+    const fullDoc = buildStandaloneHtmlDocument(book, renderedHtml);
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(fullDoc);
+    doc.close();
+
+    setTimeout(() => {
+      try {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      } finally {
+        setTimeout(() => iframe.remove(), 3000);
+      }
+    }, 600);
+    return true;
+  }
+
+  global.PdfExporter = {
+    buildStandaloneHtmlDocument,
+    exportAsHTML,
+    exportAsPDF
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* --- js/app.js --- */
+/* ==========================================================================
+   MEDNERD AI — Medical Book Creator
+   Module: app.js
+   Main UI Controller: Dashboard, Upload Center, 12-Step Resumable Pipeline,
+   Live Book Preview & Editor, Image Center, QA Report, Export Center,
+   and exact MEDNERD API Key & Model Preset Management.
+   ========================================================================== */
+
+(function (global) {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+
+  const APP = {
+    activeView: 'dashboardView',
+    lang: 'ar',
+    theme: 'light',
+    mode: 'auto', // auto | professional | source_preservation
+    uploadQueue: [], // { id, file, name, size, status, error, extracted }
+    currentProjectId: null,
+    currentBook: null,
+    currentImages: [],
+    renderedBook: null,
+    qaReport: null,
+    previewPageIndex: 0,
+    previewZoom: 100,
+    isEditingText: false,
+    imageFilter: 'all',
+    replacingImageId: null,
+    pipelineAbort: null,
+    confirmCb: null
+  };
+
+  /* ---------------- Utilities & Toasts ---------------- */
+  function toast(msg, type = 'info') {
+    const c = $('toastContainer');
+    if (!c) return;
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = '0';
+      setTimeout(() => t.remove(), 300);
+    }, 3600);
+  }
+
+  function showConfirm(message, onYes) {
+    $('confirmModalText').textContent = message;
+    APP.confirmCb = onYes;
+    $('confirmModal').classList.add('open');
+  }
+
+  function closeConfirm(confirmed) {
+    $('confirmModal').classList.remove('open');
+    const cb = APP.confirmCb;
+    APP.confirmCb = null;
+    if (confirmed && typeof cb === 'function') cb();
+  }
+
+  function switchView(viewId) {
+    APP.activeView = viewId;
+    document.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id === viewId));
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.view === viewId));
+    if (viewId === 'dashboardView') refreshDashboard();
+    if (viewId === 'previewView') renderPreviewPane();
+    if (viewId === 'imageCenterView') renderImageCenter();
+  }
+
+  /* ---------------- Theme & Language ---------------- */
+  function applyTheme(theme) {
+    APP.theme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', APP.theme);
+    const icon = $('themeIcon');
+    if (icon) icon.className = APP.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    global.GeminiClient.store.set('mednerd_theme', APP.theme);
+  }
+
+  function applyLang(lang) {
+    APP.lang = lang === 'en' ? 'en' : 'ar';
+    document.documentElement.setAttribute('lang', APP.lang);
+    document.documentElement.setAttribute('dir', APP.lang === 'en' ? 'ltr' : 'rtl');
+    const btn = $('langToggleBtn');
+    if (btn) btn.textContent = APP.lang === 'en' ? 'AR' : 'EN';
+    global.GeminiClient.store.set('mednerd_lang', APP.lang);
+  }
+
+  /* ---------------- Exact MEDNERD API Key & Model Chips UI ---------------- */
+  function refreshMaskedKeyBanner() {
+    const key = global.GeminiClient.getActiveApiKey();
+    const banner = $('apiMaskedBanner');
+    if (!banner) return;
+    banner.style.display = key ? 'block' : 'none';
+    const maskedText = $('maskedKeyText');
+    if (maskedText) maskedText.textContent = key ? global.GeminiClient.maskApiKey(key) : '';
+    const storageBadge = $('keyStorageBadge');
+    if (storageBadge) {
+      storageBadge.textContent = global.GeminiClient.state.sessionOnlyKey ? 'مؤقت للجلسة فقط' : 'محفوظ في المتصفح';
+    }
+    const guide = $('keyGuide');
+    if (guide) guide.style.display = key ? 'none' : '';
+  }
+
+  function syncModelChips() {
+    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
+    const input = $('apiModelInput');
+    const active = (input && input.value.trim()) || global.GeminiClient.store.get('mednerd_model') || cfg.model;
+    document.querySelectorAll('.model-chip').forEach(ch => {
+      ch.classList.toggle('active', ch.getAttribute('data-model') === active);
+    });
+  }
+
+  function applyModelInput() {
+    const el = $('apiModelInput');
+    if (!el) return;
+    const v = el.value.trim().replace(/^models\//, '');
+    global.GeminiClient.setModel(v);
+    if (!global.GeminiClient.store.get('mednerd_model')) el.value = '';
+  }
+
+  function selectModelPreset(modelName) {
+    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
+    const input = $('apiModelInput');
+    if (!input) return;
+    input.value = modelName === cfg.model ? '' : modelName;
+    applyModelInput();
+    syncModelChips();
+  }
+
+  function updateApiStatusUI(status, customMessage = '', lastVerifiedAt = null) {
+    const dot = $('apiStatusDot');
+    const txt = $('apiStatusText');
+    const dash = $('statApiStatus');
+    const map = {
+      'no-key': ['', 'لم يتم إدخال مفتاح API', 'غير متصل'],
+      'unverified': ['unverified', 'جاهز للتحقق (اضغط)', 'جاهز للتحقق'],
+      'verifying': ['verifying', 'جارٍ التحقق من المفتاح...', 'جارٍ الفحص'],
+      'connected': ['connected', 'المفتاح صالح والاتصال ناجح', 'متصل'],
+      'invalid': ['error', 'المفتاح غير صالح أو غير مصرح به', 'مفتاح خاطئ'],
+      'quota': ['error', 'تجاوز حد الاستخدام أو الحصة', 'تجاوز الحصة'],
+      'model-error': ['error', 'النموذج المحدد غير متاح', 'خطأ نموذج'],
+      'permission': ['error', 'صلاحيات API مرفوضة', 'مرفوض'],
+      'timeout': ['error', 'انتهت مهلة التحقق', 'مهلة منتهية'],
+      'network-error': ['error', customMessage || 'فشل الاتصال بالشبكة', 'خطأ شبكة'],
+      'unexpected': ['error', 'حدث خطأ غير متوقع', 'خطأ']
+    };
+    const [cls, label, shortLabel] = map[status] || map['no-key'];
+    if (dot) dot.className = 'status-dot' + (cls ? ' ' + cls : '');
+    if (txt) txt.textContent = label;
+    if (dash) dash.textContent = shortLabel;
+
+    const btn = $('openApiModalBtn');
+    if (btn) {
+      btn.title = status === 'connected' && lastVerifiedAt
+        ? `آخر تحقق: ${lastVerifiedAt.toLocaleTimeString('ar')}. النتيجة لحظية ولا تضمن استمرار الخدمة أو الحصة.`
+        : 'اضغط لفتح إعدادات Gemini API';
+    }
+    const line = $('modalStatusLine');
+    if (line) line.textContent = 'الحالة: ' + label;
+    refreshMaskedKeyBanner();
+  }
+
+  function openApiModal() {
+    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
+    const input = $('apiKeyInput');
+    input.value = '';
+    input.type = 'password';
+    $('toggleKeyVisBtn').innerHTML = '<i class="fa-solid fa-eye"></i>';
+    $('apiModalResult').textContent = '';
+    const mi = $('apiModelInput');
+    mi.placeholder = cfg.model + ' (الافتراضي)';
+    mi.value = global.GeminiClient.store.get('mednerd_model') || '';
+    syncModelChips();
+    refreshMaskedKeyBanner();
+    updateApiStatusUI(global.GeminiClient.state.connectionStatus, '', global.GeminiClient.state.lastVerifiedAt);
+    $('apiKeyModal').classList.add('open');
+  }
+
+  function closeApiModal() {
+    global.GeminiClient.cancelVerification(false);
+    $('apiKeyInput').value = '';
+    $('testApiBtn').disabled = false;
+    $('cancelVerifyBtn').style.display = 'none';
+    $('apiKeyModal').classList.remove('open');
+  }
+
+  function handleSaveKey(persistToLocal) {
+    applyModelInput();
+    syncModelChips();
+    const typed = global.GeminiClient.cleanKey($('apiKeyInput').value);
+    const rawKey = typed || global.GeminiClient.getActiveApiKey();
+    const res = $('apiModalResult');
+    if (!rawKey) {
+      res.style.color = 'var(--danger)';
+      res.textContent = 'يرجى إدخال مفتاح Gemini API أولاً قبل الحفظ.';
+      return;
+    }
+    global.GeminiClient.saveApiKey(rawKey, persistToLocal);
+    $('apiKeyInput').value = '';
+    res.style.color = 'var(--petrol)';
+    res.textContent = (persistToLocal ? 'تم حفظ المفتاح محلياً.' : 'تم تفعيل المفتاح مؤقتاً لهذه الجلسة.') + ' جاري اختبار الاتصال...';
+    handleTestApi();
+  }
+
+  async function handleTestApi() {
+    applyModelInput();
+    syncModelChips();
+    const resEl = $('apiModalResult');
+    const testBtn = $('testApiBtn');
+    const cancelBtn = $('cancelVerifyBtn');
+
+    const typedKey = global.GeminiClient.cleanKey($('apiKeyInput').value);
+    if (typedKey) {
+      global.GeminiClient.state.sessionOnlyKey = typedKey;
+      refreshMaskedKeyBanner();
+    }
+
+    testBtn.disabled = true;
+    cancelBtn.style.display = '';
+
+    const result = await global.GeminiClient.testApiConnection(stageText => {
+      resEl.style.color = 'var(--petrol)';
+      resEl.textContent = stageText;
+    });
+
+    testBtn.disabled = false;
+    cancelBtn.style.display = 'none';
+
+    if (result && !result.cancelled) {
+      if (result.ok && $('apiKeyInput')) $('apiKeyInput').value = '';
+      resEl.style.color = result.color || (result.ok ? 'var(--dark-green)' : 'var(--danger)');
+      resEl.textContent = result.message || '';
+      syncModelChips();
+    }
+  }
+
+  /* ---------------- Dashboard & Templates ---------------- */
+  function renderSpecialtyOptions() {
+    const sel = $('bookSpecialtySelect');
+    const grid = $('templatesGrid');
+    const specs = Object.values(global.MEDNERD_CONFIG.MEDICAL_SPECIALTIES);
+
+    if (sel) {
+      sel.innerHTML = specs.map(s => `<option value="${s.id}">${s.nameAr} (${s.nameEn})</option>`).join('');
+    }
+    if (grid) {
+      grid.innerHTML = specs.map(s => `
+        <div class="card-box project-card">
+          <div>
+            <span class="badge badge-petrol">${s.nameEn}</span>
+            <h3 style="margin:8px 0 4px;color:var(--petrol);">${s.nameAr}</h3>
+            <p style="font-size:12.5px;color:var(--muted-text);">${s.subdomains.join(' · ')}</p>
+          </div>
+          <button class="btn-secondary btn-sm use-template-btn" data-spec="${s.id}">
+            <i class="fa-solid fa-wand-sparkles"></i> إنشاء كتاب بهذا القالب
+          </button>
+        </div>
+      `).join('');
+
+      grid.querySelectorAll('.use-template-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if ($('bookSpecialtySelect')) $('bookSpecialtySelect').value = btn.dataset.spec;
+          setMode('professional');
+          switchView('studioView');
+        });
+      });
+    }
+  }
+
+  async function refreshDashboard() {
+    try {
+      const projects = await global.StorageManager.listProjects();
+      const completed = projects.filter(p => p.status === 'completed');
+      const processing = projects.filter(p => p.status === 'processing' || p.status === 'partial');
+
+      $('statBooksCount').textContent = completed.length;
+      $('statProcessingCount').textContent = processing.length;
+
+      const est = await global.StorageManager.getStorageUsage();
+      $('statStorageUsage').textContent = `${est.usageMB} MB`;
+
+      const grid = $('projectsGrid');
+      if (!projects.length) {
+        grid.innerHTML = `
+          <div class="card-box" style="grid-column:1/-1;text-align:center;padding:34px;">
+            <p style="color:var(--muted-text);margin-bottom:12px;">لا توجد مشاريع محفوظة بعد. ابدأ برفع محاضراتك لتحويلها إلى كتاب أكاديمي.</p>
+            <button class="btn-primary" id="emptyDashCreateBtn"><i class="fa-solid fa-plus"></i> إنشاء أول كتاب</button>
+          </div>`;
+        const b = $('emptyDashCreateBtn');
+        if (b) b.addEventListener('click', () => switchView('studioView'));
+        return;
+      }
+
+      grid.innerHTML = projects.map(p => {
+        const badgeCls = p.status === 'completed' ? 'badge-green' : 'badge-mustard';
+        const statusText = p.status === 'completed' ? 'مكتمل' : 'قيد المعالجة / محفوظ جزئياً';
+        const dateStr = new Date(p.updatedAt).toLocaleDateString('ar-EG');
+        return `
+          <div class="card-box project-card">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
+                <span class="badge ${badgeCls}">${statusText}</span>
+                <span style="font-size:11.5px;color:var(--muted-text);">${dateStr}</span>
+              </div>
+              <h3 style="font-size:16px;color:var(--petrol);margin-bottom:4px;">${p.title || 'كتاب طبي بدون عنوان'}</h3>
+              <p style="font-size:12.5px;color:var(--muted-text);">${p.files ? p.files.length : 0} ملفات · ${p.book ? p.book.chapters.length + ' فصول' : 'لم يُبنَ بعد'}</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              ${p.book ? `<button class="btn-primary btn-sm open-proj-btn" data-id="${p.id}"><i class="fa-solid fa-book-open"></i> فتح الكتاب</button>` : ''}
+              <button class="btn-danger btn-sm del-proj-btn" data-id="${p.id}"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>`;
+      }).join('');
+
+      grid.querySelectorAll('.open-proj-btn').forEach(b => {
+        b.addEventListener('click', () => loadProjectIntoPreview(b.dataset.id));
+      });
+      grid.querySelectorAll('.del-proj-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          showConfirm('هل تريد حذف هذا المشروع نهائياً من التخزين المحلي؟', async () => {
+            await global.StorageManager.deleteProject(b.dataset.id);
+            if (APP.currentProjectId === b.dataset.id) {
+              APP.currentProjectId = null;
+              APP.currentBook = null;
+              APP.currentImages = [];
+            }
+            toast('تم حذف المشروع.', 'success');
+            refreshDashboard();
+          });
+        });
+      });
+    } catch (e) {
+      toast(e.message || 'تعذر تحميل المشاريع.', 'error');
+    }
+  }
+
+  async function loadProjectIntoPreview(projectId) {
+    const proj = await global.StorageManager.getProject(projectId);
+    if (!proj || !proj.book) {
+      toast('لا يوجد كتاب مكتمل لهذا المشروع.', 'error');
+      return;
+    }
+    APP.currentProjectId = proj.id;
+    APP.currentBook = proj.book;
+    APP.currentImages = await global.StorageManager.getProjectImages(proj.id);
+    APP.previewPageIndex = 0;
+    switchView('previewView');
+  }
+
+  /* ---------------- Upload Center ---------------- */
+  function addFilesToQueue(fileList) {
+    const files = Array.from(fileList || []);
+    let added = 0;
+    for (const file of files) {
+      if (!global.FileProcessor.isSupportedFile(file)) {
+        toast(`صيغة غير مدعومة: ${file.name}`, 'error');
+        continue;
+      }
+      if (APP.uploadQueue.some(q => q.name === file.name && q.size === file.size)) {
+        continue;
+      }
+      APP.uploadQueue.push({
+        id: `f_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        file,
+        name: file.name,
+        size: file.size,
+        status: 'pending',
+        error: '',
+        extracted: null
+      });
+      added++;
+    }
+    if (added > 0) renderUploadQueue();
+  }
+
+  function renderUploadQueue() {
+    const list = $('uploadFileList');
+    const badge = $('filesCountBadge');
+    if (badge) badge.textContent = `${APP.uploadQueue.length} ملفات`;
+    if (!list) return;
+
+    if (!APP.uploadQueue.length) {
+      list.innerHTML = `<p style="text-align:center;color:var(--muted-text);font-size:13px;padding:12px;">لم يتم إضافة ملفات بعد.</p>`;
+      return;
+    }
+
+    list.innerHTML = APP.uploadQueue.map(item => {
+      const statusMap = {
+        pending: ['badge-petrol', 'جاهز للمعالجة'],
+        extracting: ['badge-mustard', 'جارٍ الاستخراج...'],
+        ready: ['badge-green', 'تم الاستخراج'],
+        error: ['badge-danger', `فشل: ${item.error}`]
+      };
+      const [cls, stText] = statusMap[item.status] || statusMap.pending;
+      return `
+        <div class="file-item">
+          <div class="file-meta">
+            <span class="file-name">${item.name}</span>
+            <span class="file-sub">${global.FileProcessor.formatBytes(item.size)}</span>
+          </div>
+          <span class="badge ${cls}">${stText}</span>
+          ${item.status === 'error' ? `<button class="btn-secondary btn-sm retry-file-btn" data-id="${item.id}" title="إعادة المحاولة"><i class="fa-solid fa-rotate-right"></i></button>` : ''}
+          <button class="btn-danger btn-sm remove-file-btn" data-id="${item.id}" title="حذف"><i class="fa-solid fa-xmark"></i></button>
+        </div>`;
+    }).join('');
+
+    list.querySelectorAll('.remove-file-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        APP.uploadQueue = APP.uploadQueue.filter(x => x.id !== b.dataset.id);
+        renderUploadQueue();
+      });
+    });
+
+    list.querySelectorAll('.retry-file-btn').forEach(b => {
+      b.addEventListener('click', () => retrySingleFile(b.dataset.id));
+    });
+  }
+
+  async function retrySingleFile(fileId) {
+    const item = APP.uploadQueue.find(x => x.id === fileId);
+    if (!item) return;
+    item.status = 'extracting';
+    item.error = '';
+    renderUploadQueue();
+    try {
+      item.extracted = await global.FileProcessor.processFile(item.file);
+      item.status = 'ready';
+    } catch (e) {
+      item.status = 'error';
+      item.error = e.message;
+    }
+    renderUploadQueue();
+  }
+
+  /* ---------------- Creation Modes & 12-Step Pipeline ---------------- */
+  function setMode(mode) {
+    APP.mode = mode;
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+    const profBox = $('professionalOptionsBox');
+    if (profBox) profBox.style.display = mode === 'professional' ? 'block' : 'none';
+  }
+
+  function renderPipelineSteps(activeStep, completedSteps = new Set()) {
+    const grid = $('pipelineStepsGrid');
+    const bar = $('pipelineProgressBar');
+    if (!grid) return;
+
+    const steps = global.MEDNERD_CONFIG.PIPELINE_STEPS;
+    grid.innerHTML = steps.map(s => {
+      const isDone = completedSteps.has(s.id);
+      const isActive = activeStep === s.id;
+      const cls = isDone ? 'done' : isActive ? 'active' : '';
+      const icon = isDone ? 'fa-circle-check' : isActive ? 'fa-spinner fa-spin' : 'fa-circle';
+      return `<div class="step-chip ${cls}"><i class="fa-solid ${icon}"></i><span>${s.id}. ${s.nameAr}</span></div>`;
+    }).join('');
+
+    if (bar) {
+      const pct = Math.round((completedSteps.size / steps.length) * 100);
+      bar.style.width = `${pct}%`;
+    }
+  }
+
+  async function startBookPipeline() {
+    if (!APP.uploadQueue.length) {
+      toast('يرجى رفع ملف واحد على الأقل قبل بدء إنشاء الكتاب.', 'error');
+      return;
+    }
+    if (!global.GeminiClient.getActiveApiKey()) {
+      toast('يرجى إدخال مفتاح Gemini API أولاً.', 'error');
+      openApiModal();
+      return;
+    }
+
+    const abortCtl = new AbortController();
+    APP.pipelineAbort = abortCtl;
+    const signal = abortCtl.signal;
+
+    $('startBuildBookBtn').disabled = true;
+    $('cancelBuildBtn').style.display = 'inline-flex';
+    $('pipelinePanel').style.display = 'block';
+
+    const completed = new Set();
+    const setStep = (stepId, msg) => {
+      $('pipelineStatusMsg').textContent = msg;
+      renderPipelineSteps(stepId, completed);
+    };
+    const finishStep = stepId => {
+      completed.add(stepId);
+      renderPipelineSteps(null, completed);
+    };
+
+    const projectId = `proj_${Date.now()}`;
+    APP.currentProjectId = projectId;
+
+    const options = {
+      mode: APP.mode,
+      customTitle: $('bookTitleInput').value.trim(),
+      specialty: $('bookSpecialtySelect').value || 'human_medicine',
+      language: $('bookLangSelect') ? $('bookLangSelect').value : 'ar',
+      imageDensity: $('imageDensitySelect') ? $('imageDensitySelect').value : 'balanced',
+      fontSizePt: $('fontSizeInput') ? $('fontSizeInput').value : 11,
+      coverStyle: $('coverStyleSelect') ? $('coverStyleSelect').value : 'academic_teal',
+      primaryColor: $('primaryColorInput') ? $('primaryColorInput').value : '#0e7490',
+      scientificEnrichment: $('enrichmentToggle') ? $('enrichmentToggle').checked : false
+    };
+
+    try {
+      await global.StorageManager.saveProject({
+        id: projectId,
+        title: options.customTitle || APP.uploadQueue[0].name,
+        status: 'processing',
+        files: APP.uploadQueue.map(f => ({ name: f.name, size: f.size })),
+        options
+      });
+
+      setStep(1, 'الخطوة 1/12: تجهيز الملفات المرفوعة...');
+      finishStep(1);
+
+      setStep(2, 'الخطوة 2/12: استخراج النصوص والجداول والصور الأصلية...');
+      const allBlocks = [];
+      const originalImages = [];
+
+      for (const item of APP.uploadQueue) {
+        if (signal.aborted) throw new Error('تم إيقاف العملية.');
+        if (item.status !== 'ready' || !item.extracted) {
+          item.status = 'extracting';
+          renderUploadQueue();
+          try {
+            item.extracted = await global.FileProcessor.processFile(item.file);
+            item.status = 'ready';
+          } catch (e) {
+            item.status = 'error';
+            item.error = e.message;
+            renderUploadQueue();
+            throw new Error(`فشل استخراج ${item.name}: ${e.message}`);
+          }
+          renderUploadQueue();
+        }
+        allBlocks.push(...(item.extracted.blocks || []));
+        originalImages.push(...(item.extracted.extractedImages || []));
+      }
+
+      const ocrTargets = originalImages.filter(im => im.isPageScan || im.isStandaloneImage);
+      for (let i = 0; i < ocrTargets.length; i++) {
+        if (signal.aborted) throw new Error('تم إيقاف العملية.');
+        setStep(2, `تحليل بصري للصورة ${i + 1} من ${ocrTargets.length}...`);
+        const extractedTxt = await global.ContentAnalyzer.extractTextFromImage(ocrTargets[i], signal);
+        allBlocks.push({
+          sourceFile: ocrTargets[i].sourceFile,
+          location: ocrTargets[i].location,
+          text: extractedTxt
+        });
+      }
+
+      if (!allBlocks.length) throw new Error('لم يتم العثور على محتوى نصي قابل للتحليل.');
+      await global.StorageManager.saveStageResult(projectId, 2, { blocksCount: allBlocks.length, imagesCount: originalImages.length });
+      finishStep(2);
+
+      setStep(3, 'الخطوة 3/12: تقسيم المحتوى إلى مقاطع مترابطة...');
+      const segments = global.FileProcessor.segmentBlocks(allBlocks);
+      await global.StorageManager.saveStageResult(projectId, 3, segments);
+      finishStep(3);
+
+      const analyzedSegments = [];
+      for (let i = 0; i < segments.length; i++) {
+        if (signal.aborted) throw new Error('تم إيقاف العملية.');
+        setStep(4, `الخطوة 4/12: تحليل المقطع الطبي ${i + 1} من ${segments.length} عبر Gemini...`);
+        const analyzed = await global.ContentAnalyzer.analyzeSegment(segments[i], options, signal);
+        analyzedSegments.push(analyzed);
+      }
+      await global.StorageManager.saveStageResult(projectId, 4, analyzedSegments);
+      finishStep(4);
+
+      setStep(5, 'الخطوة 5/12: ترتيب الفصول واكتشاف التكرار والتعارضات...');
+      const organized = await global.ContentAnalyzer.organizeAndDetectConflicts(analyzedSegments, options, signal);
+      await global.StorageManager.saveStageResult(projectId, 5, organized);
+      finishStep(5);
+
+      setStep(6, 'الخطوة 6/12: فهرسة الصور الأصلية...');
+      finishStep(6);
+      setStep(7, 'الخطوة 7/12: توليد الرسومات التوضيحية الطبية...');
+      const imgRes = await global.ImageEngine.processBookImages(
+        projectId,
+        organized,
+        originalImages,
+        options,
+        msg => setStep(7, msg),
+        signal
+      );
+      APP.currentImages = imgRes.images;
+      finishStep(7);
+
+      setStep(8, 'الخطوة 8/12: بناء هيكل الكتاب الأكاديمي...');
+      const book = await global.BookBuilder.buildBook({ id: projectId, files: APP.uploadQueue }, organized, imgRes, options, signal);
+      finishStep(8);
+      setStep(9, 'الخطوة 9/12: تنسيق الفصول والجداول والفهارس...');
+      finishStep(9);
+
+      setStep(10, 'الخطوة 10/12: توليد صفحات A4 الأكاديمية...');
+      const rendered = global.HtmlRenderer.renderBookPages(book);
+      finishStep(10);
+
+      setStep(11, 'الخطوة 11/12: فحص الجودة والتدقيق الشامل...');
+      const qa = global.HtmlRenderer.runQualityAssurance(book, rendered, APP.currentImages);
+      finishStep(11);
+
+      setStep(12, 'الخطوة 12/12: حفظ الكتاب وتجهيز التصدير...');
+      APP.currentBook = book;
+      APP.renderedBook = rendered;
+      APP.qaReport = qa;
+
+      await global.StorageManager.saveProject({
+        id: projectId,
+        title: book.title,
+        status: 'completed',
+        files: APP.uploadQueue.map(f => ({ name: f.name, size: f.size })),
+        options,
+        book
+      });
+      finishStep(12);
+      setStep(12, 'اكتمل إنشاء الكتاب بنجاح!');
+      toast('تم إنشاء الكتاب الأكاديمي بنجاح!', 'success');
+
+      setTimeout(() => switchView('previewView'), 500);
+    } catch (e) {
+      toast(e.message || 'حدث خطأ أثناء إنشاء الكتاب.', 'error');
+      $('pipelineStatusMsg').textContent = `توقف عند: ${e.message}`;
+    } finally {
+      APP.pipelineAbort = null;
+      $('startBuildBookBtn').disabled = false;
+      $('cancelBuildBtn').style.display = 'none';
+    }
+  }
+
+  /* ---------------- Live Book Preview & Editor ---------------- */
+  function renderPreviewPane() {
+    if (!APP.currentBook) {
+      $('previewEmptyState').style.display = 'block';
+      $('previewActiveContainer').style.display = 'none';
+      return;
+    }
+
+    $('previewEmptyState').style.display = 'none';
+    $('previewActiveContainer').style.display = 'block';
+
+    APP.currentBook.chapters.forEach(ch => {
+      ch.images = APP.currentImages.filter(im => im.chapterId === ch.id);
+    });
+
+    APP.renderedBook = global.HtmlRenderer.renderBookPages(APP.currentBook);
+    APP.qaReport = global.HtmlRenderer.runQualityAssurance(APP.currentBook, APP.renderedBook, APP.currentImages);
+
+    const wrap = $('bookZoomWrap');
+    wrap.innerHTML = APP.renderedBook.html;
+    wrap.style.transform = `scale(${APP.previewZoom / 100})`;
+    wrap.classList.toggle('editable-active', APP.isEditingText);
+
+    wrap.querySelectorAll('.editable-prose').forEach(el => {
+      el.contentEditable = APP.isEditingText ? 'true' : 'false';
+    });
+
+    const total = APP.renderedBook.totalPages;
+    if (APP.previewPageIndex >= total) APP.previewPageIndex = Math.max(0, total - 1);
+    $('pageIndicator').textContent = `صفحة ${APP.previewPageIndex + 1} / ${total}`;
+    $('zoomLabel').textContent = `${APP.previewZoom}%`;
+
+    renderChapterSidebar();
+  }
+
+  function scrollToPage(index) {
+    const pages = document.querySelectorAll('#bookZoomWrap .book-page');
+    if (!pages.length) return;
+    APP.previewPageIndex = Math.max(0, Math.min(index, pages.length - 1));
+    $('pageIndicator').textContent = `صفحة ${APP.previewPageIndex + 1} / ${pages.length}`;
+    pages[APP.previewPageIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderChapterSidebar() {
+    const list = $('chapterSidebarList');
+    if (!list || !APP.currentBook) return;
+
+    list.innerHTML = APP.currentBook.chapters.map((ch, idx) => `
+      <div class="chapter-nav-item">
+        <div style="font-size:13px;font-weight:800;color:var(--petrol);margin-bottom:6px;">${ch.number}. ${ch.title}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="btn-secondary btn-sm jump-ch-btn" data-page="${idx + 3}" title="انتقال"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-secondary btn-sm up-ch-btn" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="رفع"><i class="fa-solid fa-arrow-up"></i></button>
+          <button class="btn-secondary btn-sm down-ch-btn" data-idx="${idx}" ${idx === APP.currentBook.chapters.length - 1 ? 'disabled' : ''} title="خفض"><i class="fa-solid fa-arrow-down"></i></button>
+          <button class="btn-secondary btn-sm regen-ch-btn" data-id="${ch.id}" title="إعادة صياغة وتنسيق الفصل"><i class="fa-solid fa-rotate"></i></button>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.jump-ch-btn').forEach(b => {
+      b.addEventListener('click', () => scrollToPage(parseInt(b.dataset.page, 10)));
+    });
+    list.querySelectorAll('.up-ch-btn').forEach(b => {
+      b.addEventListener('click', () => reorderChapter(parseInt(b.dataset.idx, 10), -1));
+    });
+    list.querySelectorAll('.down-ch-btn').forEach(b => {
+      b.addEventListener('click', () => reorderChapter(parseInt(b.dataset.idx, 10), 1));
+    });
+    list.querySelectorAll('.regen-ch-btn').forEach(b => {
+      b.addEventListener('click', () => handleRegenerateChapter(b.dataset.id));
+    });
+  }
+
+  async function reorderChapter(index, delta) {
+    const chs = APP.currentBook.chapters;
+    const target = index + delta;
+    if (target < 0 || target >= chs.length) return;
+    const [moved] = chs.splice(index, 1);
+    chs.splice(target, 0, moved);
+    chs.forEach((c, i) => { c.number = i + 1; });
+    await saveCurrentBookToDB();
+    renderPreviewPane();
+    toast('تم تحديث ترتيب الفصول.', 'success');
+  }
+
+  async function handleRegenerateChapter(chapterId) {
+    try {
+      toast('جارٍ إعادة تنسيق الفصل...', 'info');
+      APP.currentBook = await global.BookBuilder.regenerateChapter(APP.currentBook, chapterId);
+      await saveCurrentBookToDB();
+      renderPreviewPane();
+      toast('تم تحديث الفصل بنجاح.', 'success');
+    } catch (e) {
+      toast(e.message, 'error');
+    }
+  }
+
+  async function saveEditedProse() {
+    const wrap = $('bookZoomWrap');
+    wrap.querySelectorAll('.editable-prose').forEach(el => {
+      const chId = el.dataset.chapterId;
+      const subIdx = parseInt(el.dataset.subIdx, 10);
+      const ch = APP.currentBook.chapters.find(c => c.id === chId);
+      if (ch && ch.subtopics[subIdx]) {
+        ch.subtopics[subIdx].contentMarkdown = el.innerText.trim();
+      }
+    });
+    APP.isEditingText = false;
+    $('toggleEditModeBtn').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تعديل النصوص';
+    $('saveBookEditsBtn').style.display = 'none';
+    await saveCurrentBookToDB();
+    renderPreviewPane();
+    toast('تم حفظ تعديلات النصوص في المشروع.', 'success');
+  }
+
+  async function saveCurrentBookToDB() {
+    if (!APP.currentProjectId || !APP.currentBook) return;
+    const existing = await global.StorageManager.getProject(APP.currentProjectId);
+    await global.StorageManager.saveProject({
+      ...(existing || {}),
+      id: APP.currentProjectId,
+      title: APP.currentBook.title,
+      status: 'completed',
+      book: APP.currentBook
+    });
+  }
+
+  function showQaModal() {
+    if (!APP.qaReport) return;
+    const q = APP.qaReport;
+    const s = q.summary;
+    const issuesHtml = q.issues.length
+      ? `<div class="alert-box alert-danger"><strong>مشكلات تمنع الاعتماد النهائي:</strong><ul>${q.issues.map(i => `<li>${i}</li>`).join('')}</ul></div>`
+      : '';
+    const warnHtml = q.warnings.length
+      ? `<div class="alert-box alert-warn"><strong>ملاحظات للمراجعة:</strong><ul>${q.warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>`
+      : `<div class="alert-box alert-success">جميع الفحوصات الأساسية مكتملة دون تعارضات أو نواقص.</div>`;
+
+    $('qaModalBody').innerHTML = `
+      <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:12px;">
+        <div class="card-box"><strong>الملفات المعالجة:</strong> ${s.filesProcessed}</div>
+        <div class="card-box"><strong>عدد الفصول:</strong> ${s.chaptersCount}</div>
+        <div class="card-box"><strong>عدد الصفحات:</strong> ${s.pagesCount}</div>
+        <div class="card-box"><strong>صور أصلية / مولدة:</strong> ${s.originalImagesCount} / ${s.generatedImagesCount}</div>
+      </div>
+      ${issuesHtml}
+      ${warnHtml}
+    `;
+    $('qaModal').classList.add('open');
+  }
+
+  /* ---------------- Image Center ---------------- */
+  function renderImageCenter() {
+    const grid = $('imageCenterGrid');
+    if (!grid) return;
+
+    const filtered = APP.currentImages.filter(im => APP.imageFilter === 'all' || im.origin === APP.imageFilter);
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="card-box" style="grid-column:1/-1;text-align:center;padding:40px;"><p style="color:var(--muted-text);">لا توجد صور مطابقة في المشروع الحالي.</p></div>`;
+      return;
+    }
+
+    const chOpts = APP.currentBook ? APP.currentBook.chapters : [];
+    grid.innerHTML = filtered.map(im => {
+      const originLabel = im.origin === 'original' ? 'صورة أصلية' : im.origin === 'manual_upload' ? 'مرفوعة يدوياً' : 'مولدة بالذكاء الاصطناعي';
+      const thumb = im.dataUrl
+        ? `<img src="${im.dataUrl}" alt="${im.title}">`
+        : `<div style="text-align:center;padding:12px;font-size:12px;color:var(--mustard);"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px;margin-bottom:6px;display:block;"></i>${im.unavailableReason || 'غير متوفرة'}</div>`;
+      return `
+        <div class="image-card">
+          <div class="image-thumb">${thumb}</div>
+          <div class="image-card-body">
+            <span class="badge badge-petrol" style="align-self:flex-start;">${originLabel} · ${im.imageType || ''}</span>
+            <strong style="font-size:13.5px;">${im.title}</strong>
+            <p style="font-size:12px;color:var(--muted-text);">${im.caption || ''}</p>
+            ${chOpts.length ? `
+              <select class="form-select img-ch-select" data-id="${im.id}" style="font-size:12px;padding:6px;">
+                ${chOpts.map(c => `<option value="${c.id}" ${c.id === im.chapterId ? 'selected' : ''}>الفصل ${c.number}: ${c.title}</option>`).join('')}
+              </select>` : ''}
+            <div style="display:flex;gap:6px;margin-top:auto;">
+              <button class="btn-secondary btn-sm replace-img-btn" data-id="${im.id}" style="flex:1;">استبدال</button>
+              <button class="btn-danger btn-sm del-img-btn" data-id="${im.id}"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    grid.querySelectorAll('.img-ch-select').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        const img = APP.currentImages.find(x => x.id === sel.dataset.id);
+        if (img) {
+          img.chapterId = sel.value;
+          await global.StorageManager.saveImageAsset(img);
+          toast('تم نقل الصورة إلى الفصل المحدد.', 'success');
+        }
+      });
+    });
+
+    grid.querySelectorAll('.replace-img-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        APP.replacingImageId = btn.dataset.id;
+        $('customImageUploadInput').click();
+      });
+    });
+
+    grid.querySelectorAll('.del-img-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        APP.currentImages = APP.currentImages.filter(x => x.id !== btn.dataset.id);
+        renderImageCenter();
+        toast('تمت إزالة الصورة.', 'success');
+      });
+    });
+  }
+
+  function handleCustomImageFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = String(reader.result || '');
+      if (APP.replacingImageId) {
+        const target = APP.currentImages.find(x => x.id === APP.replacingImageId);
+        if (target) {
+          target.dataUrl = dataUrl;
+          target.mimeType = file.type;
+          target.status = 'ready';
+          target.origin = 'manual_upload';
+          await global.StorageManager.saveImageAsset(target).catch(() => {});
+        }
+        APP.replacingImageId = null;
+        toast('تم استبدال الصورة بنجاح.', 'success');
+      } else {
+        const ch = APP.currentBook && APP.currentBook.chapters[0];
+        const newImg = {
+          id: `manual_${Date.now()}`,
+          projectId: APP.currentProjectId || 'temp',
+          chapterId: ch ? ch.id : 'ch_1',
+          title: file.name,
+          caption: 'صورة مضافة يدوياً',
+          imageType: 'Manual Upload',
+          origin: 'manual_upload',
+          mimeType: file.type,
+          dataUrl,
+          status: 'ready'
+        };
+        APP.currentImages.push(newImg);
+        if (APP.currentProjectId) await global.StorageManager.saveImageAsset(newImg).catch(() => {});
+        toast('تمت إضافة الصورة إلى مركز الصور.', 'success');
+      }
+      renderImageCenter();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ---------------- Initialization & Event Wiring ---------------- */
+  function init() {
+    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
+    applyTheme(global.GeminiClient.store.get('mednerd_theme') || 'light');
+    applyLang(global.GeminiClient.store.get('mednerd_lang') || 'ar');
+
+    global.GeminiClient.state.onStatusChange = (status, customMessage, lastVerifiedAt) => {
+      updateApiStatusUI(status, customMessage, lastVerifiedAt);
+    };
+    global.GeminiClient.state.onModelAutoSwitch = altModel => {
+      const mi = $('apiModelInput');
+      if (mi) mi.value = altModel === cfg.model ? '' : altModel;
+      syncModelChips();
+    };
+
+    updateApiStatusUI(global.GeminiClient.getActiveApiKey() ? 'unverified' : 'no-key');
+
+    renderSpecialtyOptions();
+    renderUploadQueue();
+    refreshDashboard();
+
+    // Navigation
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchView(tab.dataset.view));
+    });
+    $('brandHomeBtn').addEventListener('click', () => switchView('dashboardView'));
+    $('heroCreateBookBtn').addEventListener('click', () => switchView('studioView'));
+    $('emptyGoStudioBtn').addEventListener('click', () => switchView('studioView'));
+    $('refreshProjectsBtn').addEventListener('click', refreshDashboard);
+
+    // Theme & Lang
+    $('themeToggleBtn').addEventListener('click', () => applyTheme(APP.theme === 'dark' ? 'light' : 'dark'));
+    $('langToggleBtn').addEventListener('click', () => applyLang(APP.lang === 'ar' ? 'en' : 'ar'));
+
+    // API Modal & Model Chips (Exact MEDNERD wiring)
+    $('openApiModalBtn').addEventListener('click', openApiModal);
+    $('dashApiCard').addEventListener('click', openApiModal);
+    $('closeApiModalBtn').addEventListener('click', closeApiModal);
+    $('apiKeyModal').addEventListener('click', e => {
+      if (e.target === $('apiKeyModal')) closeApiModal();
+    });
+    $('toggleKeyVisBtn').addEventListener('click', () => {
+      const inp = $('apiKeyInput');
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      $('toggleKeyVisBtn').innerHTML = `<i class="fa-solid ${show ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
+    });
+
+    $('apiKeyInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); handleTestApi(); }
+    });
+    $('apiModelInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); handleTestApi(); }
+    });
+    $('apiModelInput').addEventListener('input', syncModelChips);
+
+    document.querySelectorAll('.model-chip').forEach(chip => {
+      chip.addEventListener('click', () => selectModelPreset(chip.getAttribute('data-model')));
+    });
+
+    $('saveSessionKeyBtn').addEventListener('click', () => handleSaveKey(false));
+    $('saveLocalKeyBtn').addEventListener('click', () => handleSaveKey(true));
+    $('testApiBtn').addEventListener('click', handleTestApi);
+    $('cancelVerifyBtn').addEventListener('click', () => {
+      const msg = global.GeminiClient.cancelVerification(true);
+      $('testApiBtn').disabled = false;
+      $('cancelVerifyBtn').style.display = 'none';
+      const resEl = $('apiModalResult');
+      if (resEl) {
+        resEl.style.color = 'var(--mustard)';
+        resEl.textContent = msg || '';
+      }
+    });
+    $('clearApiBtn').addEventListener('click', () => {
+      global.GeminiClient.clearApiKey();
+      $('apiKeyInput').value = '';
+      const resEl = $('apiModalResult');
+      resEl.style.color = 'var(--danger)';
+      resEl.textContent = 'تم حذف المفتاح من المتصفح والذاكرة المؤقتة.';
+    });
+
+    // Upload Dropzone
+    const dz = $('uploadDropzone');
+    const picker = $('filePickerInput');
+    dz.addEventListener('click', () => picker.click());
+    picker.addEventListener('change', e => {
+      addFilesToQueue(e.target.files);
+      picker.value = '';
+    });
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('drag-over');
+      addFilesToQueue(e.dataTransfer.files);
+    });
+
+    // Modes & Build
+    document.querySelectorAll('.mode-card').forEach(c => {
+      c.addEventListener('click', () => setMode(c.dataset.mode));
+    });
+    $('startBuildBookBtn').addEventListener('click', startBookPipeline);
+    $('cancelBuildBtn').addEventListener('click', () => {
+      if (APP.pipelineAbort) APP.pipelineAbort.abort();
+      global.GeminiClient.abortAll();
+    });
+
+    // Preview & Export
+    $('prevPageBtn').addEventListener('click', () => scrollToPage(APP.previewPageIndex - 1));
+    $('nextPageBtn').addEventListener('click', () => scrollToPage(APP.previewPageIndex + 1));
+    $('zoomInBtn').addEventListener('click', () => {
+      APP.previewZoom = Math.min(140, APP.previewZoom + 10);
+      renderPreviewPane();
+    });
+    $('zoomOutBtn').addEventListener('click', () => {
+      APP.previewZoom = Math.max(60, APP.previewZoom - 10);
+      renderPreviewPane();
+    });
+    $('toggleEditModeBtn').addEventListener('click', () => {
+      APP.isEditingText = !APP.isEditingText;
+      $('toggleEditModeBtn').innerHTML = APP.isEditingText
+        ? '<i class="fa-solid fa-xmark"></i> إلغاء التعديل'
+        : '<i class="fa-solid fa-pen-to-square"></i> تعديل النصوص';
+      $('saveBookEditsBtn').style.display = APP.isEditingText ? 'inline-flex' : 'none';
+      renderPreviewPane();
+    });
+    $('saveBookEditsBtn').addEventListener('click', saveEditedProse);
+    $('showQaModalBtn').addEventListener('click', showQaModal);
+    $('closeQaModalBtn').addEventListener('click', () => $('qaModal').classList.remove('open'));
+    $('exportHtmlBtn').addEventListener('click', () => {
+      if (APP.currentBook && APP.renderedBook) {
+        global.PdfExporter.exportAsHTML(APP.currentBook, APP.renderedBook.html);
+        toast('تم تنزيل الكتاب بصيغة HTML.', 'success');
+      }
+    });
+    $('exportPdfBtn').addEventListener('click', () => {
+      if (APP.currentBook && APP.renderedBook) {
+        global.PdfExporter.exportAsPDF(APP.currentBook, APP.renderedBook.html);
+      }
+    });
+
+    // Image Center
+    document.querySelectorAll('.img-filter-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        APP.imageFilter = b.dataset.filter;
+        document.querySelectorAll('.img-filter-btn').forEach(x => x.classList.toggle('active', x === b));
+        renderImageCenter();
+      });
+    });
+    $('addCustomImageBtn').addEventListener('click', () => {
+      APP.replacingImageId = null;
+      $('customImageUploadInput').click();
+    });
+    $('customImageUploadInput').addEventListener('change', e => {
+      if (e.target.files && e.target.files[0]) handleCustomImageFile(e.target.files[0]);
+      e.target.value = '';
+    });
+
+    // Confirm modal
+    $('confirmYesBtn').addEventListener('click', () => closeConfirm(true));
+    $('confirmNoBtn').addEventListener('click', () => closeConfirm(false));
+  }
+
+  window.addEventListener('DOMContentLoaded', init);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+</body>
+</html>
