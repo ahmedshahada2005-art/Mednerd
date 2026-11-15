@@ -3,36 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEDNERD AI — Medical Book Creator</title>
+<title>MEDNERD AI — Medical Book Creator (A4 Engine)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Stylesheet: styles.css
-   MEDNERD Official Palette + Premium Academic Editorial UI (iPad/Desktop/Mobile)
+   MEDNERD Official Palette + MEDNERD A4 Engine (.page-card & 4 Components)
    ========================================================================== */
 
 :root {
   --bg-main: #fdfbf7;
   --bg-elevated: #f5f2eb;
-  --petrol: #0e7490;
-  --petrol-dark: #0b5c73;
-  --petrol-soft: rgba(14, 116, 144, 0.08);
+  --petrol: #1A7398;
+  --petrol-dark: #0e7490;
+  --petrol-soft: rgba(26, 115, 152, 0.08);
   --dark-green: #14532d;
   --dark-green-soft: rgba(20, 83, 45, 0.1);
-  --mustard: #b45309;
-  --mustard-soft: rgba(180, 83, 9, 0.1);
+  --mustard: #C06A23;
+  --mustard-soft: rgba(192, 106, 35, 0.1);
   --white: #ffffff;
-  --dark-text: #17202a;
+  --dark-text: #0F172A;
   --muted-text: #4b5563;
-  --border-color: #e5e7eb;
+  --border-color: #e2e8f0;
   --danger: #dc2626;
   --danger-soft: rgba(220, 38, 38, 0.08);
-  --shadow-sm: 0 4px 6px -1px rgba(14, 116, 144, 0.05), 0 2px 4px -2px rgba(14, 116, 144, 0.05);
-  --shadow-md: 0 12px 24px -6px rgba(14, 116, 144, 0.1);
+  --shadow-sm: 0 4px 6px -1px rgba(26, 115, 152, 0.05), 0 2px 4px -2px rgba(26, 115, 152, 0.05);
+  --shadow-md: 0 12px 24px -6px rgba(26, 115, 152, 0.1);
   --modal-backdrop: rgba(15, 23, 42, 0.65);
 }
 
@@ -61,11 +61,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Cairo', 'Inter', sans-serif;
+  font-family: 'Cairo', 'Inter', Arial, Tahoma, sans-serif;
 }
 
 html[lang="en"] * {
-  font-family: 'Inter', 'Cairo', sans-serif;
+  font-family: 'Inter', 'Cairo', Arial, sans-serif;
 }
 
 body {
@@ -110,7 +110,7 @@ body {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: #0e7490;
+  background: #1A7398;
   color: #fff;
   display: flex;
   align-items: center;
@@ -225,7 +225,6 @@ body {
   50% { transform: scale(1.35); opacity: 0.5; }
 }
 
-/* Model Chips (Exact match from MEDNERD code) */
 .model-presets {
   display: flex;
   gap: 6px;
@@ -269,11 +268,11 @@ body {
 }
 
 .btn-primary {
-  background: #0e7490;
+  background: #1A7398;
   color: #fff;
-  box-shadow: 0 4px 12px rgba(14, 116, 144, 0.22);
+  box-shadow: 0 4px 12px rgba(26, 115, 152, 0.22);
 }
-.btn-primary:hover:not(:disabled) { background: #0b5c73; transform: translateY(-1px); }
+.btn-primary:hover:not(:disabled) { background: #0e7490; transform: translateY(-1px); }
 .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .btn-secondary {
@@ -317,7 +316,7 @@ body {
 
 /* Dashboard Hero & Stats */
 .welcome-banner {
-  background: linear-gradient(135deg, #0e7490 0%, #14532d 100%);
+  background: linear-gradient(135deg, #1A7398 0%, #0F172A 100%);
   color: #fff;
   border-radius: 22px;
   padding: 30px 28px;
@@ -344,7 +343,7 @@ body {
 
 .cta-create-btn {
   background: #ffffff;
-  color: #0e7490;
+  color: #1A7398;
   border: none;
   padding: 14px 26px;
   border-radius: 14px;
@@ -460,7 +459,7 @@ body {
 /* Studio & Upload Center */
 .studio-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1.05fr 0.95fr;
   gap: 20px;
   align-items: start;
 }
@@ -473,28 +472,29 @@ body {
   border: 2px dashed var(--petrol);
   background: var(--petrol-soft);
   border-radius: 18px;
-  padding: 32px 20px;
+  padding: 24px 18px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .dropzone.drag-over {
-  background: rgba(14, 116, 144, 0.16);
+  background: rgba(26, 115, 152, 0.16);
   transform: scale(1.01);
 }
 .dropzone i {
-  font-size: 36px;
+  font-size: 32px;
   color: var(--petrol);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .file-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 360px;
+  max-height: 240px;
   overflow-y: auto;
+  margin-bottom: 14px;
 }
 
 .file-item {
@@ -600,7 +600,7 @@ body {
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #0e7490, #14532d);
+  background: linear-gradient(90deg, #1A7398, #14532d);
   width: 0%;
   transition: width 0.35s ease;
 }
@@ -687,82 +687,215 @@ body {
   max-width: 210mm;
 }
 
-/* A4 Academic Book Page Rendering inside Preview */
-.book-page {
-  width: 100%;
-  min-height: 270mm;
-  background: #ffffff;
-  color: #17202a;
-  padding: 16mm 18mm;
-  margin-bottom: 20px;
+/* ==========================================================================
+   MEDNERD A4 Engine (.page-card & 4 Mandatory Components)
+   ========================================================================== */
+.page-card {
+  width: 210mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  box-sizing: border-box;
+  padding: 10mm 12mm;
+  margin: 0 auto 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+  background-color: #F8F9FA;
+  color: #1E293B;
   border-radius: 4px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
-.book-cover { padding: 0; overflow: hidden; }
-.cover-inner {
-  min-height: 270mm;
-  padding: 26mm 22mm;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.cover-top-badge { font-size: 10pt; letter-spacing: 1.5px; opacity: 0.85; font-weight: 700; }
-.cover-specialty { font-size: 13pt; font-weight: 700; color: #fbbf24; margin-bottom: 10px; }
-.cover-title { font-size: 26pt; font-weight: 800; line-height: 1.3; margin-bottom: 12px; }
-.cover-subtitle { font-size: 12.5pt; opacity: 0.9; }
-.cover-footer { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.25); padding-top: 12px; }
 
-.book-page-header {
+.med-page-header {
   display: flex;
   justify-content: space-between;
-  font-size: 9pt;
-  color: #64748b;
-  border-bottom: 1px solid #e2e8f0;
+  align-items: center;
+  border-bottom: 2px solid #1A7398;
   padding-bottom: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
-.book-page-content { flex: 1; }
-.book-page-footer {
+
+.med-page-header span:first-child {
+  font-size: 22px;
+  font-weight: 900;
+  color: #1A7398;
+  letter-spacing: 0.05em;
+}
+
+.med-page-header span:last-child {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.med-page-main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.med-page-footer {
+  border-top: 1px solid #E2E8F0;
+  padding-top: 6px;
+  margin-top: 8px;
   display: flex;
   justify-content: space-between;
-  font-size: 9pt;
-  color: #64748b;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 6px;
-  margin-top: 20px;
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 700;
 }
-.chapter-banner { border-bottom: 2px solid var(--book-primary, #0e7490); padding-bottom: 10px; margin-bottom: 16px; }
-.chapter-num { font-size: 9.5pt; font-weight: 800; }
-.chapter-title { font-size: 18pt; font-weight: 800; color: #0f172a; }
-.chapter-sources { font-size: 9pt; color: #64748b; }
-.section-heading { font-size: 15pt; font-weight: 800; border-inline-start: 4px solid #0e7490; padding-inline-start: 10px; margin: 14px 0 10px; }
-.subtopic-heading { font-size: 13pt; font-weight: 800; margin: 16px 0 8px; }
-.prose-block p { margin-bottom: 10px; }
-.prose-block ul, .prose-block ol { padding-inline-start: 22px; margin-bottom: 10px; }
-.book-page table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
-.book-page th { background: var(--book-primary, #0e7490); color: #fff; padding: 8px 10px; text-align: start; border: 1px solid #cbd5e1; }
-.book-page td { padding: 8px 10px; border: 1px solid #cbd5e1; }
-.callout-box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 12px 0; background: #f8fafc; }
-.clinical-box { border-inline-start: 4px solid #14532d; background: #f0fdf4; }
-.definitions-box { border-inline-start: 4px solid #0e7490; }
-.mcq-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
-.mcq-opts { list-style: none; padding-inline-start: 10px; margin: 6px 0; }
-.mcq-ans { color: #14532d; font-size: 9.5pt; }
-.book-figure { margin: 14px auto; text-align: center; }
-.book-figure img { max-width: 100%; max-height: 110mm; object-fit: contain; border-radius: 6px; border: 1px solid #e2e8f0; }
-.book-figure figcaption { font-size: 9pt; color: #334155; margin-top: 6px; }
-.fig-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 1px 6px; border-radius: 4px; font-size: 8pt; font-weight: 700; margin-inline-end: 6px; }
-.toc-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
-.toc-dots { flex: 1; border-bottom: 1px dotted #94a3b8; }
-.index-grid { column-count: 2; column-gap: 18px; font-size: 9.5pt; }
-.index-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding: 3px 0; }
+
+/* Component 1: Text + Left Visual Box (w-[38%] min-h-[170px]) */
+.med-comp-1 {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 14px;
+}
+
+.med-comp-1-text {
+  flex: 1;
+  font-size: 13.5px;
+  text-align: justify;
+  line-height: 1.65;
+  color: #1E293B;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.med-comp-1-text h3 {
+  font-weight: 800;
+  color: #1A7398;
+  font-size: 15.5px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.med-comp-1-fig {
+  width: 38%;
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #1A7398;
+  border-radius: 8px;
+  background: #F8FAFC;
+  padding: 10px;
+  text-align: center;
+  flex: none;
+}
+
+/* Component 2: Clinical Pearl Box */
+.med-comp-2 {
+  border-right: 4px solid #C06A23;
+  background: #FFFBEB;
+  padding: 12px 14px;
+  border-radius: 12px 0 0 12px;
+  border-top: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
+  border-left: 1px solid #E2E8F0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.med-comp-2 > span {
+  font-weight: 900;
+  color: #C06A23;
+  display: block;
+  font-size: 13.5px;
+  margin-bottom: 4px;
+}
+
+.med-comp-2 > p {
+  color: #1E293B;
+  font-weight: 600;
+}
+
+/* Component 3: Academic Comparison Table */
+.med-comp-3 {
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.med-comp-3 table {
+  width: 100%;
+  text-align: right;
+  font-size: 13px;
+  border-collapse: collapse;
+}
+
+.med-comp-3 thead {
+  background: #1A7398;
+  color: #ffffff;
+}
+
+.med-comp-3 th {
+  padding: 9px 10px;
+  border-bottom: 1px solid #E2E8F0;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+.med-comp-3 td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #E2E8F0;
+  background: #ffffff;
+  color: #1E293B;
+}
+
+.med-comp-3 td:first-child {
+  font-weight: 700;
+  background: #F8FAFC;
+}
+
+/* Component 4: Clinical MCQ Box */
+.med-comp-4 {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+  padding: 13px 14px;
+  font-size: 13px;
+}
+
+.med-comp-4 > p {
+  font-weight: 700;
+  color: #0F172A;
+  font-size: 13.5px;
+  margin-bottom: 8px;
+}
+
+.med-mcq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  font-size: 12px;
+  color: #1E293B;
+  margin-bottom: 8px;
+}
+
+.med-mcq-grid > div {
+  padding: 7px 9px;
+  border-radius: 6px;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+}
 
 .editable-active .editable-prose {
-  outline: 2px dashed #0e7490;
+  outline: 2px dashed #1A7398;
   padding: 6px;
   border-radius: 6px;
   background: #f0f9ff;
@@ -891,7 +1024,9 @@ body {
 @media (max-width: 768px) {
   .welcome-banner { padding: 22px 18px; }
   .welcome-banner h1 { font-size: 22px; }
-  .book-page { padding: 10mm; min-height: auto; }
+  .page-card { width: 100%; min-height: auto; max-height: none; padding: 10px; }
+  .med-comp-1 { flex-direction: column; }
+  .med-comp-1-fig { width: 100%; }
 }
 
 </style>
@@ -915,7 +1050,7 @@ body {
       <div class="brand-icon">M</div>
       <div>
         <div class="brand-title">MEDNERD AI — Medical Book Creator</div>
-        <div class="brand-sub">Transform Medical Files Into Professional Academic Books.</div>
+        <div class="brand-sub">نظام MEDNERD لإنتاج الكتب والملازم الطبية الأكاديمية (A4 Engine)</div>
       </div>
     </div>
 
@@ -944,8 +1079,8 @@ body {
   <section id="dashboardView" class="view-section active">
     <div class="welcome-banner">
       <div>
-        <h1>مرحباً بك في MEDNERD AI — Medical Book Creator</h1>
-        <p>حوّل محاضراتك وملفات PDF وDOCX وPPTX الخام إلى كتب ومراجع طبية أكاديمية جاهزة للطباعة بصيغة A4 مع استخراج الصور الأصلية من الملف وتوليد الرسومات الطبية التوضيحية تلقائياً.</p>
+        <h1>نظام MEDNERD لإنتاج الكتب والملازم الطبية الأكاديمية (A4 Engine)</h1>
+        <p>حوّل المحاضرات والملفات الطبية (PDF, DOCX, PPTX أو النص المصدري المباشر) إلى كود HTML أكاديمي مستقل وجاهز للطباعة الورقية (Print-Ready PDF) بنظام A4 مع المكونات الأربعة المعيارية ودمج الصور الأصلية والمولدة.</p>
       </div>
       <button class="cta-create-btn" id="heroCreateBookBtn">
         <i class="fa-solid fa-plus-circle"></i>
@@ -987,66 +1122,76 @@ body {
   <!-- 2. STUDIO / UPLOAD & PIPELINE VIEW -->
   <section id="studioView" class="view-section">
     <div class="studio-grid">
-      <!-- Left: Upload Center -->
+      <!-- Left: Upload Center + Mandatory Team Input Template -->
       <div class="card-box">
         <div class="section-header" style="margin-top:0;">
-          <h2 class="section-title"><i class="fa-solid fa-cloud-arrow-up"></i> مركز رفع الملفات (Upload Center)</h2>
+          <h2 class="section-title"><i class="fa-solid fa-cloud-arrow-up"></i> قالب إدخال البيانات ورفع الملفات</h2>
           <span class="badge badge-petrol" id="filesCountBadge">0 ملفات</span>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="bookSubjectInput">[المادة]:</label>
+            <input type="text" id="bookSubjectInput" class="form-input" placeholder="مثال: التشريح العصبي | الفيزيولوجيا الطبية">
+          </div>
+          <div>
+            <label class="form-label" for="bookTitleInput">[عنوان المحاضرة بالعربية]:</label>
+            <input type="text" id="bookTitleInput" class="form-input" placeholder="مثال: الأعصاب القحفية وآليات النقل المشبكي">
+          </div>
         </div>
 
         <div class="dropzone" id="uploadDropzone">
           <i class="fa-solid fa-file-medical"></i>
-          <h3>اسحب الملفات وأفلتها هنا أو اضغط للاختيار</h3>
-          <p style="font-size:12.5px;color:var(--muted-text);margin-top:4px;">يدعم: PDF, DOCX, PPTX, TXT, MD, JPG, PNG, WEBP (يستخرج النصوص + الصور الأصلية من داخل الملف)</p>
+          <h3>ارفع ملفات المحاضرة (PDF, DOCX, PPTX, TXT, MD, صور)</h3>
+          <p style="font-size:12.5px;color:var(--muted-text);margin-top:4px;">يستخرج النصوص والجداول والصور الأصلية من داخل الملف تلقائياً</p>
           <input type="file" id="filePickerInput" multiple accept=".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp" style="display:none;">
         </div>
 
         <div id="uploadFileList" class="file-list"></div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" for="rawSourceTextInput">[المحتوى المصدري] (اختياري — الصق النص هنا مباشرة أو اعتمد على الملفات المرفوعة أعلاه):</label>
+          <textarea id="rawSourceTextInput" class="form-textarea" rows="5" placeholder="الصق النص أو المحتوى المصدري للمحاضرة هنا كاملاً دون تعديل..."></textarea>
+        </div>
       </div>
 
-      <!-- Right: Book Configuration, Modes & Master Prompt -->
+      <!-- Right: Book Configuration, Modes & MEDNERD A4 Engine Prompt -->
       <div class="card-box">
         <div class="section-header" style="margin-top:0;">
-          <h2 class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الكتاب والبرومبت المعتمد</h2>
+          <h2 class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات محرك MEDNERD A4 والبرومبت المعتمد</h2>
         </div>
 
         <label class="form-label">اختر وضع الإنشاء (Creation Mode):</label>
         <div class="mode-cards" id="modeSelector">
           <div class="mode-card active" data-mode="auto">
             <h4>AUTO MODE</h4>
-            <p>يدرج صور الملف الأصلي ويولّد الرسومات التوضيحية وينسق الكتاب تلقائياً.</p>
+            <p>يطبق نظام MEDNERD A4 Engine والمكونات الأربعة ويدمج صور الملف ويولّد المخططات تلقائياً.</p>
           </div>
           <div class="mode-card" data-mode="professional">
             <h4>PROFESSIONAL</h4>
-            <p>تحكم كامل بالتخصص، الخط، الألوان، الغلاف، وكثافة الصور.</p>
+            <p>تحكم كامل بالتخصص، الخط، الألوان، وكثافة الرسومات المولدة.</p>
           </div>
           <div class="mode-card" data-mode="source_preservation">
             <h4>SOURCE PRESERVATION</h4>
-            <p>يحافظ على نصوص وصور المحاضرات كما هي تماماً دون إعادة صياغة.</p>
+            <p>نقل حرفي صارم للمحتوى المصدري وصوره ضمن بطاقات A4 دون أي تعديل.</p>
           </div>
         </div>
 
-        <div class="form-row">
-          <div>
-            <label class="form-label" for="bookTitleInput">عنوان الكتاب (اختياري):</label>
-            <input type="text" id="bookTitleInput" class="form-input" placeholder="يُستنتج تلقائياً إذا تُرك فارغاً">
-          </div>
-          <div>
-            <label class="form-label" for="bookSpecialtySelect">التخصص الطبي:</label>
-            <select id="bookSpecialtySelect" class="form-select"></select>
-          </div>
+        <div class="form-group">
+          <label class="form-label" for="bookSpecialtySelect">التخصص الطبي:</label>
+          <select id="bookSpecialtySelect" class="form-select"></select>
         </div>
 
         <!-- Master Prompt Editor Box -->
         <div class="form-group">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
-            <label class="form-label" for="masterPromptInput" style="margin-bottom:0;"><i class="fa-solid fa-terminal"></i> البرومبت المعتمد (يدمج صور الملف الأصلي + يولّد رسومات جديدة):</label>
+            <label class="form-label" for="masterPromptInput" style="margin-bottom:0;"><i class="fa-solid fa-terminal"></i> برومبت نظام MEDNERD لإنتاج الكتب والملازم الطبية (A4 Engine):</label>
             <div style="display:flex;gap:6px;">
               <button type="button" class="btn-secondary btn-sm" id="copyMasterPromptBtn"><i class="fa-solid fa-copy"></i> نسخ البرومبت</button>
               <button type="button" class="btn-secondary btn-sm" id="resetMasterPromptBtn"><i class="fa-solid fa-rotate-left"></i> استعادة الافتراضي</button>
             </div>
           </div>
-          <textarea id="masterPromptInput" class="form-textarea" rows="5"></textarea>
+          <textarea id="masterPromptInput" class="form-textarea" rows="7"></textarea>
         </div>
 
         <div id="professionalOptionsBox" style="display:none;">
@@ -1054,17 +1199,17 @@ body {
             <div>
               <label class="form-label" for="bookLangSelect">لغة الكتاب:</label>
               <select id="bookLangSelect" class="form-select">
-                <option value="ar">العربية (RTL + مصطلحات إنجليزية)</option>
+                <option value="ar">العربية (RTL + مصطلحات إنجليزية بين قوسين)</option>
                 <option value="en">English (LTR)</option>
               </select>
             </div>
             <div>
-              <label class="form-label" for="imageDensitySelect">كثافة الصور المولدة (إلى جانب صور الملف الأصلي):</label>
+              <label class="form-label" for="imageDensitySelect">كثافة الصور والمخططات:</label>
               <select id="imageDensitySelect" class="form-select">
-                <option value="balanced">متوازنة (صور الملف + حتى 4 رسومات مولدة)</option>
-                <option value="minimal">محدودة (صور الملف + رسمتان مولدتان)</option>
-                <option value="rich">غنية (صور الملف + حتى 6 رسومات مولدة)</option>
-                <option value="none">صور الملف الأصلي فقط (بدون توليد)</option>
+                <option value="balanced">متوازنة (صور الملف + توليد مخططات للمفاهيم)</option>
+                <option value="minimal">محدودة (صور الملف + مخططان)</option>
+                <option value="rich">غنية (صور الملف + حتى 6 مخططات)</option>
+                <option value="none">صور الملف الأصلي + إطارات [المكون 1] المعيارية</option>
               </select>
             </div>
           </div>
@@ -1074,16 +1219,16 @@ body {
               <input type="number" id="fontSizeInput" class="form-input" value="11" min="9" max="14">
             </div>
             <div>
-              <label class="form-label" for="coverStyleSelect">تصميم الغلاف:</label>
+              <label class="form-label" for="coverStyleSelect">تصميم الهوية:</label>
               <select id="coverStyleSelect" class="form-select">
-                <option value="academic_teal">MEDNERD Petrol Teal</option>
-                <option value="royal_green">Medical Dark Green</option>
-                <option value="editorial_dark">Editorial Midnight</option>
+                <option value="academic_teal">MEDNERD Academic (#1A7398)</option>
+                <option value="royal_green">Medical Dark Green (#14532d)</option>
+                <option value="editorial_dark">Editorial Slate (#0F172A)</option>
               </select>
             </div>
             <div>
               <label class="form-label" for="primaryColorInput">اللون الرئيسي:</label>
-              <input type="color" id="primaryColorInput" class="form-input" value="#0e7490" style="height:42px;padding:4px;">
+              <input type="color" id="primaryColorInput" class="form-input" value="#1A7398" style="height:42px;padding:4px;">
             </div>
           </div>
           <div class="form-group">
@@ -1131,7 +1276,7 @@ body {
       <div class="preview-toolbar">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <button class="btn-secondary btn-sm" id="prevPageBtn"><i class="fa-solid fa-chevron-right"></i> السابق</button>
-          <span id="pageIndicator" style="font-size:13px;font-weight:700;">1 / 1</span>
+          <span id="pageIndicator" style="font-size:13px;font-weight:700;">1</span>
           <button class="btn-secondary btn-sm" id="nextPageBtn">التالي <i class="fa-solid fa-chevron-left"></i></button>
           <button class="btn-secondary btn-sm" id="zoomOutBtn"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
           <span id="zoomLabel" style="font-size:12.5px;font-weight:700;">100%</span>
@@ -1149,7 +1294,7 @@ body {
 
       <div class="preview-layout">
         <aside class="chapter-sidebar">
-          <h3 style="font-size:15px;color:var(--petrol);margin-bottom:10px;">إدارة الفصول</h3>
+          <h3 style="font-size:15px;color:var(--petrol);margin-bottom:10px;">إدارة الفصول والصفحات</h3>
           <div id="chapterSidebarList"></div>
         </aside>
         <div class="book-viewport">
@@ -1278,8 +1423,8 @@ body {
    MEDNERD AI — Medical Book Creator
    Module: gemini-config.js
    Centralized Gemini API configuration, exact model presets from MEDNERD AI,
-   DEFAULT_MASTER_PROMPT for hybrid (Original + AI Generated) images,
-   medical specialty templates, and 12-step pipeline.
+   DEFAULT_MASTER_PROMPT (MEDNERD A4 Engine), medical specialty templates,
+   and 12-step pipeline.
    ========================================================================== */
 
 (function (global) {
@@ -1308,23 +1453,55 @@ body {
       theme: 'mednerd_theme',
       profile: 'mednerd_profile',
       intro: 'mednerd_intro',
-      masterPrompt: 'mednerd_master_book_prompt'
+      masterPrompt: 'mednerd_a4_engine_prompt_v2'
     }
   };
 
-  const DEFAULT_MASTER_PROMPT = `أنت رئيس تحرير طبي أكاديمي ومهندس نشر علمي في منصة MEDNERD AI.
-مهمتك تحويل محتوى الملفات والمحاضرات الطبية المرفوعة إلى كتاب طبي أكاديمي احترافي بمقاس A4 جاهز للطباعة، مع التطبيق الصارم لنظام الصور الهجين (الاحتفاظ بالصور الأصلية من الملف + توليد رسومات توضيحية طبية للمفاهيم المعقدة):
+  const DEFAULT_MASTER_PROMPT = `نظام MEDNERD لإنتاج الكتب والملازم الطبية الأكاديمية (A4 Engine)
 
-1. القواعد العلمية واللغوية (MEDNERD Standards):
-- الالتزام الكامل بمعلومات المصدر دون حذف أي فقرة أو جدول أو خيار في أسئلة MCQ.
-- إبقاء المصطلحات الطبية بالإنجليزية بجانب الشرح العربي الأكاديمي.
-- منع استخدام الرموز التعبيرية (Emojis) نهائياً، واستخدام وسوم <sup> و <sub> بدلاً من LaTeX، واعتماد الترقيم الرقمي المجرد للصفحات دون كلمة "صفحة".
+أنت نظام برمجي وتحريري متخصص في صف وتحويل المحاضرات الطبية إلى كود HTML متكامل، مستقل، ومطابق تماماً لمعايير الطباعة الورقية (Print-Ready PDF) الخاصة بأكاديمية MEDNERD بنظام A4.
 
-2. المسار الأول للصور — إدراج الصور الأصلية الموجودة في الملف (Original File Images):
-- عندما تجد إشارة [ORIGINAL_IMAGE: ID | المصدر: ...] داخل النص، حافظ على معرّفها (ID) وأدرجها في نفس الموضوع الفرعي الذي وردت فيه داخل الملف الأصلي مع عنوان علمي وشرح يربطها بالفقرة.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+قالب إدخال البيانات (إلزامي لكل عضو بالفريق)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[المادة]: 
+[عنوان المحاضرة بالعربية]: 
+[المحتوى المصدري]: (النص أو الملفات المرفوعة كاملة دون تعديل)
 
-3. المسار الثاني للصور — توليد صور ورسومات توضيحية جديدة (AI & Vector Medical Illustrations):
-- حدد المفاهيم التشريحية أو الفيزيولوجية أو المرضية أو الدوائية التي تحتاج إلى توضيح بصري، وأنشئ لكل منها وصف توليد دقيق (promptEn) ومخطط خطوات/عناصر علمية (diagramNodes) وعنواناً وشرحاً علمياً بالعربية.`;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. هندسة الصياغة الطبية الصرفة (كسر أسلوب الذكاء الاصطناعي)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- يمنع منعاً باتاً استخدام أي عبارات إنشائية أو تمهيدية مثل: (من الجدير بالذكر، يلعب دوراً هاماً، نستنتج، كما نلاحظ، مما لا شك فيه، دعونا ننتقل).
+- الأسلوب المعتمد هو الأسلوب التقريري الطبي الصارم (Clinical & Direct Staccato Style).
+- الأمانة العلمية: نقل كل تفصيلة، رقم، نسبة، أو استثناء وارد في المصدر دون أي اختصار أو تلخيص.
+- الحفاظ التام على المصطلحات بالإنجليزية بين قوسين بجانب الاسم العربي: مثلاً العصب الثلاثي التوائم (Trigeminal nerve - CN V).
+- يمنع منعاً باتاً استخدام الرموز التعبيرية (Emojis).
+- منع رموز LaTeX واستخدام وسوم HTML للصيغ العلمية:
+  يُمنع منعاً باتاً كتابة الصيغ الكيميائية أو الشحنات أو الرموز الرياضية بصيغة LaTeX أو وضع إشارات الدولار (مثل $Ca^{2+}$ أو $$...$$).
+  يجب استخدام وسوم HTML البسيطة حصراً:
+  - للشحنات والأرقام العلوية استخدم <sup> مثل: Ca<sup>2+</sup> أو Na<sup>+</sup>
+  - للأرقام السفلية استخدم <sub> مثل: H<sub>2</sub>O أو CO<sub>2</sub>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. القواعد الصارمة لإدارة المساحة والتنسيق الرأسي (قاعدة التراص المتناسق)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- هيكل حاوية المحتوى الرئيسي: استخدام justify-start حصراً مع gap-3 أو gap-3.5، ويُمنع منعاً باتاً استخدام justify-between لتفادي تشتت البطاقات وتولد فراغات شاسعة غير مبررة بينها.
+- نسبة الامتلاء: يجب أن يشغل المحتوى العلمي والبطاقات مساحة الصفحة بنسبة 85% إلى 95% بشكل طبيعي ناتج عن غزارة المعلومات وحجم الخطوط، وليس بفعل تباعد البطاقات عن بعضها.
+- مقاييس الخطوط الإلزامية:
+  - نصوص الفقرات والشروحات: text-[13.5px] إلى text-sm مع leading-relaxed بلون #334155 أو #1E293B.
+  - العناوين الرئيسية: text-lg إلى text-xl مع font-black بلون #1A7398.
+  - العناوين الفرعية: text-sm إلى text-base مع font-extrabold بلون #0F172A.
+- قاعدة ترقيم الصفحات الصارمة:
+  يُمنع منعاً باتاً كتابة عبارة "صفحة" أو "صفحة X من Y". يجب وضع الرقم المجرد فقط داخل تذييل الصفحة كعدد رقمي بحت: 1، 2، 3... إلخ.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. نظام المكونات الإلزامي وضبط نسب الصور (Component Library)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+يمنع توليد أي شكل بصري خارج هذه المكونات المعيارية:
+- [المكون 1]: حاوية النص مع الرسم التوضيحي الجانبي (الصورة على اليسار بعرض w-[38%] min-h-[170px]) — تدمج الصور الأصلية المستخرجة من الملف [ORIGINAL_IMAGE: ID] أو تولّد رسماً توضيحياً طبياً للمفهوم.
+- [المكون 2]: الصندوق السريري (Clinical Pearl Box) بحد أيمن #C06A23 وخلفية #FFFBEB.
+- [المكون 3]: جدول المقارنة الأكاديمي بترويسة #1A7398.
+- [المكون 4]: بنك الأسئلة والتقويم السريري (MCQ Box) بشبكة خيارات من عمودين مع الإجابة الصحيحة والتعليل الفيزيولوجي/السريري المباشر.`;
 
   const MEDICAL_SPECIALTIES = {
     human_medicine: {
@@ -2637,78 +2814,107 @@ body {
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: content-analyzer.js
-   Medical Content Intelligence Engine (Steps 4 & 5):
-   - Applies the Master Prompt (including custom user prompt edits).
-   - Preserves [ORIGINAL_IMAGE: id] references inside `attachedOriginalImages`
-     on the exact subtopic where they appeared.
-   - Generates `keyConceptsForVisuals` with `diagramNodes` so every concept
-     needing visual clarification gets a real illustration.
+   MEDNERD A4 Engine Medical Content Intelligence:
+   - Enforces Clinical & Direct Staccato Style (zero AI filler phrases).
+   - Preserves every detail, number, percentage, exception, and English term
+     in parentheses alongside Arabic: e.g. العصب الثلاثي التوائم (Trigeminal nerve - CN V).
+   - Enforces <sup> and <sub> HTML tags (forbids LaTeX $...$ and emojis).
+   - Maps content into the 4 mandatory MEDNERD A4 components:
+     [Component 1]: Text + Left-side figure (original file image OR generated diagram)
+     [Component 2]: Clinical Pearl Box (ملاحظة سريرية هامة)
+     [Component 3]: Academic Comparison Table (جدول المقارنة الأكاديمي)
+     [Component 4]: Clinical MCQ Box (بنك الأسئلة والتقويم السريري)
    ========================================================================== */
 
 (function (global) {
   'use strict';
 
+  const FORBIDDEN_PHRASES = [
+    /من الجدير بالذكر/g,
+    /يلعب دوراً هاماً/g,
+    /يلعب دورا هاما/g,
+    /مما لا شك فيه/g,
+    /دعونا ننتقل/g,
+    /كما نلاحظ/g
+  ];
+
+  function sanitizeMedicalText(str) {
+    if (!str) return '';
+    let out = String(str);
+    // Remove emojis
+    out = out.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '');
+    // Convert common LaTeX superscripts/subscripts if any slipped through
+    out = out.replace(/\$\$/g, '').replace(/\$/g, '');
+    out = out.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
+    out = out.replace(/_\{([^}]+)\}/g, '<sub>$1</sub>');
+    FORBIDDEN_PHRASES.forEach(re => { out = out.replace(re, ''); });
+    return out.trim();
+  }
+
   async function extractTextFromImage(imageAsset, signal = null) {
-    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة دون اختراع أي كلمة غير موجودة. أبقِ المصطلحات الطبية بالإنجليزية كما هي. إذا كانت الصورة رسماً توضيحياً أو شكلاً طبياً، صف التراكيب والعلاقات الظاهرة فيها بدقة علمية تحت عنوان [وصف الشكل الطبي الأصلي: ${imageAsset.id}].`;
+    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة وبأسلوب تقريري طبي مباشر دون عبارات إنشائية ودون إيموجي. حافظ على المصطلحات الإنجليزية بين قوسين واستخدم <sup> و <sub> للصيغ الكيميائية. إذا كانت الصورة شكلاً أو مخططاً، صف التراكيب الظاهرة تحت عنوان [وصف الشكل الطبي الأصلي: ${imageAsset.id}].`;
     const res = await global.GeminiClient.callGemini({
-      systemInstruction: 'أنت أداة استخراج نصوص وتحليل صور طبية أكاديمية بدقة عالية.',
+      systemInstruction: 'أنت أداة استخراج وتحرير طبي أكاديمي صارم في نظام MEDNERD A4 Engine.',
       parts: [
         { text: prompt },
         { inlineData: { mimeType: imageAsset.mimeType, data: imageAsset.base64 } }
       ],
       signal
     });
-    return `[ORIGINAL_IMAGE: ${imageAsset.id} | المصدر: ${imageAsset.sourceFile} - ${imageAsset.location}]\n${res.text}`;
+    return `[ORIGINAL_IMAGE: ${imageAsset.id} | المصدر: ${imageAsset.sourceFile} - ${imageAsset.location}]\n${sanitizeMedicalText(res.text)}`;
   }
 
   async function analyzeSegment(segment, options = {}, signal = null) {
     const mode = options.mode || 'auto';
     const specialty = options.specialty || 'human_medicine';
-    const enrichment = !!options.scientificEnrichment && mode !== 'source_preservation';
-    const lang = options.language || 'ar';
+    const subjectName = options.subjectName || '';
+    const lectureTitle = options.customTitle || '';
     const customMasterPrompt = (options.masterPrompt || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT || '').trim();
-
-    const modeInstruction = mode === 'source_preservation'
-      ? `وضع الحفاظ الصارم على المصدر (SOURCE PRESERVATION MODE):
-- ممنوع إعادة صياغة المعلومات أو اختصارها أو حذفها.
-- احتفظ بالنص الأصلي، والفقرات، وأسئلة MCQ بكامل خياراتها، والجداول، وإشارات الصور الأصلية [ORIGINAL_IMAGE: ...] كما هي.`
-      : (enrichment
-        ? `وضع الإثراء العلمي مفعّل: التزم أساساً بمعلومات المصدر، وإذا أضفت أي توضيح علمي خارجي فميّزه صراحة بوسم [إثراء علمي خارجي].`
-        : `التزم التزاماً صارماً بمعلومات المصدر فقط. لا تخترع معلومات طبية ولا تضف معلومات من خارج النص.`);
-
-    const langInstruction = lang === 'en'
-      ? 'اكتب الشرح والتحليل باللغة الإنجليزية الأكاديمية.'
-      : 'اكتب باللغة العربية الأكاديمية مع إبقاء جميع المصطلحات الطبية وأسماء الأمراض والأدوية بالإنجليزية بجانب العربية.';
 
     const systemInstruction = `${customMasterPrompt}
 
-التخصص المستهدف: (${specialty})
-${modeInstruction}
-${langInstruction}
+بيانات القالب الإلزامي:
+[المادة]: ${subjectName || specialty}
+[عنوان المحاضرة بالعربية]: ${lectureTitle || 'يُستنتج من المحتوى المصدري'}
 
-أخرج JSON صالحاً بالبنية التالية تماماً:
+تعليمات التحويل المهيكل (MEDNERD A4 Component Library):
+حول المقطع المصدري إلى مكونات MEDNERD الأربعة القياسية دون اختصار أو حذف أي معلومة أو رقم أو نسبة:
+1. لكل فقرة علمية رئيسية [المكون 1]:
+   - ضع العنوان العلمي الفرعي في "heading" والشرح الأكاديمي التفصيلي الكامل في "contentMarkdown" بأسلوب تقريري طبي مباشر، مع المصطلحات الإنجليزية بين قوسين، ووسوم <sup> و <sub> للصيغ الكيميائية، وبدون أي إيموجي أو عبارات إنشائية.
+   - إذا وردت في الفقرة إشارة صورة أصلية [ORIGINAL_IMAGE: ID]، اربطها في "attachedOriginalImages" لتظهر في حاوية الرسم الجانبي اليسرى (w-[38%]).
+   - إذا كانت الفقرة تحتاج إلى رسم توضيحي أو مخطط جانبي [المكون 1]، أضف في "sideVisual" اسم الشكل الدقيق ("figureLabel") ووصف توليده ("promptEn") وعناصر المخطط ("diagramNodes").
+2. لأي ملاحظة سريرية أو تطبيق سريري [المكون 2]: ضعه في "clinicalCases" ليُعرض داخل الصندوق السريري (Clinical Pearl Box).
+3. لأي مقارنة أو بيانات مجدولة [المكون 3]: ضعها في "tables" بعمودين أو أكثر (المعيار | التفاصيل).
+4. لأي أسئلة تقويم أو MCQs [المكون 4]: ضعها في "mcqs" بكامل خياراتها مع الرمز الصحيح والتعليل الفيزيولوجي/السريري المباشر.
+
+أخرج JSON صالحاً بالبنية التالية حصراً:
 {
   "topics": [
     {
-      "title": "عنوان الموضوع الرئيسي",
+      "title": "عنوان المحاضرة أو الموضوع الرئيسي",
       "domain": "anatomy | pathology | pharmacology | physiology | clinical | dental | nursing | lab | physio | general",
       "sourceFiles": ["اسم الملف"],
       "subtopics": [
         {
-          "heading": "العنوان الفرعي",
-          "contentMarkdown": "النص الكامل المنسق للموضوع الفرعي دون حذف، مع استخدام <sup> و <sub> بدلاً من LaTeX ودون إيموجي",
+          "heading": "العنوان العلمي الفرعي",
+          "contentMarkdown": "الشرح الأكاديمي التفصيلي الدقيق بدون تلخيص مع كتابة الصيغ مثل Ca<sup>2+</sup> والمصطلحات الإنجليزية بين قوسين",
+          "sideVisual": {
+            "figureLabel": "شكل: اسم الرسم الدقيق",
+            "suggestedType": "Anatomy Illustrations | Physiology Illustrations | Pathology Images | Pharmacology Diagrams | Medical Diagrams | Flowcharts",
+            "promptEn": "Clean medical textbook illustration of ..., white background, high anatomical precision, text-free",
+            "diagramNodes": ["العنصر 1", "العنصر 2", "العنصر 3"]
+          },
           "attachedOriginalImages": [
             {
               "imageId": "معرّف الصورة الأصلية كما ورد في [ORIGINAL_IMAGE: ID]",
-              "figureTitle": "عنوان علمي للصورة الأصلية",
-              "caption": "شرح علمي يربط الصورة الأصلية بالفقرة"
+              "figureTitle": "شكل: عنوان الصورة الأصلية",
+              "caption": "وصف مختصر لما يظهر في الشكل الأصلي"
             }
           ],
-          "definitions": [{"term": "Term", "definition": "التعريف"}],
-          "classifications": ["تصنيف أو قائمة"],
-          "tables": [{"caption": "عنوان الجدول", "markdown": "| col1 | col2 |\\n|---|---|\\n| ... | ... |"}],
-          "clinicalCases": ["حالة سريرية أو تنبيه سريري هام إن وُجد"],
-          "mcqs": [{"question": "نص السؤال", "options": ["A) ...", "B) ..."], "answer": "الإجابة إن ذُكرت", "explanation": "التفسير العلمي"}]
+          "definitions": [{"term": "Term", "definition": "التعريف التقريري الدقيق"}],
+          "tables": [{"caption": "عنوان الجدول", "markdown": "| المعيار | التفاصيل |\\n|---|---|\\n| ... | ... |"}],
+          "clinicalCases": ["التطبيق السريري المباشر للملاحظة السريرية الهامة"],
+          "mcqs": [{"question": "نص السؤال السريري", "options": ["A) الخيار الأول", "B) الخيار الثاني", "C) الخيار الثالث", "D) الخيار الرابع"], "answer": "A", "explanation": "التعليل الفيزيولوجي/السريري المباشر"}]
         }
       ]
     }
@@ -2716,21 +2922,51 @@ ${langInstruction}
   "medicalTerms": ["Term1", "Term2"],
   "keyConceptsForVisuals": [
     {
-      "concept": "المفهوم الطبي الذي يحتاج رسماً توضيحياً جديداً",
-      "suggestedType": "Anatomy Illustrations | Histology Images | Pathology Images | Radiology Images | Medical Diagrams | Clinical Photographs | Pharmacology Diagrams | Physiology Illustrations | Dental Illustrations | Flowcharts | Anatomical Cross Sections",
-      "promptEn": "Clean academic medical textbook illustration of ..., white background, high anatomical precision, text-free",
-      "titleAr": "عنوان الشكل العلمي المولّد",
-      "captionAr": "شرح مختصر يربط الشكل المولّد بالمحتوى",
-      "diagramNodes": ["الخطوة أو البنية 1", "الخطوة أو البنية 2", "الخطوة أو البنية 3", "النتيجة السريرية أو الوظيفية"]
+      "concept": "المفهوم الطبي",
+      "suggestedType": "Medical Diagrams",
+      "promptEn": "Clean academic medical textbook illustration of ..., white background, text-free",
+      "titleAr": "شكل: اسم الرسم الدقيق",
+      "captionAr": "مساحة إدراج المخطط",
+      "diagramNodes": ["الخطوة 1", "الخطوة 2", "الخطوة 3"]
     }
   ]
 }`;
 
-    return global.GeminiClient.callGeminiJSON({
+    const parsed = await global.GeminiClient.callGeminiJSON({
       systemInstruction,
-      parts: [{ text: `حلّل المقطع الطبي التالي وطبّق بروتوكول الصور الهجين (الصور الأصلية + توليد الرسومات التوضيحية):\n\n${segment.text}` }],
+      parts: [{
+        text: `[المادة]: ${subjectName || specialty}\n[عنوان المحاضرة بالعربية]: ${lectureTitle || 'من المصدر'}\n[المحتوى المصدري]:\n${segment.text}`
+      }],
       signal
     });
+
+    // Sanitize all text fields against emojis, LaTeX, and filler phrases
+    if (parsed && Array.isArray(parsed.topics)) {
+      parsed.topics.forEach(t => {
+        t.title = sanitizeMedicalText(t.title);
+        (t.subtopics || []).forEach(st => {
+          st.heading = sanitizeMedicalText(st.heading);
+          st.contentMarkdown = sanitizeMedicalText(st.contentMarkdown);
+          if (Array.isArray(st.clinicalCases)) {
+            st.clinicalCases = st.clinicalCases.map(sanitizeMedicalText);
+          }
+          if (st.sideVisual && st.sideVisual.figureLabel) {
+            if (!Array.isArray(parsed.keyConceptsForVisuals)) parsed.keyConceptsForVisuals = [];
+            parsed.keyConceptsForVisuals.push({
+              concept: st.heading || st.sideVisual.figureLabel,
+              subtopicHeading: st.heading,
+              suggestedType: st.sideVisual.suggestedType || 'Medical Diagrams',
+              promptEn: st.sideVisual.promptEn || `Clean medical textbook illustration of ${st.heading}, white background`,
+              titleAr: sanitizeMedicalText(st.sideVisual.figureLabel),
+              captionAr: st.heading,
+              diagramNodes: st.sideVisual.diagramNodes || []
+            });
+          }
+        });
+      });
+    }
+
+    return parsed;
   }
 
   async function organizeAndDetectConflicts(analyzedSegments, options = {}, signal = null) {
@@ -2762,11 +2998,11 @@ ${langInstruction}
 
       try {
         chapterPlan = await global.GeminiClient.callGeminiJSON({
-          systemInstruction: `أنت رئيس تحرير كتب طبية أكاديمية في MEDNERD. رتب الموضوعات التالية في فصول منطقية متسلسلة أكاديمياً، واكتشف أي تكرار أو تناقض محتمل بين المصادر دون حذف أي محتوى.
+          systemInstruction: `أنت رئيس تحرير نظام MEDNERD A4 Engine. رتب الموضوعات التالية في فصول أكاديمية متسلسلة دون حذف أي محتوى، واكتشف أي تكرار أو تعارض بين المصادر.
 أخرج JSON فقط:
 {
-  "bookTitle": "عنوان مقترح للكتاب بناءً على المحتوى",
-  "bookSubtitle": "عنوان فرعي أكاديمي",
+  "bookTitle": "عنوان المحاضرة أو الكتاب بالعربية",
+  "bookSubtitle": "اسم المادة العلمية",
   "chapters": [
     {
       "chapterTitle": "عنوان الفصل",
@@ -2774,8 +3010,8 @@ ${langInstruction}
       "topicIndices": [0, 1]
     }
   ],
-  "duplicates": ["وصف أي موضوع مكرر بين ملفين"],
-  "contradictions": ["تنبيه لأي تعارض علمي أو رقمي بين ملفين إن وُجد"]
+  "duplicates": ["وصف أي موضوع مكرر"],
+  "contradictions": ["تنبيه لأي تعارض علمي إن وُجد"]
 }`,
           parts: [{ text: JSON.stringify(compactSummary, null, 2) }],
           signal
@@ -2787,10 +3023,10 @@ ${langInstruction}
 
     if (!chapterPlan || !Array.isArray(chapterPlan.chapters) || !chapterPlan.chapters.length) {
       chapterPlan = {
-        bookTitle: allTopics[0] ? allTopics[0].title : 'المرجع الطبي الأكاديمي',
-        bookSubtitle: 'مُعدّ ومنسق بواسطة MEDNERD AI Book Creator',
+        bookTitle: options.customTitle || (allTopics[0] ? allTopics[0].title : 'محاضرة طبية أكاديمية'),
+        bookSubtitle: options.subjectName || 'MEDNERD ACADEMIC',
         chapters: allTopics.map((t, idx) => ({
-          chapterTitle: t.title || `الفصل ${idx + 1}`,
+          chapterTitle: t.title || `المحور ${idx + 1}`,
           domain: t.domain || 'general',
           topicIndices: [idx]
         })),
@@ -2812,7 +3048,7 @@ ${langInstruction}
       return {
         id: `ch_${idx + 1}`,
         number: idx + 1,
-        title: ch.chapterTitle,
+        title: sanitizeMedicalText(ch.chapterTitle),
         domain: ch.domain || 'general',
         sourceFiles: Array.from(sourceFiles),
         subtopics: mergedSubtopics
@@ -2820,8 +3056,8 @@ ${langInstruction}
     }).filter(ch => ch.subtopics.length > 0);
 
     return {
-      bookTitle: chapterPlan.bookTitle,
-      bookSubtitle: chapterPlan.bookSubtitle,
+      bookTitle: sanitizeMedicalText(options.customTitle || chapterPlan.bookTitle),
+      bookSubtitle: sanitizeMedicalText(options.subjectName || chapterPlan.bookSubtitle),
       chapters,
       medicalTerms: Array.from(allTerms),
       visualCandidates,
@@ -2831,6 +3067,7 @@ ${langInstruction}
   }
 
   global.ContentAnalyzer = {
+    sanitizeMedicalText,
     extractTextFromImage,
     analyzeSegment,
     organizeAndDetectConflicts
@@ -3268,12 +3505,17 @@ ${langInstruction}
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: html-renderer.js
-   Professional Medical Book Designer & Quality Assurance Engine (Steps 10 & 11):
-   - Renders A4 Portrait academic pages with Cairo / Inter typography.
-   - Supports RTL & LTR, Cover, Title, Copyright, Preface, TOC, Chapters,
-     Tables, Figures, MCQs, Index, Running Headers & Page Numbers.
-   - Prevents text overlap, image overflow, bad table splits, and orphan headings.
-   - Runs Quality Assurance Engine and produces detailed QA Audit Report.
+   MEDNERD A4 Engine Renderer & Quality Assurance (Steps 10 & 11):
+   Implements the exact mandatory page-card structure and 4-Component Library:
+   - .page-card (210mm x 297mm, padding: 10mm 12mm, background: #F8F9FA)
+   - Header: MEDNERD (#1A7398) | [اسم المادة | عنوان المحاضرة] (#0F172A)
+   - Main: flex-1 overflow-hidden flex flex-col justify-start gap-3 (never justify-between)
+   - Footer: MEDNERD ACADEMIC | Plain integer page number only (1, 2, 3...)
+   - [Component 1]: Text + Left-side Visual Box (w-[38%] min-h-[170px]) with
+     embedded Original File Image, AI/SVG Generated Diagram, or standard SVG box
+   - [Component 2]: Clinical Pearl Box (border-r-4 border-[#C06A23] bg-[#FFFBEB])
+   - [Component 3]: Academic Comparison Table (thead bg-[#1A7398])
+   - [Component 4]: Clinical MCQ Box (2-col options grid + answer & rationale)
    ========================================================================== */
 
 (function (global) {
@@ -3283,228 +3525,309 @@ ${langInstruction}
     return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  function safeMd(md) {
-    const raw = (typeof global.marked !== 'undefined')
-      ? global.marked.parse(String(md || ''))
-      : `<p>${esc(md).replace(/\n/g, '<br>')}</p>`;
-    if (global.DOMPurify) {
-      return global.DOMPurify.sanitize(raw, {
-        USE_PROFILES: { html: true },
-        FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'style'],
-        FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus']
-      });
-    }
-    return raw;
+  /**
+   * Preserves <sup> and <sub> tags while sanitizing HTML
+   */
+  function renderMedicalHtmlText(text) {
+    if (!text) return '';
+    let s = String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/&lt;sup&gt;(.*?)&lt;\/sup&gt;/gi, '<sup>$1</sup>')
+      .replace(/&lt;sub&gt;(.*?)&lt;\/sub&gt;/gi, '<sub>$1</sub>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    return s;
   }
 
-  function buildPageShell({ pageNum, totalPages, bookTitle, chapterTitle, dir, primaryColor, bodyHtml, isCover = false, pageId = '' }) {
-    if (isCover) {
-      return `<section class="book-page book-cover" dir="${dir}" data-page="${pageNum}" id="${pageId}">${bodyHtml}</section>`;
-    }
-    return `
-      <section class="book-page" dir="${dir}" data-page="${pageNum}" id="${pageId}">
-        <div class="book-page-header" style="border-bottom-color:${primaryColor}33">
-          <span>${esc(bookTitle)}</span>
-          <span>${esc(chapterTitle || '')}</span>
-        </div>
-        <div class="book-page-content">${bodyHtml}</div>
-        <div class="book-page-footer">
-          <span>MEDNERD AI — Medical Book Creator</span>
-          <span class="page-number">${pageNum} / ${totalPages}</span>
-        </div>
-      </section>`;
-  }
+  function parseMarkdownTableRows(md) {
+    const lines = String(md || '')
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.includes('|'));
+    if (lines.length < 2) return null;
 
-  function renderBookPages(book) {
-    const isEn = book.language === 'en';
-    const dir = book.direction || (isEn ? 'ltr' : 'rtl');
-    const primary = (book.design && book.design.primaryColor) || '#0e7490';
-    const fontSize = (book.design && book.design.fontSizePt) || 11;
-    const coverStyle = (book.design && book.design.coverStyle) || 'academic_teal';
+    const parseRow = line => line
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map(c => c.trim());
 
-    const rawPages = [];
-
-    // 1. Cover Page
-    const coverBg = coverStyle === 'royal_green'
-      ? 'linear-gradient(155deg, #14532d 0%, #0f172a 100%)'
-      : coverStyle === 'editorial_dark'
-        ? 'linear-gradient(155deg, #0f172a 0%, #1e293b 100%)'
-        : `linear-gradient(155deg, ${primary} 0%, #0f172a 100%)`;
-
-    rawPages.push({
-      isCover: true,
-      chapterTitle: '',
-      id: 'page_cover',
-      html: `
-        <div class="cover-inner" style="background:${coverBg};">
-          <div class="cover-top-badge">MEDNERD AI · ACADEMIC MEDICAL EDITION</div>
-          <div class="cover-main">
-            <div class="cover-specialty">${esc(book.specialtyLabel)}</div>
-            <h1 class="cover-title">${esc(book.title)}</h1>
-            <p class="cover-subtitle">${esc(book.subtitle)}</p>
-          </div>
-          <div class="cover-footer">
-            <div class="cover-author">${esc(book.author)}</div>
-            <div class="cover-year">${esc(book.frontMatter.copyrightYear)}</div>
-          </div>
-        </div>`
-    });
-
-    // 2. Title & Copyright Page
-    const sourcesList = (book.frontMatter.sourceFiles || []).map(f => `<li>${esc(f)}</li>`).join('');
-    rawPages.push({
-      chapterTitle: isEn ? 'Title & Copyright' : 'صفحة العنوان والحقوق',
-      id: 'page_copyright',
-      html: `
-        <div class="title-page-block">
-          <h2 style="color:${primary}">${esc(book.title)}</h2>
-          <p class="subtitle-muted">${esc(book.subtitle)}</p>
-          <p><strong>${isEn ? 'Prepared by:' : 'إعداد:'}</strong> ${esc(book.author)}</p>
-          <p><strong>${isEn ? 'Specialty:' : 'التخصص:'}</strong> ${esc(book.specialtyLabel)}</p>
-          <hr class="book-divider">
-          <h3>${isEn ? 'Academic & Publishing Notice' : 'تنبيه النشر والاستخدام الأكاديمي'}</h3>
-          <p>${esc(book.frontMatter.disclaimer)}</p>
-          ${sourcesList ? `<h4>${isEn ? 'Compiled Source Files' : 'الملفات المصدرية المعتمدة'}</h4><ul>${sourcesList}</ul>` : ''}
-        </div>`
-    });
-
-    // 3. Preface & Table of Contents
-    const tocItems = book.chapters.map((ch, idx) => `
-      <div class="toc-row">
-        <span class="toc-title"><strong>${isEn ? 'Chapter' : 'الفصل'} ${ch.number}:</strong> ${esc(ch.title)}</span>
-        <span class="toc-dots"></span>
-        <span class="toc-page">${idx + 4}</span>
-      </div>`).join('');
-
-    rawPages.push({
-      chapterTitle: isEn ? 'Preface & Contents' : 'المقدمة وجدول المحتويات',
-      id: 'page_toc',
-      html: `
-        <h2 class="section-heading" style="color:${primary};border-inline-start-color:${primary}">${isEn ? 'Preface' : 'مقدمة الكتاب'}</h2>
-        <div class="prose-block">${safeMd(book.frontMatter.preface)}</div>
-        <h2 class="section-heading" style="color:${primary};border-inline-start-color:${primary};margin-top:24px;">${isEn ? 'Table of Contents' : 'جدول المحتويات'}</h2>
-        <div class="toc-list">${tocItems}</div>`
-    });
-
-    // 4. Chapters
-    book.chapters.forEach(ch => {
-      let chHtml = `
-        <div class="chapter-banner" style="border-bottom-color:${primary}">
-          <span class="chapter-num" style="color:${primary}">${isEn ? 'CHAPTER' : 'الفصل'} ${ch.number}</span>
-          <h2 class="chapter-title">${esc(ch.title)}</h2>
-          ${ch.sourceFiles && ch.sourceFiles.length ? `<div class="chapter-sources">${isEn ? 'Sources:' : 'المصادر:'} ${esc(ch.sourceFiles.join('، '))}</div>` : ''}
-        </div>`;
-
-      (ch.subtopics || []).forEach((st, sIdx) => {
-        chHtml += `<div class="subtopic-block" data-chapter="${ch.id}" data-subtopic="${sIdx}">`;
-        chHtml += `<h3 class="subtopic-heading" style="color:${primary}">${esc(st.heading)}</h3>`;
-        chHtml += `<div class="prose-block editable-prose" data-chapter-id="${ch.id}" data-sub-idx="${sIdx}">${safeMd(st.contentMarkdown)}</div>`;
-
-        if (Array.isArray(st.definitions) && st.definitions.length) {
-          chHtml += `<div class="callout-box definitions-box"><h4>${isEn ? 'Key Definitions' : 'المصطلحات والتعريفات'}</h4><ul>`;
-          st.definitions.forEach(d => {
-            chHtml += `<li><strong>${esc(d.term)}:</strong> ${esc(d.definition)}</li>`;
-          });
-          chHtml += `</ul></div>`;
-        }
-
-        if (Array.isArray(st.tables) && st.tables.length) {
-          st.tables.forEach(tb => {
-            chHtml += `<div class="table-wrapper">`;
-            if (tb.caption) chHtml += `<div class="table-caption">${esc(tb.caption)}</div>`;
-            chHtml += safeMd(tb.markdown);
-            chHtml += `</div>`;
-          });
-        }
-
-        if (Array.isArray(st.clinicalCases) && st.clinicalCases.length) {
-          st.clinicalCases.forEach(cc => {
-            chHtml += `<div class="callout-box clinical-box"><h4>${isEn ? 'Clinical Case' : 'حالة سريرية'}</h4><div>${safeMd(cc)}</div></div>`;
-          });
-        }
-
-        if (Array.isArray(st.mcqs) && st.mcqs.length) {
-          chHtml += `<div class="mcq-section"><h4>${isEn ? 'Self-Assessment Questions' : 'أسئلة التقييم الذاتي'}</h4>`;
-          st.mcqs.forEach((q, qi) => {
-            chHtml += `<div class="mcq-item"><p class="mcq-q"><strong>${qi + 1}.</strong> ${esc(q.question)}</p><ul class="mcq-opts">`;
-            (q.options || []).forEach(opt => { chHtml += `<li>${esc(opt)}</li>`; });
-            chHtml += `</ul>`;
-            if (q.answer) chHtml += `<p class="mcq-ans"><strong>${isEn ? 'Answer:' : 'الإجابة:'}</strong> ${esc(q.answer)}${q.explanation ? ' — ' + esc(q.explanation) : ''}</p>`;
-            chHtml += `</div>`;
-          });
-          chHtml += `</div>`;
-        }
-
-        chHtml += `</div>`;
-      });
-
-      // Chapter Images (only ready images with valid dataUrl)
-      const readyImgs = (ch.images || []).filter(im => im.status === 'ready' && im.dataUrl);
-      if (readyImgs.length) {
-        chHtml += `<div class="chapter-figures">`;
-        readyImgs.forEach((im, fi) => {
-          const badge = im.origin === 'ai_generated'
-            ? (isEn ? 'AI Educational Illustration' : 'رسم توضيحي مولّد بالذكاء الاصطناعي')
-            : (isEn ? 'Original Source Figure' : 'صورة من المصدر الأصلي');
-          chHtml += `
-            <figure class="book-figure" data-image-id="${esc(im.id)}">
-              <img src="${im.dataUrl}" alt="${esc(im.title)}">
-              <figcaption>
-                <span class="fig-badge">${badge}</span>
-                <strong>${esc(im.title || `Figure ${ch.number}.${fi + 1}`)}</strong>
-                ${im.caption ? `<span class="fig-cap"> — ${esc(im.caption)}</span>` : ''}
-              </figcaption>
-            </figure>`;
-        });
-        chHtml += `</div>`;
-      }
-
-      rawPages.push({
-        chapterTitle: ch.title,
-        id: `page_${ch.id}`,
-        html: chHtml
-      });
-    });
-
-    // 5. Final Index Page
-    if (book.indexEntries && book.indexEntries.length) {
-      const idxHtml = book.indexEntries.map(e => `
-        <div class="index-item">
-          <span class="index-term">${esc(e.term)}</span>
-          <span class="index-ch">${isEn ? 'Ch.' : 'فصل'} ${e.chapters.join(', ')}</span>
-        </div>`).join('');
-      rawPages.push({
-        chapterTitle: isEn ? 'Medical Index' : 'الفهرس العلمي',
-        id: 'page_index',
-        html: `
-          <h2 class="section-heading" style="color:${primary};border-inline-start-color:${primary}">${isEn ? 'Medical Terminology Index' : 'فهرس المصطلحات الطبية'}</h2>
-          <div class="index-grid">${idxHtml}</div>`
-      });
-    }
-
-    const totalPages = rawPages.length;
-    const htmlPages = rawPages.map((p, i) => buildPageShell({
-      pageNum: i + 1,
-      totalPages,
-      bookTitle: book.title,
-      chapterTitle: p.chapterTitle,
-      dir,
-      primaryColor: primary,
-      bodyHtml: p.html,
-      isCover: !!p.isCover,
-      pageId: p.id
-    }));
-
-    return {
-      pages: rawPages,
-      html: `<div class="book-document" style="--book-font-size:${fontSize}pt;--book-primary:${primary}" dir="${dir}">${htmlPages.join('\n')}</div>`,
-      totalPages
-    };
+    const headers = parseRow(lines[0]);
+    const bodyLines = lines.slice(1).filter(l => !/^[\|\s\-:]+$/.test(l));
+    const rows = bodyLines.map(parseRow);
+    return { headers, rows };
   }
 
   /**
-   * STEP 11: Book Quality Assurance Engine
+   * [المكون 1]: حاوية النص مع الرسم التوضيحي الجانبي (الصورة على اليسار بنسبة متناسقة w-[38%])
    */
+  function renderComponent1(chId, sIdx, heading, bodyText, figureObj, fallbackLabel) {
+    const label = (figureObj && figureObj.title) || fallbackLabel || `شكل: ${heading}`;
+    let visualInner = '';
+
+    if (figureObj && figureObj.dataUrl) {
+      const badgeText = figureObj.origin === 'original' ? 'صورة من الملف الأصلي' : 'مخطط توضيحي مولّد';
+      visualInner = `
+        <img src="${figureObj.dataUrl}" alt="${esc(label)}" style="max-width:100%;max-height:145px;object-fit:contain;border-radius:6px;margin-bottom:4px;">
+        <span class="text-xs font-bold text-[#0F172A]" style="font-size:11.5px;font-weight:700;color:#0F172A;display:block;">${esc(label)}</span>
+        <span class="text-[10px] text-[#64748B] mt-1" style="font-size:10px;color:#64748B;display:block;">${esc(badgeText)}</span>`;
+    } else {
+      visualInner = `
+        <svg class="w-8 h-8 text-[#1A7398] mb-1.5" style="width:32px;height:32px;color:#1A7398;margin-bottom:6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span class="text-xs font-bold text-[#0F172A]" style="font-size:12px;font-weight:700;color:#0F172A;display:block;">[${esc(label)}]</span>
+        <span class="text-[10px] text-[#64748B] mt-1" style="font-size:10px;color:#64748B;display:block;">مساحة إدراج المخطط</span>`;
+    }
+
+    return `
+<div class="bg-white rounded-xl border border-[#E2E8F0] p-4 flex flex-row items-stretch gap-3.5 shadow-xs med-comp-1">
+  <div class="flex-1 text-[13.5px] text-justify leading-relaxed text-[#1E293B] flex flex-col justify-center med-comp-1-text">
+    <h3 class="font-extrabold text-[#1A7398] text-base mb-1.5 pb-1 border-b border-[#E2E8F0]">${esc(heading)}</h3>
+    <p class="editable-prose" data-chapter-id="${esc(chId)}" data-sub-idx="${sIdx}">${renderMedicalHtmlText(bodyText)}</p>
+  </div>
+  <div class="w-[38%] min-h-[170px] flex flex-col items-center justify-center border-2 border-dashed border-[#1A7398] rounded-lg bg-[#F8FAFC] p-2.5 text-center flex-none med-comp-1-fig">
+    ${visualInner}
+  </div>
+</div>`;
+  }
+
+  /**
+   * [المكون 2]: الصندوق السريري (Clinical Pearl Box)
+   */
+  function renderComponent2(clinicalText) {
+    return `
+<div class="border-r-4 border-[#C06A23] bg-[#FFFBEB] p-3.5 rounded-l-xl border-y border-l border-[#E2E8F0] text-[13px] leading-relaxed shadow-xs med-comp-2">
+  <span class="font-black text-[#C06A23] block text-sm mb-1">ملاحظة سريرية هامة (Clinical Note):</span>
+  <p class="text-[#1E293B] font-medium">${renderMedicalHtmlText(clinicalText)}</p>
+</div>`;
+  }
+
+  /**
+   * [المكون 3]: جدول المقارنة الأكاديمي
+   */
+  function renderComponent3(tableObj) {
+    const parsed = parseMarkdownTableRows(tableObj.markdown);
+    if (!parsed || !parsed.rows.length) return '';
+
+    const ths = parsed.headers.map(h => `<th class="p-2.5 border-b border-[#E2E8F0] font-bold text-sm">${renderMedicalHtmlText(h)}</th>`).join('');
+    const trs = parsed.rows.map(r => {
+      const tds = r.map((cell, idx) =>
+        idx === 0
+          ? `<td class="p-2.5 font-bold bg-[#F8FAFC]">${renderMedicalHtmlText(cell)}</td>`
+          : `<td class="p-2.5 leading-relaxed">${renderMedicalHtmlText(cell)}</td>`
+      ).join('');
+      return `<tr>${tds}</tr>`;
+    }).join('');
+
+    return `
+<div class="overflow-hidden rounded-lg border border-[#E2E8F0] shadow-xs med-comp-3">
+  <table class="w-full text-right text-[13px] border-collapse">
+    <thead class="bg-[#1A7398] text-white">
+      <tr>${ths}</tr>
+    </thead>
+    <tbody class="divide-y divide-[#E2E8F0] bg-white text-[#1E293B]">
+      ${trs}
+    </tbody>
+  </table>
+</div>`;
+  }
+
+  /**
+   * [المكون 4]: بنك الأسئلة والتقويم السريري (MCQ Box)
+   */
+  function renderComponent4(qNum, mcq) {
+    const opts = (mcq.options || []).map(opt =>
+      `<div class="p-2 rounded border border-[#E2E8F0] bg-[#F8FAFC]">${renderMedicalHtmlText(opt)}</div>`
+    ).join('');
+    const ans = mcq.answer || '—';
+    const exp = mcq.explanation || 'وفق الآلية المذكورة في المحاضرة.';
+
+    return `
+<div class="bg-white rounded-xl border border-[#E2E8F0] p-3.5 text-[13px] shadow-xs med-comp-4">
+  <p class="font-bold text-[#0F172A] text-sm mb-2">${qNum}. ${renderMedicalHtmlText(mcq.question)}</p>
+  <div class="grid grid-cols-2 gap-2 text-xs text-[#1E293B] mb-2 med-mcq-grid">
+    ${opts}
+  </div>
+  <div class="text-[11px] text-[#0F172A] font-bold bg-[#F8FAFC] p-1.5 rounded border border-[#E2E8F0]">
+    الإجابة الصحيحة: ${esc(ans)} — ${renderMedicalHtmlText(exp)}
+  </div>
+</div>`;
+  }
+
+  /**
+   * بنية الصفحة الإجبارية (.page-card)
+   */
+  function buildA4PageCard({ pageNum, headerRightText, cardsHtml, pageId }) {
+    return `
+<div class="page-card book-page" data-page="${pageNum}" id="${pageId || 'page_' + pageNum}">
+  <header class="flex-none pb-2">
+    <div class="flex justify-between items-center border-b-2 border-[#1A7398] pb-1.5 med-page-header">
+      <span class="text-2xl font-black text-[#1A7398] tracking-wider">MEDNERD</span>
+      <span class="text-sm font-bold text-[#0F172A]">${esc(headerRightText)}</span>
+    </div>
+  </header>
+
+  <main class="flex-1 overflow-hidden flex flex-col justify-start gap-3 med-page-main">
+    ${cardsHtml}
+  </main>
+
+  <footer class="flex-none pt-2">
+    <div class="border-t border-[#E2E8F0] pt-1.5 flex justify-between text-xs text-[#64748B] font-bold med-page-footer">
+      <span class="tracking-wider">MEDNERD ACADEMIC</span>
+      <span>${pageNum}</span>
+    </div>
+  </footer>
+</div>`;
+  }
+
+  function renderBookPages(book) {
+    const subjectLabel = book.subtitle || book.specialtyLabel || 'العلوم الطبية';
+    const lectureLabel = book.title || 'محاضرة طبية';
+    const headerRightText = `${subjectLabel} | ${lectureLabel}`;
+
+    // Collect all cards with an estimated vertical weight (out of 100 units per A4 page)
+    // so each page fills 85%–95% naturally with justify-start and gap-3
+    const cardQueue = [];
+    let mcqCounter = 1;
+
+    (book.chapters || []).forEach(ch => {
+      const chImages = (ch.images || []).filter(im => im.status === 'ready' && im.dataUrl);
+      const usedImgIds = new Set();
+
+      (ch.subtopics || []).forEach((st, sIdx) => {
+        // Match original image or generated figure for this subtopic
+        let figureObj = null;
+        if (Array.isArray(st.attachedOriginalImages) && st.attachedOriginalImages.length) {
+          const wantedId = st.attachedOriginalImages[0].imageId;
+          figureObj = chImages.find(im => im.id === wantedId) || null;
+        }
+        if (!figureObj) {
+          figureObj = chImages.find(im => !usedImgIds.has(im.id)) || null;
+        }
+        if (figureObj) usedImgIds.add(figureObj.id);
+
+        const fallbackLabel = (st.sideVisual && st.sideVisual.figureLabel)
+          ? st.sideVisual.figureLabel
+          : `شكل: ${st.heading}`;
+
+        // Append definitions inline into content if present so zero detail is lost
+        let fullText = st.contentMarkdown || '';
+        if (Array.isArray(st.definitions) && st.definitions.length) {
+          const defsLine = st.definitions.map(d => `<strong>${esc(d.term)}:</strong> ${d.definition}`).join(' | ');
+          fullText += `\n\n${defsLine}`;
+        }
+
+        // [Component 1]
+        cardQueue.push({
+          weight: 34,
+          html: renderComponent1(ch.id, sIdx, st.heading || ch.title, fullText, figureObj, fallbackLabel),
+          chapterTitle: ch.title
+        });
+
+        // [Component 2] Clinical Notes
+        (st.clinicalCases || []).forEach(cc => {
+          if (cc && String(cc).trim()) {
+            cardQueue.push({
+              weight: 18,
+              html: renderComponent2(cc),
+              chapterTitle: ch.title
+            });
+          }
+        });
+
+        // [Component 3] Comparison Tables
+        (st.tables || []).forEach(tb => {
+          const tbHtml = renderComponent3(tb);
+          if (tbHtml) {
+            cardQueue.push({
+              weight: 28,
+              html: tbHtml,
+              chapterTitle: ch.title
+            });
+          }
+        });
+
+        // [Component 4] MCQs
+        (st.mcqs || []).forEach(mcq => {
+          cardQueue.push({
+            weight: 24,
+            html: renderComponent4(mcqCounter++, mcq),
+            chapterTitle: ch.title
+          });
+        });
+      });
+
+      // Any remaining original/generated images in this chapter not yet placed
+      chImages.forEach(im => {
+        if (!usedImgIds.has(im.id)) {
+          usedImgIds.add(im.id);
+          cardQueue.push({
+            weight: 32,
+            html: renderComponent1(ch.id, 0, im.title || ch.title, im.caption || ch.title, im, im.title),
+            chapterTitle: ch.title
+          });
+        }
+      });
+    });
+
+    // Pack cards into A4 pages targeting 85–95 units per page
+    const rawPages = [];
+    let currentCards = [];
+    let currentWeight = 0;
+    const MAX_PAGE_WEIGHT = 92;
+
+    cardQueue.forEach(item => {
+      if (currentCards.length > 0 && (currentWeight + item.weight > MAX_PAGE_WEIGHT)) {
+        rawPages.push({
+          cards: currentCards,
+          chapterTitle: currentCards[0].chapterTitle
+        });
+        currentCards = [];
+        currentWeight = 0;
+      }
+      currentCards.push(item);
+      currentWeight += item.weight;
+    });
+
+    if (currentCards.length > 0) {
+      rawPages.push({
+        cards: currentCards,
+        chapterTitle: currentCards[0].chapterTitle
+      });
+    }
+
+    if (rawPages.length === 0) {
+      rawPages.push({
+        cards: [{
+          html: renderComponent1('ch_1', 0, lectureLabel, 'لم يتم إدخال محتوى بعد.', null, 'شكل: مخطط توضيحي')
+        }],
+        chapterTitle: lectureLabel
+      });
+    }
+
+    const htmlPages = rawPages.map((p, idx) => {
+      const pageNum = idx + 1;
+      const cardsHtml = p.cards.map(c => c.html).join('\n');
+      return buildA4PageCard({
+        pageNum,
+        headerRightText,
+        cardsHtml,
+        pageId: `page_${pageNum}`
+      });
+    });
+
+    return {
+      pages: rawPages.map((p, i) => ({
+        id: `page_${i + 1}`,
+        chapterTitle: p.chapterTitle,
+        html: p.cards.map(c => c.html).join('\n')
+      })),
+      html: `<div class="book-document" dir="rtl"><span id="page_cover" style="display:none"></span><span id="page_copyright" style="display:none"></span><span id="page_toc" style="display:none"></span><span id="page_index" style="display:none"></span>${htmlPages.join('\n')}</div>`,
+      totalPages: htmlPages.length
+    };
+  }
+
   function runQualityAssurance(book, rendered, allImages = []) {
     const issues = [];
     const warnings = [];
@@ -3513,41 +3836,14 @@ ${langInstruction}
       issues.push('لا توجد فصول منشأة في الكتاب.');
     }
 
-    // Check chapter completeness & duplicate chapter titles
-    const seenTitles = new Set();
     book.chapters.forEach(ch => {
-      const norm = String(ch.title || '').trim().toLowerCase();
-      if (seenTitles.has(norm)) {
-        warnings.push(`عنوان فصل مكرر: "${ch.title}".`);
-      }
-      seenTitles.add(norm);
-
       if (!ch.subtopics || ch.subtopics.length === 0) {
-        issues.push(`الفصل "${ch.title}" لا يحتوي على فقرات أو موضوعات فرعية.`);
-      } else {
-        ch.subtopics.forEach(st => {
-          if (!st.contentMarkdown || st.contentMarkdown.trim().length < 10) {
-            warnings.push(`فقرة قصيرة جداً أو فارغة في "${ch.title} — ${st.heading}".`);
-          }
-        });
+        issues.push(`الفصل "${ch.title}" لا يحتوي على بطاقات علمية.`);
       }
     });
 
-    // Check unavailable images
-    const unavailableImgs = (allImages || []).filter(im => im.status === 'unavailable');
-    if (unavailableImgs.length > 0) {
-      warnings.push(`${unavailableImgs.length} رسمة توضيحية لم تُولَّد لعدم توفر نموذج توليد الصور في مفتاح API الحالي (يمكنك رفع بديل من Image Center).`);
-    }
-
-    // Check contradictions & duplicates from ContentAnalyzer
     if (book.alerts && book.alerts.contradictions && book.alerts.contradictions.length) {
       book.alerts.contradictions.forEach(c => warnings.push(`تعارض محتمل بين المصادر: ${c}`));
-    }
-
-    // Check empty pages
-    const emptyPages = (rendered.pages || []).filter(p => !p.html || !p.html.trim());
-    if (emptyPages.length > 0) {
-      issues.push(`تم رصد ${emptyPages.length} صفحة فارغة.`);
     }
 
     const readyOrig = (allImages || []).filter(im => im.origin === 'original' && im.status === 'ready').length;
@@ -3580,108 +3876,73 @@ ${langInstruction}
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: pdf-exporter.js
-   Export Center (Step 12):
-   - Print-ready A4 Portrait PDF export via dedicated hidden print iframe
-     (safe in sandboxed iframes & all browsers including iPad/Desktop).
-   - Standalone self-contained HTML book download.
+   MEDNERD A4 Engine Export Center (Step 12):
+   Outputs a single complete HTML document starting with <!DOCTYPE html>
+   and ending with </html> with Tailwind CSS CDN and exact @page A4 portrait
+   and .page-card print rules.
    ========================================================================== */
 
 (function (global) {
   'use strict';
 
-  function getBookPrintStyles(book) {
-    const primary = (book.design && book.design.primaryColor) || '#0e7490';
-    const fontSize = (book.design && book.design.fontSizePt) || 11;
-    const fontFamily = book.language === 'en' ? "'Inter', 'Cairo', sans-serif" : "'Cairo', 'Inter', sans-serif";
-
+  function getA4EngineStyles() {
     return `
-      @page { size: A4 portrait; margin: 14mm 15mm; }
-      * { box-sizing: border-box; }
-      html, body {
-        margin: 0; padding: 0;
-        font-family: ${fontFamily};
-        font-size: ${fontSize}pt;
-        line-height: 1.75;
-        color: #17202a;
-        background: #ffffff;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .book-page {
-        background: #fff;
-        padding: 12mm 14mm;
-        margin: 0 auto 12mm;
-        page-break-after: always;
-        break-after: page;
-        position: relative;
-      }
-      .book-page:last-child { page-break-after: auto; break-after: auto; }
-      .book-cover { padding: 0; }
-      .cover-inner {
-        min-height: 265mm;
-        padding: 24mm 20mm;
-        color: #ffffff;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        border-radius: 6px;
-      }
-      .cover-top-badge { font-size: 10pt; letter-spacing: 1.5px; opacity: 0.85; font-weight: 700; }
-      .cover-specialty { font-size: 13pt; font-weight: 700; color: #fbbf24; margin-bottom: 10px; }
-      .cover-title { font-size: 28pt; font-weight: 800; line-height: 1.3; margin: 0 0 12px; }
-      .cover-subtitle { font-size: 13pt; opacity: 0.92; margin: 0; }
-      .cover-footer { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.25); padding-top: 12px; font-size: 11pt; }
-      .book-page-header {
-        display: flex; justify-content: space-between;
-        font-size: 8.5pt; color: #64748b;
-        border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 14px;
-      }
-      .book-page-footer {
-        display: flex; justify-content: space-between;
-        font-size: 8.5pt; color: #64748b;
-        border-top: 1px solid #e2e8f0; padding-top: 6px; margin-top: 18px;
-      }
-      .chapter-banner { border-bottom: 2px solid ${primary}; padding-bottom: 10px; margin-bottom: 16px; break-after: avoid; }
-      .chapter-num { font-size: 9.5pt; font-weight: 800; letter-spacing: 1px; display: block; }
-      .chapter-title { font-size: 19pt; font-weight: 800; margin: 4px 0; color: #0f172a; }
-      .chapter-sources { font-size: 9pt; color: #64748b; }
-      .section-heading { font-size: 15pt; font-weight: 800; border-inline-start: 4px solid ${primary}; padding-inline-start: 10px; margin: 14px 0 10px; break-after: avoid; }
-      .subtopic-heading { font-size: 13pt; font-weight: 800; margin: 16px 0 8px; break-after: avoid; page-break-after: avoid; }
-      .prose-block p { margin: 0 0 9px; text-align: justify; }
-      .prose-block ul, .prose-block ol { padding-inline-start: 20px; margin: 0 0 10px; }
-      table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; break-inside: avoid; page-break-inside: avoid; }
-      thead { display: table-header-group; }
-      tr { break-inside: avoid; page-break-inside: avoid; }
-      th { background: ${primary}; color: #fff; padding: 7px 10px; text-align: start; border: 1px solid #cbd5e1; }
-      td { padding: 7px 10px; border: 1px solid #cbd5e1; }
-      .callout-box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin: 12px 0; background: #f8fafc; break-inside: avoid; }
-      .clinical-box { border-inline-start: 4px solid #14532d; background: #f0fdf4; }
-      .definitions-box { border-inline-start: 4px solid ${primary}; }
-      .mcq-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; break-inside: avoid; }
-      .mcq-opts { list-style: none; padding-inline-start: 10px; margin: 6px 0; }
-      .mcq-ans { color: #14532d; font-size: 9.5pt; margin-top: 6px; }
-      .book-figure { margin: 14px auto; text-align: center; break-inside: avoid; page-break-inside: avoid; max-width: 100%; }
-      .book-figure img { max-width: 100%; max-height: 110mm; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 6px; }
-      .book-figure figcaption { font-size: 9pt; color: #334155; margin-top: 6px; }
-      .fig-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 1px 6px; border-radius: 4px; font-size: 8pt; font-weight: 700; margin-inline-end: 6px; }
-      .toc-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
-      .toc-dots { flex: 1; border-bottom: 1px dotted #94a3b8; }
-      .index-grid { column-count: 2; column-gap: 18px; font-size: 9.5pt; }
-      .index-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding: 3px 0; break-inside: avoid; }
-    `;
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #F8F9FA;
+    font-family: 'Cairo', Arial, Tahoma, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page-card {
+    width: 210mm;
+    min-height: 297mm;
+    max-height: 297mm;
+    box-sizing: border-box;
+    padding: 10mm 12mm;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    background-color: #F8F9FA;
+  }
+  .page-card:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  @media screen {
+    body { background-color: #CBD5E1; padding: 16px 0; }
+    .page-card { margin: 0 auto 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
+  }
+  @media print {
+    body { background-color: #F8F9FA !important; padding: 0 !important; }
+    .page-card { margin: 0 !important; box-shadow: none !important; }
+  }`;
   }
 
   function buildStandaloneHtmlDocument(book, renderedHtml) {
     const dir = book.direction || 'rtl';
     const lang = book.language || 'ar';
+    const openScr = '<scr' + 'ipt src="https://cdn.tailwindcss.com">';
+    const closeScr = '</scr' + 'ipt>';
     return `<!DOCTYPE html>
 <html lang="${lang}" dir="${dir}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${String(book.title || 'MEDNERD Medical Book').replace(/</g, '&lt;')}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>${getBookPrintStyles(book)}</style>
+<title>${String(book.title || 'MEDNERD Academic Book').replace(/</g, '&lt;')}</title>
+${openScr}${closeScr}
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>${getA4EngineStyles()}
+</style>
 </head>
 <body>
 ${renderedHtml}
@@ -3694,7 +3955,7 @@ ${renderedHtml}
     const blob = new Blob([fullDoc], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const safeName = (book.title || 'mednerd-book').replace(/[^\w\u0600-\u06FF\- ]+/g, '').trim().replace(/\s+/g, '-') || 'mednerd-book';
+    const safeName = (book.title || 'mednerd-a4-book').replace(/[^\w\u0600-\u06FF\- ]+/g, '').trim().replace(/\s+/g, '-') || 'mednerd-a4-book';
     a.href = url;
     a.download = `${safeName}.html`;
     document.body.appendChild(a);
@@ -3720,9 +3981,9 @@ ${renderedHtml}
         iframe.contentWindow.focus();
         iframe.contentWindow.print();
       } finally {
-        setTimeout(() => iframe.remove(), 3000);
+        setTimeout(() => iframe.remove(), 3500);
       }
-    }, 600);
+    }, 900);
     return true;
   }
 
@@ -3739,9 +4000,10 @@ ${renderedHtml}
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: app.js
-   Main UI Controller: Dashboard, Upload Center, Master Prompt Editor,
-   12-Step Resumable Pipeline, Live Book Preview & Editor, Image Center,
-   QA Report, Export Center, and exact MEDNERD API Key & Model Presets.
+   Main UI Controller: Dashboard, Upload Center, Mandatory Team Input Template
+   ([المادة], [عنوان المحاضرة بالعربية], [المحتوى المصدري]), MEDNERD A4 Engine
+   Prompt Editor, 12-Step Resumable Pipeline, Live Book Preview, Image Center,
+   QA Report, and Export Center.
    ========================================================================== */
 
 (function (global) {
@@ -4041,7 +4303,7 @@ ${renderedHtml}
       if (!projects.length) {
         grid.innerHTML = `
           <div class="card-box" style="grid-column:1/-1;text-align:center;padding:34px;">
-            <p style="color:var(--muted-text);margin-bottom:12px;">لا توجد مشاريع محفوظة بعد. ابدأ برفع محاضراتك لتحويلها إلى كتاب أكاديمي.</p>
+            <p style="color:var(--muted-text);margin-bottom:12px;">لا توجد مشاريع محفوظة بعد. ابدأ برفع محاضراتك لتحويلها إلى كتاب أكاديمي بنظام A4.</p>
             <button class="btn-primary" id="emptyDashCreateBtn"><i class="fa-solid fa-plus"></i> إنشاء أول كتاب</button>
           </div>`;
         const b = $('emptyDashCreateBtn');
@@ -4138,7 +4400,7 @@ ${renderedHtml}
     if (!list) return;
 
     if (!APP.uploadQueue.length) {
-      list.innerHTML = `<p style="text-align:center;color:var(--muted-text);font-size:13px;padding:12px;">لم يتم إضافة ملفات بعد.</p>`;
+      list.innerHTML = `<p style="text-align:center;color:var(--muted-text);font-size:13px;padding:10px;">لم يتم رفع ملفات بعد (يمكنك رفع ملفات أو لصق المحتوى المصدري أدناه).</p>`;
       return;
     }
 
@@ -4219,8 +4481,9 @@ ${renderedHtml}
   }
 
   async function startBookPipeline() {
-    if (!APP.uploadQueue.length) {
-      toast('يرجى رفع ملف واحد على الأقل قبل بدء إنشاء الكتاب.', 'error');
+    const rawPastedText = ($('rawSourceTextInput') && $('rawSourceTextInput').value.trim()) || '';
+    if (!APP.uploadQueue.length && !rawPastedText) {
+      toast('يرجى رفع ملف واحد على الأقل أو لصق [المحتوى المصدري] قبل البدء.', 'error');
       return;
     }
     if (!global.GeminiClient.getActiveApiKey()) {
@@ -4253,32 +4516,37 @@ ${renderedHtml}
     const masterPromptText = ($('masterPromptInput') && $('masterPromptInput').value.trim()) || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
     global.GeminiClient.store.set(global.MEDNERD_CONFIG.GEMINI_CONFIG.storageKeys.masterPrompt, masterPromptText);
 
+    const subjectName = ($('bookSubjectInput') && $('bookSubjectInput').value.trim()) || '';
+    const customTitle = ($('bookTitleInput') && $('bookTitleInput').value.trim()) || '';
+
     const options = {
       mode: APP.mode,
       masterPrompt: masterPromptText,
-      customTitle: $('bookTitleInput').value.trim(),
+      subjectName,
+      customTitle,
+      customSubtitle: subjectName,
       specialty: $('bookSpecialtySelect').value || 'human_medicine',
       language: $('bookLangSelect') ? $('bookLangSelect').value : 'ar',
       imageDensity: $('imageDensitySelect') ? $('imageDensitySelect').value : 'balanced',
       fontSizePt: $('fontSizeInput') ? $('fontSizeInput').value : 11,
       coverStyle: $('coverStyleSelect') ? $('coverStyleSelect').value : 'academic_teal',
-      primaryColor: $('primaryColorInput') ? $('primaryColorInput').value : '#0e7490',
+      primaryColor: $('primaryColorInput') ? $('primaryColorInput').value : '#1A7398',
       scientificEnrichment: $('enrichmentToggle') ? $('enrichmentToggle').checked : false
     };
 
     try {
       await global.StorageManager.saveProject({
         id: projectId,
-        title: options.customTitle || APP.uploadQueue[0].name,
+        title: customTitle || subjectName || (APP.uploadQueue[0] && APP.uploadQueue[0].name) || 'محاضرة MEDNERD',
         status: 'processing',
         files: APP.uploadQueue.map(f => ({ name: f.name, size: f.size })),
         options
       });
 
-      setStep(1, 'الخطوة 1/12: تجهيز الملفات المرفوعة...');
+      setStep(1, 'الخطوة 1/12: تجهيز المدخلات والملفات...');
       finishStep(1);
 
-      setStep(2, 'الخطوة 2/12: استخراج النصوص والجداول والصور الأصلية من داخل الملفات...');
+      setStep(2, 'الخطوة 2/12: استخراج النصوص والجداول والصور الأصلية...');
       const allBlocks = [];
       const originalImages = [];
 
@@ -4300,6 +4568,14 @@ ${renderedHtml}
         }
         allBlocks.push(...(item.extracted.blocks || []));
         originalImages.push(...(item.extracted.extractedImages || []));
+      }
+
+      if (rawPastedText) {
+        allBlocks.push({
+          sourceFile: customTitle || 'المحتوى المصدري المباشر',
+          location: 'النص المصدري',
+          text: rawPastedText
+        });
       }
 
       const ocrTargets = originalImages.filter(im => im.isPageScan || im.isStandaloneImage);
@@ -4326,21 +4602,21 @@ ${renderedHtml}
       const analyzedSegments = [];
       for (let i = 0; i < segments.length; i++) {
         if (signal.aborted) throw new Error('تم إيقاف العملية.');
-        setStep(4, `الخطوة 4/12: تحليل المقطع الطبي ${i + 1} من ${segments.length} وفق البرومبت المعتمد...`);
+        setStep(4, `الخطوة 4/12: صياغة المقطع ${i + 1}/${segments.length} وفق نظام MEDNERD A4 Engine...`);
         const analyzed = await global.ContentAnalyzer.analyzeSegment(segments[i], options, signal);
         analyzedSegments.push(analyzed);
       }
       await global.StorageManager.saveStageResult(projectId, 4, analyzedSegments);
       finishStep(4);
 
-      setStep(5, 'الخطوة 5/12: ترتيب الفصول واكتشاف التكرار والتعارضات...');
+      setStep(5, 'الخطوة 5/12: ترتيب المحاور والفصول الأكاديمية...');
       const organized = await global.ContentAnalyzer.organizeAndDetectConflicts(analyzedSegments, options, signal);
       await global.StorageManager.saveStageResult(projectId, 5, organized);
       finishStep(5);
 
-      setStep(6, `الخطوة 6/12: إدراج ${originalImages.length} صورة أصلية مستخرجة في مواضعها العلمية...`);
+      setStep(6, `الخطوة 6/12: ربط ${originalImages.length} صورة أصلية بحاويات [المكون 1]...`);
       finishStep(6);
-      setStep(7, 'الخطوة 7/12: توليد الرسومات والمخططات التوضيحية الطبية...');
+      setStep(7, 'الخطوة 7/12: توليد المخططات والرسومات الطبية التوضيحية...');
       const imgRes = await global.ImageEngine.processBookImages(
         projectId,
         organized,
@@ -4352,13 +4628,19 @@ ${renderedHtml}
       APP.currentImages = imgRes.images;
       finishStep(7);
 
-      setStep(8, 'الخطوة 8/12: بناء هيكل الكتاب الأكاديمي...');
-      const book = await global.BookBuilder.buildBook({ id: projectId, files: APP.uploadQueue }, organized, imgRes, options, signal);
+      setStep(8, 'الخطوة 8/12: بناء هيكل الكتاب بنظام MEDNERD A4...');
+      const book = await global.BookBuilder.buildBook(
+        { id: projectId, files: APP.uploadQueue.length ? APP.uploadQueue : [{ name: 'محتوى مصدري' }] },
+        organized,
+        imgRes,
+        options,
+        signal
+      );
       finishStep(8);
-      setStep(9, 'الخطوة 9/12: تنسيق الفصول والجداول والفهارس...');
+      setStep(9, 'الخطوة 9/12: تطبيق المكونات الأربعة المعيارية...');
       finishStep(9);
 
-      setStep(10, 'الخطوة 10/12: توليد صفحات A4 الأكاديمية...');
+      setStep(10, 'الخطوة 10/12: توليد بطاقات الصفحات (.page-card A4)...');
       const rendered = global.HtmlRenderer.renderBookPages(book);
       finishStep(10);
 
@@ -4366,7 +4648,7 @@ ${renderedHtml}
       const qa = global.HtmlRenderer.runQualityAssurance(book, rendered, APP.currentImages);
       finishStep(11);
 
-      setStep(12, 'الخطوة 12/12: حفظ الكتاب وتجهيز التصدير...');
+      setStep(12, 'الخطوة 12/12: حفظ الكتاب وتجهيز كود HTML وPDF...');
       APP.currentBook = book;
       APP.renderedBook = rendered;
       APP.qaReport = qa;
@@ -4380,8 +4662,8 @@ ${renderedHtml}
         book
       });
       finishStep(12);
-      setStep(12, 'اكتمل إنشاء الكتاب بنجاح!');
-      toast('تم إنشاء الكتاب الأكاديمي مع الصور الأصلية والرسومات التوضيحية بنجاح!', 'success');
+      setStep(12, 'اكتمل إنشاء الكتاب بنظام MEDNERD A4 بنجاح!');
+      toast('تم إنشاء الملزمة/الكتاب بنظام MEDNERD A4 بنجاح!', 'success');
 
       setTimeout(() => switchView('previewView'), 500);
     } catch (e) {
@@ -4423,17 +4705,17 @@ ${renderedHtml}
 
     const total = APP.renderedBook.totalPages;
     if (APP.previewPageIndex >= total) APP.previewPageIndex = Math.max(0, total - 1);
-    $('pageIndicator').textContent = `${APP.previewPageIndex + 1} / ${total}`;
+    $('pageIndicator').textContent = `${APP.previewPageIndex + 1}`;
     $('zoomLabel').textContent = `${APP.previewZoom}%`;
 
     renderChapterSidebar();
   }
 
   function scrollToPage(index) {
-    const pages = document.querySelectorAll('#bookZoomWrap .book-page');
+    const pages = document.querySelectorAll('#bookZoomWrap .page-card');
     if (!pages.length) return;
     APP.previewPageIndex = Math.max(0, Math.min(index, pages.length - 1));
-    $('pageIndicator').textContent = `${APP.previewPageIndex + 1} / ${pages.length}`;
+    $('pageIndicator').textContent = `${APP.previewPageIndex + 1}`;
     pages[APP.previewPageIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -4445,7 +4727,7 @@ ${renderedHtml}
       <div class="chapter-nav-item">
         <div style="font-size:13px;font-weight:800;color:var(--petrol);margin-bottom:6px;">${ch.number}. ${ch.title}</div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="btn-secondary btn-sm jump-ch-btn" data-page="${idx + 3}" title="انتقال"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn-secondary btn-sm jump-ch-btn" data-page="${idx}" title="انتقال"><i class="fa-solid fa-eye"></i></button>
           <button class="btn-secondary btn-sm up-ch-btn" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="رفع"><i class="fa-solid fa-arrow-up"></i></button>
           <button class="btn-secondary btn-sm down-ch-btn" data-idx="${idx}" ${idx === APP.currentBook.chapters.length - 1 ? 'disabled' : ''} title="خفض"><i class="fa-solid fa-arrow-down"></i></button>
           <button class="btn-secondary btn-sm regen-ch-btn" data-id="${ch.id}" title="إعادة صياغة وتنسيق الفصل"><i class="fa-solid fa-rotate"></i></button>
@@ -4530,13 +4812,13 @@ ${renderedHtml}
       : '';
     const warnHtml = q.warnings.length
       ? `<div class="alert-box alert-warn"><strong>ملاحظات للمراجعة:</strong><ul>${q.warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>`
-      : `<div class="alert-box alert-success">جميع الفحوصات الأساسية مكتملة دون تعارضات أو نواقص.</div>`;
+      : `<div class="alert-box alert-success">جميع الفحوصات الأساسية مكتملة ومطابقة لمعايير MEDNERD A4 Engine.</div>`;
 
     $('qaModalBody').innerHTML = `
       <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:12px;">
         <div class="card-box"><strong>الملفات المعالجة:</strong> ${s.filesProcessed}</div>
         <div class="card-box"><strong>عدد الفصول:</strong> ${s.chaptersCount}</div>
-        <div class="card-box"><strong>عدد الصفحات:</strong> ${s.pagesCount}</div>
+        <div class="card-box"><strong>عدد بطاقات A4:</strong> ${s.pagesCount}</div>
         <div class="card-box"><strong>صور أصلية / مولدة:</strong> ${s.originalImagesCount} / ${s.generatedImagesCount}</div>
       </div>
       ${issuesHtml}
@@ -4653,7 +4935,6 @@ ${renderedHtml}
     applyTheme(global.GeminiClient.store.get('mednerd_theme') || 'light');
     applyLang(global.GeminiClient.store.get('mednerd_lang') || 'ar');
 
-    // Initialize Master Prompt input with saved or default Master Prompt
     const mpInput = $('masterPromptInput');
     if (mpInput) {
       mpInput.value = global.GeminiClient.store.get(cfg.storageKeys.masterPrompt) || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
@@ -4666,7 +4947,7 @@ ${renderedHtml}
     if (copyMpBtn) {
       copyMpBtn.addEventListener('click', () => {
         const txt = (mpInput && mpInput.value) || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
-        copyTextSafe(txt).then(() => toast('تم نسخ البرومبت المعتمد إلى الحافظة.', 'success'));
+        copyTextSafe(txt).then(() => toast('تم نسخ برومبت MEDNERD A4 Engine إلى الحافظة.', 'success'));
       });
     }
 
@@ -4675,7 +4956,7 @@ ${renderedHtml}
       resetMpBtn.addEventListener('click', () => {
         if (mpInput) mpInput.value = global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
         global.GeminiClient.store.del(cfg.storageKeys.masterPrompt);
-        toast('تمت استعادة البرومبت الافتراضي المعتمد.', 'info');
+        toast('تمت استعادة برومبت MEDNERD A4 Engine الافتراضي.', 'info');
       });
     }
 
@@ -4805,7 +5086,7 @@ ${renderedHtml}
     $('exportHtmlBtn').addEventListener('click', () => {
       if (APP.currentBook && APP.renderedBook) {
         global.PdfExporter.exportAsHTML(APP.currentBook, APP.renderedBook.html);
-        toast('تم تنزيل الكتاب بصيغة HTML.', 'success');
+        toast('تم تنزيل ملف HTML المستقل بنظام MEDNERD A4.', 'success');
       }
     });
     $('exportPdfBtn').addEventListener('click', () => {
