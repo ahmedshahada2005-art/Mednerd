@@ -945,7 +945,7 @@ body {
     <div class="welcome-banner">
       <div>
         <h1>مرحباً بك في MEDNERD AI — Medical Book Creator</h1>
-        <p>حوّل محاضراتك وملفات PDF وDOCX وPPTX الخام إلى كتب ومراجع طبية أكاديمية جاهزة للطباعة بصيغة A4 مع فهرسة وتدقيق جودة وصور توضيحية.</p>
+        <p>حوّل محاضراتك وملفات PDF وDOCX وPPTX الخام إلى كتب ومراجع طبية أكاديمية جاهزة للطباعة بصيغة A4 مع استخراج الصور الأصلية من الملف وتوليد الرسومات الطبية التوضيحية تلقائياً.</p>
       </div>
       <button class="cta-create-btn" id="heroCreateBookBtn">
         <i class="fa-solid fa-plus-circle"></i>
@@ -997,24 +997,24 @@ body {
         <div class="dropzone" id="uploadDropzone">
           <i class="fa-solid fa-file-medical"></i>
           <h3>اسحب الملفات وأفلتها هنا أو اضغط للاختيار</h3>
-          <p style="font-size:12.5px;color:var(--muted-text);margin-top:4px;">يدعم: PDF, DOCX, PPTX, TXT, MD, JPG, PNG, WEBP (رفع متعدد)</p>
+          <p style="font-size:12.5px;color:var(--muted-text);margin-top:4px;">يدعم: PDF, DOCX, PPTX, TXT, MD, JPG, PNG, WEBP (يستخرج النصوص + الصور الأصلية من داخل الملف)</p>
           <input type="file" id="filePickerInput" multiple accept=".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp" style="display:none;">
         </div>
 
         <div id="uploadFileList" class="file-list"></div>
       </div>
 
-      <!-- Right: Book Configuration & Modes -->
+      <!-- Right: Book Configuration, Modes & Master Prompt -->
       <div class="card-box">
         <div class="section-header" style="margin-top:0;">
-          <h2 class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الكتاب ووضع الإنشاء</h2>
+          <h2 class="section-title"><i class="fa-solid fa-sliders"></i> إعدادات الكتاب والبرومبت المعتمد</h2>
         </div>
 
         <label class="form-label">اختر وضع الإنشاء (Creation Mode):</label>
         <div class="mode-cards" id="modeSelector">
           <div class="mode-card active" data-mode="auto">
             <h4>AUTO MODE</h4>
-            <p>ارفع الملفات واضغط إنشاء؛ يتولى النظام التحليل والترتيب والتنسيق تلقائياً.</p>
+            <p>يدرج صور الملف الأصلي ويولّد الرسومات التوضيحية وينسق الكتاب تلقائياً.</p>
           </div>
           <div class="mode-card" data-mode="professional">
             <h4>PROFESSIONAL</h4>
@@ -1022,7 +1022,7 @@ body {
           </div>
           <div class="mode-card" data-mode="source_preservation">
             <h4>SOURCE PRESERVATION</h4>
-            <p>يحافظ على نصوص المحاضرات كما هي تماماً دون إعادة صياغة أو اختصار.</p>
+            <p>يحافظ على نصوص وصور المحاضرات كما هي تماماً دون إعادة صياغة.</p>
           </div>
         </div>
 
@@ -1037,6 +1037,18 @@ body {
           </div>
         </div>
 
+        <!-- Master Prompt Editor Box -->
+        <div class="form-group">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
+            <label class="form-label" for="masterPromptInput" style="margin-bottom:0;"><i class="fa-solid fa-terminal"></i> البرومبت المعتمد (يدمج صور الملف الأصلي + يولّد رسومات جديدة):</label>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-secondary btn-sm" id="copyMasterPromptBtn"><i class="fa-solid fa-copy"></i> نسخ البرومبت</button>
+              <button type="button" class="btn-secondary btn-sm" id="resetMasterPromptBtn"><i class="fa-solid fa-rotate-left"></i> استعادة الافتراضي</button>
+            </div>
+          </div>
+          <textarea id="masterPromptInput" class="form-textarea" rows="5"></textarea>
+        </div>
+
         <div id="professionalOptionsBox" style="display:none;">
           <div class="form-row">
             <div>
@@ -1047,12 +1059,12 @@ body {
               </select>
             </div>
             <div>
-              <label class="form-label" for="imageDensitySelect">كثافة الصور المولدة:</label>
+              <label class="form-label" for="imageDensitySelect">كثافة الصور المولدة (إلى جانب صور الملف الأصلي):</label>
               <select id="imageDensitySelect" class="form-select">
-                <option value="balanced">متوازنة (4 رسومات)</option>
-                <option value="minimal">محدودة (2 رسمة)</option>
-                <option value="rich">غنية (6 رسومات)</option>
-                <option value="none">بدون توليد (الأصلية فقط)</option>
+                <option value="balanced">متوازنة (صور الملف + حتى 4 رسومات مولدة)</option>
+                <option value="minimal">محدودة (صور الملف + رسمتان مولدتان)</option>
+                <option value="rich">غنية (صور الملف + حتى 6 رسومات مولدة)</option>
+                <option value="none">صور الملف الأصلي فقط (بدون توليد)</option>
               </select>
             </div>
           </div>
@@ -1119,7 +1131,7 @@ body {
       <div class="preview-toolbar">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <button class="btn-secondary btn-sm" id="prevPageBtn"><i class="fa-solid fa-chevron-right"></i> السابق</button>
-          <span id="pageIndicator" style="font-size:13px;font-weight:700;">صفحة 1 / 1</span>
+          <span id="pageIndicator" style="font-size:13px;font-weight:700;">1 / 1</span>
           <button class="btn-secondary btn-sm" id="nextPageBtn">التالي <i class="fa-solid fa-chevron-left"></i></button>
           <button class="btn-secondary btn-sm" id="zoomOutBtn"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
           <span id="zoomLabel" style="font-size:12.5px;font-weight:700;">100%</span>
@@ -1150,7 +1162,7 @@ body {
   <!-- 4. IMAGE CENTER VIEW -->
   <section id="imageCenterView" class="view-section">
     <div class="section-header" style="margin-top:0;">
-      <h2 class="section-title"><i class="fa-solid fa-images"></i> مركز الصور الطبية (Image Center)</h2>
+      <h2 class="section-title"><i class="fa-solid fa-images"></i> مركز الصور الطبية (الصور الأصلية + المولدة)</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn-secondary btn-sm img-filter-btn active" data-filter="all">الكل</button>
         <button class="btn-secondary btn-sm img-filter-btn" data-filter="original">أصلية من الملفات</button>
@@ -1164,7 +1176,7 @@ body {
 
 </main>
 
-<!-- API KEY MODAL (Exact structure & all 4 model chips from original MEDNERD code) -->
+<!-- API KEY MODAL -->
 <div class="modal-overlay" id="apiKeyModal" role="dialog" aria-modal="true" aria-labelledby="apiModalTitle">
   <div class="modal-card">
     <div class="modal-header">
@@ -1246,7 +1258,7 @@ body {
   </div>
 </div>
 
-<!-- CONFIRMATION MODAL (replaces native confirm) -->
+<!-- CONFIRMATION MODAL -->
 <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true">
   <div class="modal-card" style="max-width:420px;text-align:center;">
     <p id="confirmModalText" style="font-weight:700;margin-bottom:18px;"></p>
@@ -1266,7 +1278,8 @@ body {
    MEDNERD AI — Medical Book Creator
    Module: gemini-config.js
    Centralized Gemini API configuration, exact model presets from MEDNERD AI,
-   BYOK storage keys, medical specialty templates, and 12-step pipeline.
+   DEFAULT_MASTER_PROMPT for hybrid (Original + AI Generated) images,
+   medical specialty templates, and 12-step pipeline.
    ========================================================================== */
 
 (function (global) {
@@ -1294,9 +1307,24 @@ body {
       lang: 'mednerd_lang',
       theme: 'mednerd_theme',
       profile: 'mednerd_profile',
-      intro: 'mednerd_intro'
+      intro: 'mednerd_intro',
+      masterPrompt: 'mednerd_master_book_prompt'
     }
   };
+
+  const DEFAULT_MASTER_PROMPT = `أنت رئيس تحرير طبي أكاديمي ومهندس نشر علمي في منصة MEDNERD AI.
+مهمتك تحويل محتوى الملفات والمحاضرات الطبية المرفوعة إلى كتاب طبي أكاديمي احترافي بمقاس A4 جاهز للطباعة، مع التطبيق الصارم لنظام الصور الهجين (الاحتفاظ بالصور الأصلية من الملف + توليد رسومات توضيحية طبية للمفاهيم المعقدة):
+
+1. القواعد العلمية واللغوية (MEDNERD Standards):
+- الالتزام الكامل بمعلومات المصدر دون حذف أي فقرة أو جدول أو خيار في أسئلة MCQ.
+- إبقاء المصطلحات الطبية بالإنجليزية بجانب الشرح العربي الأكاديمي.
+- منع استخدام الرموز التعبيرية (Emojis) نهائياً، واستخدام وسوم <sup> و <sub> بدلاً من LaTeX، واعتماد الترقيم الرقمي المجرد للصفحات دون كلمة "صفحة".
+
+2. المسار الأول للصور — إدراج الصور الأصلية الموجودة في الملف (Original File Images):
+- عندما تجد إشارة [ORIGINAL_IMAGE: ID | المصدر: ...] داخل النص، حافظ على معرّفها (ID) وأدرجها في نفس الموضوع الفرعي الذي وردت فيه داخل الملف الأصلي مع عنوان علمي وشرح يربطها بالفقرة.
+
+3. المسار الثاني للصور — توليد صور ورسومات توضيحية جديدة (AI & Vector Medical Illustrations):
+- حدد المفاهيم التشريحية أو الفيزيولوجية أو المرضية أو الدوائية التي تحتاج إلى توضيح بصري، وأنشئ لكل منها وصف توليد دقيق (promptEn) ومخطط خطوات/عناصر علمية (diagramNodes) وعنواناً وشرحاً علمياً بالعربية.`;
 
   const MEDICAL_SPECIALTIES = {
     human_medicine: {
@@ -1388,6 +1416,7 @@ body {
 
   global.MEDNERD_CONFIG = {
     GEMINI_CONFIG,
+    DEFAULT_MASTER_PROMPT,
     MEDICAL_SPECIALTIES,
     IMAGE_TYPES,
     PIPELINE_STEPS
@@ -2178,12 +2207,9 @@ body {
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: file-processor.js
-   Client-side multi-format extraction engine:
-   - PDF (via pdf.js): text, page markers, and embedded/rendered figures
-   - DOCX (via JSZip + XML): paragraphs, headings, tables, and word/media/*
-   - PPTX (via JSZip + XML): ordered slides, tables, and ppt/media/*
-   - TXT / MD: raw text & markdown tables
-   - JPG / PNG / WEBP: base64 image assets + optional Gemini Vision OCR
+   Client-side multi-format extraction engine with inline [ORIGINAL_IMAGE: id]
+   tagging so original images from PDF, DOCX, PPTX, and image uploads stay
+   anchored to their exact scientific context in the book.
    ========================================================================== */
 
 (function (global) {
@@ -2258,12 +2284,12 @@ body {
     const blocks = [];
     const extractedImages = [];
     let totalChars = 0;
+    const OPS = global.pdfjsLib.OPS || {};
 
     for (let p = 1; p <= limitPages; p++) {
       if (onProgress) onProgress(Math.round((p / limitPages) * 100));
       const page = await pdf.getPage(p);
       const tc = await page.getTextContent();
-      // Preserve line breaks using Y-coordinate shifts
       let lastY = null;
       let pageLines = [];
       let currentLine = [];
@@ -2277,7 +2303,46 @@ body {
         lastY = y;
       }
       if (currentLine.length) pageLines.push(currentLine.join(' ').trim());
-      const pageText = pageLines.filter(Boolean).join('\n').trim();
+      let pageText = pageLines.filter(Boolean).join('\n').trim();
+
+      // Detect if this PDF page contains embedded raster figures/diagrams
+      let hasEmbeddedFigure = false;
+      try {
+        const opList = await page.getOperatorList();
+        if (opList && Array.isArray(opList.fnArray)) {
+          hasEmbeddedFigure = opList.fnArray.some(fn =>
+            fn === OPS.paintImageXObject ||
+            fn === OPS.paintInlineImageXObject ||
+            fn === OPS.paintImageMaskXObject
+          );
+        }
+      } catch (_) {}
+
+      if (hasEmbeddedFigure && extractedImages.length < 15) {
+        try {
+          const viewport = page.getViewport({ scale: 1.35 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.84);
+          const imgId = `orig_pdf_p${p}_${Date.now().toString(36)}`;
+          extractedImages.push({
+            id: imgId,
+            name: `${file.name} — الشكل في الصفحة ${p}`,
+            sourceFile: file.name,
+            location: `صفحة ${p}`,
+            mimeType: 'image/jpeg',
+            dataUrl,
+            base64: dataUrl.split(',')[1],
+            origin: 'original',
+            isPageScan: false
+          });
+          pageText += `\n[ORIGINAL_IMAGE: ${imgId} | المصدر: ${file.name} - صفحة ${p}]`;
+        } catch (_) {}
+      }
+
       if (pageText) {
         totalChars += pageText.length;
         blocks.push({
@@ -2288,7 +2353,7 @@ body {
       }
     }
 
-    // If scanned PDF (very little text), render up to first 6 pages as images for Vision OCR
+    // If scanned PDF (very little text), render up to first 6 pages as images for Vision OCR + figure inclusion
     let isScanned = false;
     if (totalChars < 40 && limitPages > 0) {
       isScanned = true;
@@ -2302,8 +2367,9 @@ body {
         const ctx = canvas.getContext('2d');
         await page.render({ canvasContext: ctx, viewport }).promise;
         const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        const imgId = `orig_scan_p${p}_${Date.now().toString(36)}`;
         extractedImages.push({
-          id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          id: imgId,
           name: `${file.name} - صفحة ${p}`,
           sourceFile: file.name,
           location: `صفحة ${p}`,
@@ -2334,12 +2400,35 @@ body {
     const docXmlFile = zip.file('word/document.xml');
     if (!docXmlFile) throw new Error(`ملف DOCX غير صالح (${file.name}).`);
 
+    // Extract original embedded images from word/media/ first so we can tag them
+    const extractedImages = [];
+    const mediaFiles = Object.keys(zip.files).filter(p => /^word\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
+    for (let idx = 0; idx < mediaFiles.length; idx++) {
+      const path = mediaFiles[idx];
+      const buf = await zip.files[path].async('arraybuffer');
+      const mimeType = guessImageMime(path);
+      const base64 = arrayBufferToBase64(buf);
+      const imgId = `orig_docx_${idx + 1}_${Date.now().toString(36)}`;
+      extractedImages.push({
+        id: imgId,
+        name: path.split('/').pop(),
+        sourceFile: file.name,
+        location: `مستند Word (صورة ${idx + 1})`,
+        mimeType,
+        base64,
+        dataUrl: `data:${mimeType};base64,${base64}`,
+        origin: 'original'
+      });
+    }
+
     const xmlText = await docXmlFile.async('string');
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
 
     const blocks = [];
     const body = xmlDoc.getElementsByTagName('w:body')[0];
+    let imgCursor = 0;
+
     if (body) {
       const children = Array.from(body.childNodes);
       let buffer = [];
@@ -2349,8 +2438,12 @@ body {
         if (node.nodeName === 'w:p') {
           const texts = Array.from(node.getElementsByTagName('w:t')).map(t => t.textContent).join('');
           if (texts.trim()) buffer.push(texts.trim());
+          const hasDrawing = node.getElementsByTagName('w:drawing').length > 0 || node.getElementsByTagName('w:pict').length > 0;
+          if (hasDrawing && imgCursor < extractedImages.length) {
+            const im = extractedImages[imgCursor++];
+            buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - ${im.name}]`);
+          }
         } else if (node.nodeName === 'w:tbl') {
-          // Extract table into Markdown format
           const rows = Array.from(node.getElementsByTagName('w:tr'));
           const mdRows = rows.map(tr => {
             const cells = Array.from(tr.getElementsByTagName('w:tc')).map(tc => {
@@ -2370,28 +2463,14 @@ body {
           buffer = [];
         }
       }
+      // Append any remaining untagged images to the last buffer
+      while (imgCursor < extractedImages.length) {
+        const im = extractedImages[imgCursor++];
+        buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - ${im.name}]`);
+      }
       if (buffer.length) {
         blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex}`, text: buffer.join('\n') });
       }
-    }
-
-    // Extract original embedded images from word/media/
-    const extractedImages = [];
-    const mediaFiles = Object.keys(zip.files).filter(p => /^word\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
-    for (const path of mediaFiles) {
-      const buf = await zip.files[path].async('arraybuffer');
-      const mimeType = guessImageMime(path);
-      const base64 = arrayBufferToBase64(buf);
-      extractedImages.push({
-        id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-        name: path.split('/').pop(),
-        sourceFile: file.name,
-        location: 'مستند Word',
-        mimeType,
-        base64,
-        dataUrl: `data:${mimeType};base64,${base64}`,
-        origin: 'original'
-      });
     }
 
     return { blocks, extractedImages, warnings: [], meta: { mediaCount: extractedImages.length } };
@@ -2412,8 +2491,29 @@ body {
 
     if (!slidePaths.length) throw new Error(`لم يتم العثور على شرائح في (${file.name}).`);
 
+    const extractedImages = [];
+    const mediaFiles = Object.keys(zip.files).filter(p => /^ppt\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
+    for (let idx = 0; idx < mediaFiles.length; idx++) {
+      const path = mediaFiles[idx];
+      const buf = await zip.files[path].async('arraybuffer');
+      const mimeType = guessImageMime(path);
+      const base64 = arrayBufferToBase64(buf);
+      const imgId = `orig_pptx_${idx + 1}_${Date.now().toString(36)}`;
+      extractedImages.push({
+        id: imgId,
+        name: path.split('/').pop(),
+        sourceFile: file.name,
+        location: `عرض PPTX (صورة ${idx + 1})`,
+        mimeType,
+        base64,
+        dataUrl: `data:${mimeType};base64,${base64}`,
+        origin: 'original'
+      });
+    }
+
     const parser = new DOMParser();
     const blocks = [];
+    let imgCursor = 0;
 
     for (let i = 0; i < slidePaths.length; i++) {
       const xmlText = await zip.files[slidePaths[i]].async('string');
@@ -2421,6 +2521,13 @@ body {
       const paragraphs = Array.from(xmlDoc.getElementsByTagName('a:p'))
         .map(p => Array.from(p.getElementsByTagName('a:t')).map(t => t.textContent).join('').trim())
         .filter(Boolean);
+
+      const hasPic = xmlDoc.getElementsByTagName('p:pic').length > 0 || xmlDoc.getElementsByTagName('a:blip').length > 0;
+      if (hasPic && imgCursor < extractedImages.length) {
+        const im = extractedImages[imgCursor++];
+        im.location = `شريحة ${i + 1}`;
+        paragraphs.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - شريحة ${i + 1}]`);
+      }
 
       if (paragraphs.length) {
         blocks.push({
@@ -2431,22 +2538,9 @@ body {
       }
     }
 
-    const extractedImages = [];
-    const mediaFiles = Object.keys(zip.files).filter(p => /^ppt\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
-    for (const path of mediaFiles) {
-      const buf = await zip.files[path].async('arraybuffer');
-      const mimeType = guessImageMime(path);
-      const base64 = arrayBufferToBase64(buf);
-      extractedImages.push({
-        id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-        name: path.split('/').pop(),
-        sourceFile: file.name,
-        location: 'عرض تقديمي PPTX',
-        mimeType,
-        base64,
-        dataUrl: `data:${mimeType};base64,${base64}`,
-        origin: 'original'
-      });
+    while (imgCursor < extractedImages.length && blocks.length > 0) {
+      const im = extractedImages[imgCursor++];
+      blocks[blocks.length - 1].text += `\n[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - ${im.name}]`;
     }
 
     return { blocks, extractedImages, warnings: [], meta: { slideCount: slidePaths.length } };
@@ -2465,10 +2559,15 @@ body {
 
   async function processImageInput(file) {
     const img = await readImageFile(file);
+    const imgId = `orig_img_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 5)}`;
     return {
-      blocks: [],
+      blocks: [{
+        sourceFile: file.name,
+        location: 'صورة مرفوعة',
+        text: `[ORIGINAL_IMAGE: ${imgId} | المصدر: ${file.name}]`
+      }],
       extractedImages: [{
-        id: `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        id: imgId,
         name: file.name,
         sourceFile: file.name,
         location: 'صورة مرفوعة',
@@ -2486,7 +2585,7 @@ body {
   async function processFile(file, onProgress = null) {
     const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
     if (file.size === 0) throw new Error(`الملف ${file.name} فارغ (0 بايت).`);
-    if (file.size > cfg.maxFileSizeBytes) throw new Error(`حجم ${file.name} يتجاوز الحد الأقصى (20 MB).`);
+    if (file.size > cfg.maxFileSizeBytes) throw new Error(`حجم ${file.name} يتجاوز الحد الأقصى (12 MB).`);
 
     const ext = getExtension(file.name);
     if (ext === 'pdf') return processPDF(file, onProgress);
@@ -2497,10 +2596,6 @@ body {
     throw new Error(`صيغة غير مدعومة: ${file.name}`);
   }
 
-  /**
-   * STEP 3: Content Segmentation
-   * Groups extracted blocks into bounded segments without breaking paragraphs.
-   */
   function segmentBlocks(allBlocks, maxChars = null) {
     const limit = maxChars || global.MEDNERD_CONFIG.GEMINI_CONFIG.maxSegmentChars;
     const segments = [];
@@ -2543,56 +2638,55 @@ body {
    MEDNERD AI — Medical Book Creator
    Module: content-analyzer.js
    Medical Content Intelligence Engine (Steps 4 & 5):
-   - Extracts headings, subheadings, English medical terms, definitions,
-     classifications, comparisons, tables, MCQs (all options), and clinical cases.
-   - Supports Auto, Professional, and Source Preservation modes.
-   - Detects contradictions & duplicate topics across multiple lectures.
-   - Supports Vision OCR for scanned PDFs / uploaded medical images.
+   - Applies the Master Prompt (including custom user prompt edits).
+   - Preserves [ORIGINAL_IMAGE: id] references inside `attachedOriginalImages`
+     on the exact subtopic where they appeared.
+   - Generates `keyConceptsForVisuals` with `diagramNodes` so every concept
+     needing visual clarification gets a real illustration.
    ========================================================================== */
 
 (function (global) {
   'use strict';
 
   async function extractTextFromImage(imageAsset, signal = null) {
-    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة دون اختراع أي كلمة غير موجودة. أبقِ المصطلحات الطبية بالإنجليزية كما هي. إذا كانت الصورة رسماً توضيحياً دون نص، صف التراكيب الظاهرة باختصار علمي دقيق تحت عنوان [وصف صورة أصلية].`;
+    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة دون اختراع أي كلمة غير موجودة. أبقِ المصطلحات الطبية بالإنجليزية كما هي. إذا كانت الصورة رسماً توضيحياً أو شكلاً طبياً، صف التراكيب والعلاقات الظاهرة فيها بدقة علمية تحت عنوان [وصف الشكل الطبي الأصلي: ${imageAsset.id}].`;
     const res = await global.GeminiClient.callGemini({
-      systemInstruction: 'أنت أداة استخراج نصوص ووصف صور طبية بدقة عالية.',
+      systemInstruction: 'أنت أداة استخراج نصوص وتحليل صور طبية أكاديمية بدقة عالية.',
       parts: [
         { text: prompt },
         { inlineData: { mimeType: imageAsset.mimeType, data: imageAsset.base64 } }
       ],
       signal
     });
-    return res.text;
+    return `[ORIGINAL_IMAGE: ${imageAsset.id} | المصدر: ${imageAsset.sourceFile} - ${imageAsset.location}]\n${res.text}`;
   }
 
   async function analyzeSegment(segment, options = {}, signal = null) {
-    const mode = options.mode || 'auto'; // auto | professional | source_preservation
+    const mode = options.mode || 'auto';
     const specialty = options.specialty || 'human_medicine';
     const enrichment = !!options.scientificEnrichment && mode !== 'source_preservation';
     const lang = options.language || 'ar';
+    const customMasterPrompt = (options.masterPrompt || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT || '').trim();
 
     const modeInstruction = mode === 'source_preservation'
       ? `وضع الحفاظ الصارم على المصدر (SOURCE PRESERVATION MODE):
 - ممنوع إعادة صياغة المعلومات أو اختصارها أو حذفها.
-- احتفظ بالنص الأصلي، والفقرات، وأسئلة MCQ بكامل خياراتها، والجداول كما هي، واقتصر على استخراج البنية وتصحيح أخطاء التنسيق الواضحة فقط.`
+- احتفظ بالنص الأصلي، والفقرات، وأسئلة MCQ بكامل خياراتها، والجداول، وإشارات الصور الأصلية [ORIGINAL_IMAGE: ...] كما هي.`
       : (enrichment
-        ? `وضع الإثراء العلمي مفعّل: التزم أساساً بمعلومات المصدر، وإذا أضفت أي توضيح علمي خارجي فميّزه صراحة بوسم [إثراء علمي خارجي] داخل الحقل.`
+        ? `وضع الإثراء العلمي مفعّل: التزم أساساً بمعلومات المصدر، وإذا أضفت أي توضيح علمي خارجي فميّزه صراحة بوسم [إثراء علمي خارجي].`
         : `التزم التزاماً صارماً بمعلومات المصدر فقط. لا تخترع معلومات طبية ولا تضف معلومات من خارج النص.`);
 
     const langInstruction = lang === 'en'
       ? 'اكتب الشرح والتحليل باللغة الإنجليزية الأكاديمية.'
       : 'اكتب باللغة العربية الأكاديمية مع إبقاء جميع المصطلحات الطبية وأسماء الأمراض والأدوية بالإنجليزية بجانب العربية.';
 
-    const systemInstruction = `أنت Medical Content Intelligence Engine متخصص في النشر الطبي الأكاديمي (${specialty}).
+    const systemInstruction = `${customMasterPrompt}
+
+التخصص المستهدف: (${specialty})
 ${modeInstruction}
 ${langInstruction}
 
-القواعد الإلزامية:
-1. لا تخترع معلومات طبية ولا تحذف معلومات من المصدر.
-2. حافظ على جميع خيارات أسئلة MCQ كاملة دون حذف أي خيار.
-3. احتفظ باسم الملف المصدر لكل وحدة معلومات.
-4. أخرج JSON بالبنية التالية تماماً:
+أخرج JSON صالحاً بالبنية التالية تماماً:
 {
   "topics": [
     {
@@ -2602,12 +2696,19 @@ ${langInstruction}
       "subtopics": [
         {
           "heading": "العنوان الفرعي",
-          "contentMarkdown": "النص الكامل المنسق للموضوع الفرعي دون حذف",
+          "contentMarkdown": "النص الكامل المنسق للموضوع الفرعي دون حذف، مع استخدام <sup> و <sub> بدلاً من LaTeX ودون إيموجي",
+          "attachedOriginalImages": [
+            {
+              "imageId": "معرّف الصورة الأصلية كما ورد في [ORIGINAL_IMAGE: ID]",
+              "figureTitle": "عنوان علمي للصورة الأصلية",
+              "caption": "شرح علمي يربط الصورة الأصلية بالفقرة"
+            }
+          ],
           "definitions": [{"term": "Term", "definition": "التعريف"}],
           "classifications": ["تصنيف أو قائمة"],
           "tables": [{"caption": "عنوان الجدول", "markdown": "| col1 | col2 |\\n|---|---|\\n| ... | ... |"}],
-          "clinicalCases": ["حالة سريرية إن وجدت"],
-          "mcqs": [{"question": "نص السؤال", "options": ["A) ...", "B) ..."], "answer": "الإجابة إن ذُكرت في المصدر", "explanation": "التفسير إن وُجد"}]
+          "clinicalCases": ["حالة سريرية أو تنبيه سريري هام إن وُجد"],
+          "mcqs": [{"question": "نص السؤال", "options": ["A) ...", "B) ..."], "answer": "الإجابة إن ذُكرت", "explanation": "التفسير العلمي"}]
         }
       ]
     }
@@ -2615,24 +2716,23 @@ ${langInstruction}
   "medicalTerms": ["Term1", "Term2"],
   "keyConceptsForVisuals": [
     {
-      "concept": "المفهوم الذي يحتاج رسماً توضيحياً",
+      "concept": "المفهوم الطبي الذي يحتاج رسماً توضيحياً جديداً",
       "suggestedType": "Anatomy Illustrations | Histology Images | Pathology Images | Radiology Images | Medical Diagrams | Clinical Photographs | Pharmacology Diagrams | Physiology Illustrations | Dental Illustrations | Flowcharts | Anatomical Cross Sections",
-      "reason": "سبب الحاجة للتوضيح البصري"
+      "promptEn": "Clean academic medical textbook illustration of ..., white background, high anatomical precision, text-free",
+      "titleAr": "عنوان الشكل العلمي المولّد",
+      "captionAr": "شرح مختصر يربط الشكل المولّد بالمحتوى",
+      "diagramNodes": ["الخطوة أو البنية 1", "الخطوة أو البنية 2", "الخطوة أو البنية 3", "النتيجة السريرية أو الوظيفية"]
     }
   ]
 }`;
 
     return global.GeminiClient.callGeminiJSON({
       systemInstruction,
-      parts: [{ text: `حلّل المقطع الطبي التالي بدقة:\n\n${segment.text}` }],
-      signal,
-      temperature: mode === 'source_preservation' ? 0.05 : 0.15
+      parts: [{ text: `حلّل المقطع الطبي التالي وطبّق بروتوكول الصور الهجين (الصور الأصلية + توليد الرسومات التوضيحية):\n\n${segment.text}` }],
+      signal
     });
   }
 
-  /**
-   * STEP 5: Chapter Classification, Deduplication & Contradiction Detection
-   */
   async function organizeAndDetectConflicts(analyzedSegments, options = {}, signal = null) {
     const allTopics = [];
     const allTerms = new Set();
@@ -2650,7 +2750,6 @@ ${langInstruction}
       }
     }
 
-    // Group topics by normalized title or ask Gemini to order chapters & flag contradictions if multiple topics exist
     let chapterPlan = null;
     if (allTopics.length > 1) {
       const compactSummary = allTopics.map((t, idx) => ({
@@ -2663,7 +2762,7 @@ ${langInstruction}
 
       try {
         chapterPlan = await global.GeminiClient.callGeminiJSON({
-          systemInstruction: `أنت رئيس تحرير كتب طبية أكاديمية. رتب الموضوعات التالية في فصول منطقية متسلسلة أكاديمياً، واكتشف أي تكرار أو تناقض محتمل بين المصادر دون حذف أي محتوى.
+          systemInstruction: `أنت رئيس تحرير كتب طبية أكاديمية في MEDNERD. رتب الموضوعات التالية في فصول منطقية متسلسلة أكاديمياً، واكتشف أي تكرار أو تناقض محتمل بين المصادر دون حذف أي محتوى.
 أخرج JSON فقط:
 {
   "bookTitle": "عنوان مقترح للكتاب بناءً على المحتوى",
@@ -2679,15 +2778,13 @@ ${langInstruction}
   "contradictions": ["تنبيه لأي تعارض علمي أو رقمي بين ملفين إن وُجد"]
 }`,
           parts: [{ text: JSON.stringify(compactSummary, null, 2) }],
-          signal,
-          temperature: 0.1
+          signal
         });
       } catch (_) {
         chapterPlan = null;
       }
     }
 
-    // Fallback deterministic grouping if single topic or planner failed
     if (!chapterPlan || !Array.isArray(chapterPlan.chapters) || !chapterPlan.chapters.length) {
       chapterPlan = {
         bookTitle: allTopics[0] ? allTopics[0].title : 'المرجع الطبي الأكاديمي',
@@ -2746,47 +2843,116 @@ ${langInstruction}
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: image-engine.js
-   Medical Image Intelligence System (Steps 6 & 7):
-   - Indexes original extracted images from uploaded files.
-   - Identifies concepts needing visual aid across chapters.
-   - Generates accurate prompts for the 11 medical image types.
-   - Calls Gemini/Imagen Image API honestly (checks capability; never fakes).
-   - Provides Image Center CRUD (replace, remove, reorder, upload).
+   Hybrid Medical Image Intelligence System (Steps 6 & 7):
+   1. Places ALL original extracted images from the uploaded files into their
+      exact matching chapters/subtopics (`attachedOriginalImages` or fallback
+      chapter mapping).
+   2. Generates new medical illustrations for `visualCandidates`:
+      - Primary: Gemini / Imagen API (`generateMedicalImage`).
+      - Fallback: High-precision Academic Vector SVG Medical Diagram generator
+        built from `diagramNodes` & scientific structure so every concept
+        receives a crisp, printable illustration even on free-tier API keys.
    ========================================================================== */
 
 (function (global) {
   'use strict';
 
-  function createSvgPlaceholder(concept, imageType, reason) {
-    // Honest placeholder card when API image generation is unavailable
-    return {
-      isHonestPlaceholder: true,
-      concept,
-      imageType,
-      reason
-    };
-  }
-
-  async function buildImagePrompt(concept, imageType, chapterTitle, signal = null) {
-    const res = await global.GeminiClient.callGeminiJSON({
-      systemInstruction: `أنت خبير رسوم توضيحية طبية للنشر الأكاديمي.
-أنشئ وصفاً (Prompt) بالإنجليزية لتوليد رسم طبي تعليمي واضح وخالٍ من النصوص المشوهة، وعنواناً علمياً وشرحاً مرتبطاً بالمحتوى بالعربية.
-أخرج JSON فقط:
-{
-  "promptEn": "Clean medical textbook illustration of ..., white background, high anatomical accuracy, editorial style, no garbled text",
-  "titleAr": "الشكل (X): عنوان علمي دقيق",
-  "captionAr": "شرح علمي مختصر يربط الصورة بمحتوى الفصل"
-}`,
-      parts: [{ text: `المفهوم: ${concept}\nالنوع: ${imageType}\nالفصل: ${chapterTitle}` }],
-      signal,
-      temperature: 0.2
-    });
-    return res;
+  function escXml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&apos;'
+    }[c]));
   }
 
   /**
-   * Process original images + generate required medical illustrations per chapter
+   * Generates a clean, print-ready MEDNERD Academic Medical SVG Diagram
+   * when raster Imagen API is not enabled on the user's free API key.
    */
+  function generateAcademicSvgDiagram(cand, chapterTitle) {
+    const title = cand.titleAr || cand.concept || 'مخطط توضيحي طبي';
+    const typeLabel = cand.suggestedType || 'Medical Diagram';
+    const rawNodes = Array.isArray(cand.diagramNodes) && cand.diagramNodes.length
+      ? cand.diagramNodes.slice(0, 5)
+      : [
+          cand.concept || 'المفهوم الأساسي',
+          cand.captionAr || 'الآلية الفيزيولوجية أو التشريحية',
+          `التطبيق السريري في ${chapterTitle || 'الفصل'}`
+        ];
+
+    const boxHeight = 52;
+    const gap = 28;
+    const startY = 86;
+    const totalHeight = startY + rawNodes.length * (boxHeight + gap) + 36;
+    const width = 760;
+
+    let nodesSvg = '';
+    rawNodes.forEach((nodeText, idx) => {
+      const y = startY + idx * (boxHeight + gap);
+      const isFirst = idx === 0;
+      const isLast = idx === rawNodes.length - 1;
+      const fill = isFirst ? '#f0f9ff' : isLast ? '#f0fdf4' : '#ffffff';
+      const stroke = isFirst ? '#0e7490' : isLast ? '#14532d' : '#94a3b8';
+      const badgeColor = isFirst ? '#0e7490' : isLast ? '#14532d' : '#b45309';
+
+      nodesSvg += `
+        <g>
+          <rect x="60" y="${y}" width="${width - 120}" height="${boxHeight}" rx="10" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+          <circle cx="96" cy="${y + boxHeight / 2}" r="14" fill="${badgeColor}"/>
+          <text x="96" y="${y + boxHeight / 2 + 5}" text-anchor="middle" fill="#ffffff" font-family="Cairo, Inter, sans-serif" font-size="13" font-weight="700">${idx + 1}</text>
+          <text x="380" y="${y + boxHeight / 2 + 5}" text-anchor="middle" fill="#17202a" font-family="Cairo, Inter, sans-serif" font-size="14" font-weight="700">${escXml(String(nodeText).slice(0, 78))}</text>
+        </g>`;
+
+      if (idx < rawNodes.length - 1) {
+        const arrowY1 = y + boxHeight + 2;
+        const arrowY2 = y + boxHeight + gap - 6;
+        nodesSvg += `
+          <line x1="${width / 2}" y1="${arrowY1}" x2="${width / 2}" y2="${arrowY2}" stroke="#0e7490" stroke-width="2.5"/>
+          <polygon points="${width / 2 - 6},${arrowY2 - 4} ${width / 2 + 6},${arrowY2 - 4} ${width / 2},${arrowY2 + 5}" fill="#0e7490"/>`;
+      }
+    });
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${totalHeight}" width="100%" height="100%">
+      <rect width="${width}" height="${totalHeight}" rx="14" fill="#fdfbf7" stroke="#cbd5e1" stroke-width="2"/>
+      <rect x="0" y="0" width="${width}" height="62" rx="14" fill="#0e7490"/>
+      <rect x="0" y="48" width="${width}" height="14" fill="#0e7490"/>
+      <text x="${width - 24}" y="26" text-anchor="end" fill="#e0f2fe" font-family="Inter, Cairo, sans-serif" font-size="11" font-weight="700">MEDNERD AI · ${escXml(typeLabel.toUpperCase())}</text>
+      <text x="${width / 2}" y="46" text-anchor="middle" fill="#ffffff" font-family="Cairo, Inter, sans-serif" font-size="16" font-weight="800">${escXml(String(title).slice(0, 70))}</text>
+      ${nodesSvg}
+    </svg>`;
+
+    const encoded = btoa(unescape(encodeURIComponent(svg)));
+    return `data:image/svg+xml;base64,${encoded}`;
+  }
+
+  async function buildImagePrompt(concept, imageType, chapterTitle, existingNodes = [], signal = null) {
+    try {
+      const res = await global.GeminiClient.callGeminiJSON({
+        systemInstruction: `أنت خبير رسوم توضيحية طبية للنشر الأكاديمي في MEDNERD.
+أنشئ وصفاً (promptEn) بالإنجليزية لتوليد رسم طبي أكاديمي بخلفية بيضاء، وعنواناً علمياً (titleAr) وشرحاً (captionAr) ومصفوفة خطوات/تراكيب متسلسلة (diagramNodes من 3 إلى 5 عناصر) بالعربية والإنجليزية.
+أخرج JSON فقط:
+{
+  "promptEn": "Clean medical textbook illustration of ..., white background, high anatomical accuracy, editorial style, text-free",
+  "titleAr": "الشكل: عنوان علمي دقيق",
+  "captionAr": "شرح علمي مختصر يربط الصورة بمحتوى الفصل",
+  "diagramNodes": ["البنية أو الخطوة 1", "البنية أو الخطوة 2", "البنية أو الخطوة 3", "الأهمية السريرية"]
+}`,
+        parts: [{ text: `المفهوم: ${concept}\nالنوع: ${imageType}\nالفصل: ${chapterTitle}` }],
+        signal
+      });
+      return res;
+    } catch (_) {
+      return {
+        promptEn: `Clean academic medical textbook ${imageType} of ${concept}, white background, high precision, editorial style`,
+        titleAr: concept,
+        captionAr: '',
+        diagramNodes: existingNodes
+      };
+    }
+  }
+
   async function processBookImages(projectId, organizedBook, originalImages, options = {}, onProgress = null, signal = null) {
     const density = options.imageDensity || 'balanced'; // minimal | balanced | rich | none
     const maxGenerated = density === 'none' ? 0 : density === 'minimal' ? 2 : density === 'rich' ? 6 : 4;
@@ -2794,27 +2960,51 @@ ${langInstruction}
     const finalImages = [];
     const seenConcepts = new Set();
 
-    // 1. Index all original extracted images (excluding full-page scans used only for OCR)
-    const usableOriginals = (originalImages || []).filter(img => !img.isPageScan);
+    // Map subtopic originalImage references -> chapterId & custom caption
+    const imagePlacementMap = new Map();
+    (organizedBook.chapters || []).forEach(ch => {
+      (ch.subtopics || []).forEach(st => {
+        (st.attachedOriginalImages || []).forEach(att => {
+          if (att && att.imageId) {
+            imagePlacementMap.set(String(att.imageId).trim(), {
+              chapterId: ch.id,
+              chapterTitle: ch.title,
+              subtopicHeading: st.heading,
+              figureTitle: att.figureTitle,
+              caption: att.caption
+            });
+          }
+        });
+      });
+    });
+
+    // 1. Index ALL original images from the uploaded files (including standalone & embedded figures)
+    const usableOriginals = (originalImages || []).filter(img => !img.isPageScan || organizedBook.chapters.length === 1);
     usableOriginals.forEach((img, idx) => {
-      const assignedChapter = organizedBook.chapters[idx % Math.max(organizedBook.chapters.length, 1)];
-      const asset = {
+      const mapped = imagePlacementMap.get(img.id);
+      const fallbackChapter = organizedBook.chapters[idx % Math.max(organizedBook.chapters.length, 1)];
+      const targetChapterId = mapped ? mapped.chapterId : (fallbackChapter ? fallbackChapter.id : 'ch_1');
+      const targetChapterTitle = mapped ? mapped.chapterTitle : (fallbackChapter ? fallbackChapter.title : '');
+
+      finalImages.push({
         id: img.id || `orig_${idx + 1}`,
         projectId,
-        chapterId: assignedChapter ? assignedChapter.id : 'ch_1',
-        chapterTitle: assignedChapter ? assignedChapter.title : '',
-        title: `صورة أصلية: ${img.name}`,
-        caption: `مستخرجة من المصدر (${img.sourceFile} — ${img.location})`,
+        chapterId: targetChapterId,
+        chapterTitle: targetChapterTitle,
+        subtopicHeading: mapped ? mapped.subtopicHeading : '',
+        title: (mapped && mapped.figureTitle) ? mapped.figureTitle : `صورة أصلية (${idx + 1}): ${img.name}`,
+        caption: (mapped && mapped.caption)
+          ? `${mapped.caption} (${img.sourceFile} — ${img.location})`
+          : `شكل مستخرج من الملف الأصلي (${img.sourceFile} — ${img.location})`,
         imageType: 'Original Source Figure',
-        origin: 'original', // original | ai_generated | manual_upload
+        origin: 'original',
         mimeType: img.mimeType,
         dataUrl: img.dataUrl,
         status: 'ready'
-      };
-      finalImages.push(asset);
+      });
     });
 
-    // 2. Generate illustrations for top visual candidates (respecting density & no duplicates)
+    // 2. Generate illustrations for visual candidates
     const candidates = (organizedBook.visualCandidates || []).slice(0, maxGenerated);
     let generatedCount = 0;
     const warnings = [];
@@ -2825,21 +3015,21 @@ ${langInstruction}
       if (!norm || seenConcepts.has(norm)) continue;
       seenConcepts.add(norm);
 
-      if (onProgress) onProgress(`تجهيز الرسم التوضيحي ${i + 1} من ${candidates.length}: ${cand.concept}`);
+      if (onProgress) onProgress(`توليد الرسم التوضيحي ${i + 1} من ${candidates.length}: ${cand.concept}`);
 
       const targetChapter = organizedBook.chapters[i % Math.max(organizedBook.chapters.length, 1)];
-      let meta = {
-        promptEn: `Clean academic medical textbook ${cand.suggestedType || 'Medical Diagram'} of ${cand.concept}, white background, high precision, editorial style`,
-        titleAr: cand.concept,
-        captionAr: cand.reason || ''
-      };
-
-      try {
-        meta = await buildImagePrompt(cand.concept, cand.suggestedType || 'Medical Diagrams', targetChapter ? targetChapter.title : '', signal);
-      } catch (_) {}
+      const meta = (cand.promptEn && cand.titleAr && Array.isArray(cand.diagramNodes) && cand.diagramNodes.length)
+        ? cand
+        : await buildImagePrompt(
+            cand.concept,
+            cand.suggestedType || 'Medical Diagrams',
+            targetChapter ? targetChapter.title : '',
+            cand.diagramNodes || [],
+            signal
+          );
 
       const genRes = await global.GeminiClient.generateMedicalImage(meta.promptEn, '4:3', signal);
-      if (genRes.ok) {
+      if (genRes.ok && genRes.dataUrl) {
         generatedCount++;
         finalImages.push({
           id: `gen_${Date.now()}_${i}`,
@@ -2847,7 +3037,7 @@ ${langInstruction}
           chapterId: targetChapter ? targetChapter.id : 'ch_1',
           chapterTitle: targetChapter ? targetChapter.title : '',
           title: meta.titleAr || cand.concept,
-          caption: `${meta.captionAr || ''} [رسم توضيحي مولّد بالذكاء الاصطناعي — لأغراض تعليمية وليس صورة سريرية حقيقية]`,
+          caption: `${meta.captionAr || cand.reason || ''} [رسم توضيحي مولّد بالذكاء الاصطناعي — لأغراض تعليمية]`,
           imageType: cand.suggestedType || 'Medical Diagrams',
           prompt: meta.promptEn,
           origin: 'ai_generated',
@@ -2857,28 +3047,35 @@ ${langInstruction}
           status: 'ready'
         });
       } else {
-        // Honest fallback: record prompt & reason without fabricating an image
-        if (!genRes.supported && warnings.length === 0) {
-          warnings.push(genRes.reason);
-        }
+        // Generate crisp Academic Medical Vector Diagram (SVG) so the book always includes the visual explanation
+        const svgDataUrl = generateAcademicSvgDiagram(
+          {
+            concept: cand.concept,
+            suggestedType: cand.suggestedType || 'Medical Diagram',
+            titleAr: meta.titleAr || cand.concept,
+            captionAr: meta.captionAr || cand.reason || '',
+            diagramNodes: meta.diagramNodes || cand.diagramNodes || []
+          },
+          targetChapter ? targetChapter.title : ''
+        );
+        generatedCount++;
         finalImages.push({
-          id: `pending_${Date.now()}_${i}`,
+          id: `gen_svg_${Date.now()}_${i}`,
           projectId,
           chapterId: targetChapter ? targetChapter.id : 'ch_1',
           chapterTitle: targetChapter ? targetChapter.title : '',
           title: meta.titleAr || cand.concept,
-          caption: meta.captionAr || cand.reason || '',
+          caption: `${meta.captionAr || cand.reason || ''} [مخطط علمي متجهي مولّد آلياً — لأغراض تعليمية]`,
           imageType: cand.suggestedType || 'Medical Diagrams',
           prompt: meta.promptEn,
           origin: 'ai_generated',
-          dataUrl: null,
-          status: 'unavailable',
-          unavailableReason: genRes.reason
+          mimeType: 'image/svg+xml',
+          dataUrl: svgDataUrl,
+          status: 'ready'
         });
       }
     }
 
-    // Persist to IndexedDB
     for (const img of finalImages) {
       await global.StorageManager.saveImageAsset(img).catch(() => {});
     }
@@ -2893,7 +3090,7 @@ ${langInstruction}
 
   global.ImageEngine = {
     processBookImages,
-    createSvgPlaceholder
+    generateAcademicSvgDiagram
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -3542,9 +3739,9 @@ ${renderedHtml}
 /* ==========================================================================
    MEDNERD AI — Medical Book Creator
    Module: app.js
-   Main UI Controller: Dashboard, Upload Center, 12-Step Resumable Pipeline,
-   Live Book Preview & Editor, Image Center, QA Report, Export Center,
-   and exact MEDNERD API Key & Model Preset Management.
+   Main UI Controller: Dashboard, Upload Center, Master Prompt Editor,
+   12-Step Resumable Pipeline, Live Book Preview & Editor, Image Center,
+   QA Report, Export Center, and exact MEDNERD API Key & Model Presets.
    ========================================================================== */
 
 (function (global) {
@@ -3556,8 +3753,8 @@ ${renderedHtml}
     activeView: 'dashboardView',
     lang: 'ar',
     theme: 'light',
-    mode: 'auto', // auto | professional | source_preservation
-    uploadQueue: [], // { id, file, name, size, status, error, extracted }
+    mode: 'auto',
+    uploadQueue: [],
     currentProjectId: null,
     currentBook: null,
     currentImages: [],
@@ -3572,7 +3769,28 @@ ${renderedHtml}
     confirmCb: null
   };
 
-  /* ---------------- Utilities & Toasts ---------------- */
+  function copyTextSafe(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(() => fallbackCopyText(text));
+    }
+    return Promise.resolve(fallbackCopyText(text));
+  }
+
+  function fallbackCopyText(text) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function toast(msg, type = 'info') {
     const c = $('toastContainer');
     if (!c) return;
@@ -3608,7 +3826,6 @@ ${renderedHtml}
     if (viewId === 'imageCenterView') renderImageCenter();
   }
 
-  /* ---------------- Theme & Language ---------------- */
   function applyTheme(theme) {
     APP.theme = theme === 'dark' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', APP.theme);
@@ -4033,8 +4250,12 @@ ${renderedHtml}
     const projectId = `proj_${Date.now()}`;
     APP.currentProjectId = projectId;
 
+    const masterPromptText = ($('masterPromptInput') && $('masterPromptInput').value.trim()) || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
+    global.GeminiClient.store.set(global.MEDNERD_CONFIG.GEMINI_CONFIG.storageKeys.masterPrompt, masterPromptText);
+
     const options = {
       mode: APP.mode,
+      masterPrompt: masterPromptText,
       customTitle: $('bookTitleInput').value.trim(),
       specialty: $('bookSpecialtySelect').value || 'human_medicine',
       language: $('bookLangSelect') ? $('bookLangSelect').value : 'ar',
@@ -4057,7 +4278,7 @@ ${renderedHtml}
       setStep(1, 'الخطوة 1/12: تجهيز الملفات المرفوعة...');
       finishStep(1);
 
-      setStep(2, 'الخطوة 2/12: استخراج النصوص والجداول والصور الأصلية...');
+      setStep(2, 'الخطوة 2/12: استخراج النصوص والجداول والصور الأصلية من داخل الملفات...');
       const allBlocks = [];
       const originalImages = [];
 
@@ -4084,7 +4305,7 @@ ${renderedHtml}
       const ocrTargets = originalImages.filter(im => im.isPageScan || im.isStandaloneImage);
       for (let i = 0; i < ocrTargets.length; i++) {
         if (signal.aborted) throw new Error('تم إيقاف العملية.');
-        setStep(2, `تحليل بصري للصورة ${i + 1} من ${ocrTargets.length}...`);
+        setStep(2, `تحليل بصري للصورة الأصلية ${i + 1} من ${ocrTargets.length}...`);
         const extractedTxt = await global.ContentAnalyzer.extractTextFromImage(ocrTargets[i], signal);
         allBlocks.push({
           sourceFile: ocrTargets[i].sourceFile,
@@ -4097,7 +4318,7 @@ ${renderedHtml}
       await global.StorageManager.saveStageResult(projectId, 2, { blocksCount: allBlocks.length, imagesCount: originalImages.length });
       finishStep(2);
 
-      setStep(3, 'الخطوة 3/12: تقسيم المحتوى إلى مقاطع مترابطة...');
+      setStep(3, 'الخطوة 3/12: تقسيم المحتوى مع الحفاظ على مواقع الصور الأصلية...');
       const segments = global.FileProcessor.segmentBlocks(allBlocks);
       await global.StorageManager.saveStageResult(projectId, 3, segments);
       finishStep(3);
@@ -4105,7 +4326,7 @@ ${renderedHtml}
       const analyzedSegments = [];
       for (let i = 0; i < segments.length; i++) {
         if (signal.aborted) throw new Error('تم إيقاف العملية.');
-        setStep(4, `الخطوة 4/12: تحليل المقطع الطبي ${i + 1} من ${segments.length} عبر Gemini...`);
+        setStep(4, `الخطوة 4/12: تحليل المقطع الطبي ${i + 1} من ${segments.length} وفق البرومبت المعتمد...`);
         const analyzed = await global.ContentAnalyzer.analyzeSegment(segments[i], options, signal);
         analyzedSegments.push(analyzed);
       }
@@ -4117,9 +4338,9 @@ ${renderedHtml}
       await global.StorageManager.saveStageResult(projectId, 5, organized);
       finishStep(5);
 
-      setStep(6, 'الخطوة 6/12: فهرسة الصور الأصلية...');
+      setStep(6, `الخطوة 6/12: إدراج ${originalImages.length} صورة أصلية مستخرجة في مواضعها العلمية...`);
       finishStep(6);
-      setStep(7, 'الخطوة 7/12: توليد الرسومات التوضيحية الطبية...');
+      setStep(7, 'الخطوة 7/12: توليد الرسومات والمخططات التوضيحية الطبية...');
       const imgRes = await global.ImageEngine.processBookImages(
         projectId,
         organized,
@@ -4160,7 +4381,7 @@ ${renderedHtml}
       });
       finishStep(12);
       setStep(12, 'اكتمل إنشاء الكتاب بنجاح!');
-      toast('تم إنشاء الكتاب الأكاديمي بنجاح!', 'success');
+      toast('تم إنشاء الكتاب الأكاديمي مع الصور الأصلية والرسومات التوضيحية بنجاح!', 'success');
 
       setTimeout(() => switchView('previewView'), 500);
     } catch (e) {
@@ -4202,7 +4423,7 @@ ${renderedHtml}
 
     const total = APP.renderedBook.totalPages;
     if (APP.previewPageIndex >= total) APP.previewPageIndex = Math.max(0, total - 1);
-    $('pageIndicator').textContent = `صفحة ${APP.previewPageIndex + 1} / ${total}`;
+    $('pageIndicator').textContent = `${APP.previewPageIndex + 1} / ${total}`;
     $('zoomLabel').textContent = `${APP.previewZoom}%`;
 
     renderChapterSidebar();
@@ -4212,7 +4433,7 @@ ${renderedHtml}
     const pages = document.querySelectorAll('#bookZoomWrap .book-page');
     if (!pages.length) return;
     APP.previewPageIndex = Math.max(0, Math.min(index, pages.length - 1));
-    $('pageIndicator').textContent = `صفحة ${APP.previewPageIndex + 1} / ${pages.length}`;
+    $('pageIndicator').textContent = `${APP.previewPageIndex + 1} / ${pages.length}`;
     pages[APP.previewPageIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -4337,7 +4558,7 @@ ${renderedHtml}
 
     const chOpts = APP.currentBook ? APP.currentBook.chapters : [];
     grid.innerHTML = filtered.map(im => {
-      const originLabel = im.origin === 'original' ? 'صورة أصلية' : im.origin === 'manual_upload' ? 'مرفوعة يدوياً' : 'مولدة بالذكاء الاصطناعي';
+      const originLabel = im.origin === 'original' ? 'صورة أصلية من الملف' : im.origin === 'manual_upload' ? 'مرفوعة يدوياً' : 'مولدة بالذكاء الاصطناعي';
       const thumb = im.dataUrl
         ? `<img src="${im.dataUrl}" alt="${im.title}">`
         : `<div style="text-align:center;padding:12px;font-size:12px;color:var(--mustard);"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px;margin-bottom:6px;display:block;"></i>${im.unavailableReason || 'غير متوفرة'}</div>`;
@@ -4432,6 +4653,32 @@ ${renderedHtml}
     applyTheme(global.GeminiClient.store.get('mednerd_theme') || 'light');
     applyLang(global.GeminiClient.store.get('mednerd_lang') || 'ar');
 
+    // Initialize Master Prompt input with saved or default Master Prompt
+    const mpInput = $('masterPromptInput');
+    if (mpInput) {
+      mpInput.value = global.GeminiClient.store.get(cfg.storageKeys.masterPrompt) || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
+      mpInput.addEventListener('input', () => {
+        global.GeminiClient.store.set(cfg.storageKeys.masterPrompt, mpInput.value);
+      });
+    }
+
+    const copyMpBtn = $('copyMasterPromptBtn');
+    if (copyMpBtn) {
+      copyMpBtn.addEventListener('click', () => {
+        const txt = (mpInput && mpInput.value) || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
+        copyTextSafe(txt).then(() => toast('تم نسخ البرومبت المعتمد إلى الحافظة.', 'success'));
+      });
+    }
+
+    const resetMpBtn = $('resetMasterPromptBtn');
+    if (resetMpBtn) {
+      resetMpBtn.addEventListener('click', () => {
+        if (mpInput) mpInput.value = global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT;
+        global.GeminiClient.store.del(cfg.storageKeys.masterPrompt);
+        toast('تمت استعادة البرومبت الافتراضي المعتمد.', 'info');
+      });
+    }
+
     global.GeminiClient.state.onStatusChange = (status, customMessage, lastVerifiedAt) => {
       updateApiStatusUI(status, customMessage, lastVerifiedAt);
     };
@@ -4460,7 +4707,7 @@ ${renderedHtml}
     $('themeToggleBtn').addEventListener('click', () => applyTheme(APP.theme === 'dark' ? 'light' : 'dark'));
     $('langToggleBtn').addEventListener('click', () => applyLang(APP.lang === 'ar' ? 'en' : 'ar'));
 
-    // API Modal & Model Chips (Exact MEDNERD wiring)
+    // API Modal & Model Chips
     $('openApiModalBtn').addEventListener('click', openApiModal);
     $('dashApiCard').addEventListener('click', openApiModal);
     $('closeApiModalBtn').addEventListener('click', closeApiModal);
