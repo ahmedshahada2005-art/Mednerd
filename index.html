@@ -1384,8 +1384,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
   function arrayBufferToBase64(buffer) {
     let binary = '';
     const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < bytes.byteLength; i++) {
       binary += String.fromCharCode(bytes[i]);
     }
     return btoa(binary);
@@ -1397,25 +1396,28 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     if (ext === 'gif') return 'image/gif';
     return 'image/jpeg';
   }
-  async function readImageFile(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = String(reader.result || '');
-        const base64 = dataUrl.split(',')[1] || '';
-        if (!base64) return reject(new Error(`تعذر قراءة الصورة: ${file.name}`));
-        resolve({ dataUrl, base64, mimeType: file.type || guessImageMime(file.name) });
-      };
-      reader.onerror = () => reject(new Error(`فشل قراءة الصورة: ${file.name}`));
-      reader.readAsDataURL(file);
-    });
+  function multiplyMatrix(m1, m2) {
+    return [
+      m1[0] * m2[0] + m1[2] * m2[1],
+      m1[1] * m2[0] + m1[3] * m2[1],
+      m1[0] * m2[2] + m1[2] * m2[3],
+      m1[1] * m2[2] + m1[3] * m2[3],
+      m1[0] * m2[4] + m1[2] * m2[5] + m1[4],
+      m1[1] * m2[4] + m1[3] * m2[5] + m1[5]
+    ];
+  }
+  function applyMatrix(p, m) {
+    return [
+      p[0] * m[0] + p[1] * m[2] + m[4],
+      p[0] * m[1] + p[1] * m[3] + m[5]
+    ];
   }
   
   async function extractCroppedFiguresFromPdfPage(page, pageNum, fileName) {
     const croppedFigures = [];
     if (typeof document === 'undefined') return croppedFigures;
     try {
-      const scale = 1.6;
+      const scale = 1.75;
       const viewport = page.getViewport({ scale });
       const width = Math.floor(viewport.width);
       const height = Math.floor(viewport.height);
@@ -1426,112 +1428,133 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       srcCtx.fillStyle = '#ffffff';
       srcCtx.fillRect(0, 0, width, height);
       await page.render({ canvasContext: srcCtx, viewport }).promise;
-      const maskCanvas = document.createElement('canvas');
-      maskCanvas.width = width;
-      maskCanvas.height = height;
-      const maskCtx = maskCanvas.getContext('2d');
-      maskCtx.drawImage(srcCanvas, 0, 0);
-      const tc = await page.getTextContent();
-      maskCtx.fillStyle = '#ffffff';
-      for (const item of tc.items) {
-        if (!item.str || !item.str.trim()) continue;
-        const tx = global.pdfjsLib.Util.transform(viewport.transform, item.transform);
-        const fontHeight = Math.hypot(tx[2], tx[3]) || (item.height * scale) || 14;
-        const textWidth = (item.width ? item.width * scale : item.str.length * fontHeight * 0.55);
-        const x = tx[4];
-        const y = tx[5] - fontHeight;
-        maskCtx.fillRect(x - 4, y - 4, textWidth + 8, fontHeight + 10);
-      }
-      maskCtx.fillRect(0, 0, width, Math.floor(height * 0.05));
-      maskCtx.fillRect(0, Math.floor(height * 0.95), width, Math.ceil(height * 0.05));
-      const imgData = maskCtx.getImageData(0, 0, width, height).data;
-      const cellSize = 14;
-      const cols = Math.ceil(width / cellSize);
-      const rows = Math.ceil(height / cellSize);
-      const grid = new Uint8Array(cols * rows);
-      const bgR = 250, bgG = 250, bgB = 250;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          let nonWhiteCount = 0;
-          const y0 = r * cellSize;
-          const x0 = c * cellSize;
-          const yEnd = Math.min(height, y0 + cellSize);
-          const xEnd = Math.min(width, x0 + cellSize);
-          for (let y = y0; y < yEnd; y += 2) {
-            for (let x = x0; x < xEnd; x += 2) {
-              const idx = (y * width + x) * 4;
-              const R = imgData[idx], G = imgData[idx + 1], B = imgData[idx + 2];
-              if (R < bgR - 18 || G < bgG - 18 || B < bgB - 18) {
-                nonWhiteCount++;
-              }
-            }
-          }
-          if (nonWhiteCount >= 4) {
-            grid[r * cols + c] = 1;
-          }
-        }
-      }
-      const dilated = new Uint8Array(cols * rows);
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (!grid[r * cols + c]) continue;
-          for (let dr = -1; dr <= 1; dr++) {
-            for (let dc = -1; dc <= 1; dc++) {
-              const nr = r + dr, nc = c + dc;
-              if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-                dilated[nr * cols + nc] = 1;
-              }
+      const candidateRects = [];
+      const OPS = global.pdfjsLib.OPS || {};
+      try {
+        const opList = await page.getOperatorList();
+        let ctm = [1, 0, 0, 1, 0, 0];
+        const stack = [];
+        for (let i = 0; i < opList.fnArray.length; i++) {
+          const fn = opList.fnArray[i];
+          const args = opList.argsArray[i];
+          if (fn === OPS.save) {
+            stack.push(ctm.slice());
+          } else if (fn === OPS.restore) {
+            if (stack.length) ctm = stack.pop();
+          } else if (fn === OPS.transform && Array.isArray(args) && args.length === 6) {
+            ctm = multiplyMatrix(ctm, args);
+          } else if (
+            fn === OPS.paintImageXObject ||
+            fn === OPS.paintInlineImageXObject ||
+            fn === OPS.paintJpegXObject
+          ) {
+            const fullM = multiplyMatrix(viewport.transform, ctm);
+            const c0 = applyMatrix([0, 0], fullM);
+            const c1 = applyMatrix([1, 0], fullM);
+            const c2 = applyMatrix([0, 1], fullM);
+            const c3 = applyMatrix([1, 1], fullM);
+            const minX = Math.max(0, Math.floor(Math.min(c0[0], c1[0], c2[0], c3[0])));
+            const maxX = Math.min(width, Math.ceil(Math.max(c0[0], c1[0], c2[0], c3[0])));
+            const minY = Math.max(0, Math.floor(Math.min(c0[1], c1[1], c2[1], c3[1])));
+            const maxY = Math.min(height, Math.ceil(Math.max(c0[1], c1[1], c2[1], c3[1])));
+            const rw = maxX - minX;
+            const rh = maxY - minY;
+            if (rw >= 75 && rh >= 75 && (rw * rh) < (width * height * 0.90)) {
+              candidateRects.push({ x: minX, y: minY, w: rw, h: rh });
             }
           }
         }
-      }
-      const visited = new Uint8Array(cols * rows);
-      const boxes = [];
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const startIdx = r * cols + c;
-          if (!dilated[startIdx] || visited[startIdx]) continue;
-          const queue = [startIdx];
-          visited[startIdx] = 1;
-          let minR = r, maxR = r, minC = c, maxC = c;
-          let activeCells = 0;
-          while (queue.length > 0) {
-            const curr = queue.pop();
-            const cr = Math.floor(curr / cols);
-            const cc = curr % cols;
-            activeCells++;
-            if (cr < minR) minR = cr;
-            if (cr > maxR) maxR = cr;
-            if (cc < minC) minC = cc;
-            if (cc > maxC) maxC = cc;
-            const neighbors = [
-              [cr - 1, cc], [cr + 1, cc], [cr, cc - 1], [cr, cc + 1]
-            ];
-            for (const [nr, nc] of neighbors) {
-              if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-                const nIdx = nr * cols + nc;
-                if (dilated[nIdx] && !visited[nIdx]) {
-                  visited[nIdx] = 1;
-                  queue.push(nIdx);
+      } catch (_) {}
+      if (candidateRects.length === 0) {
+        const maskCanvas = document.createElement('canvas');
+        maskCanvas.width = width;
+        maskCanvas.height = height;
+        const maskCtx = maskCanvas.getContext('2d');
+        maskCtx.drawImage(srcCanvas, 0, 0);
+        const tc = await page.getTextContent();
+        maskCtx.fillStyle = '#ffffff';
+        for (const item of tc.items) {
+          if (!item.str || !item.str.trim()) continue;
+          const tx = global.pdfjsLib.Util.transform(viewport.transform, item.transform);
+          const fh = Math.hypot(tx[2], tx[3]) || 16;
+          const tw = Math.max((item.width || 0) * scale, item.str.length * fh * 0.65);
+          maskCtx.fillRect(tx[4] - tw - 8, tx[5] - fh - 6, tw * 2 + 16, fh + 14);
+        }
+        maskCtx.fillRect(0, 0, width, Math.floor(height * 0.06));
+        maskCtx.fillRect(0, Math.floor(height * 0.94), width, Math.ceil(height * 0.06));
+        const imgData = maskCtx.getImageData(0, 0, width, height).data;
+        const cell = 16;
+        const cols = Math.ceil(width / cell);
+        const rows = Math.ceil(height / cell);
+        const grid = new Uint8Array(cols * rows);
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            let colored = 0;
+            const y0 = r * cell, x0 = c * cell;
+            for (let y = y0; y < Math.min(height, y0 + cell); y += 2) {
+              for (let x = x0; x < Math.min(width, x0 + cell); x += 2) {
+                const idx = (y * width + x) * 4;
+                const R = imgData[idx], G = imgData[idx + 1], B = imgData[idx + 2];
+                if (R < 232 || G < 232 || B < 232) colored++;
+              }
+            }
+            if (colored >= 6) grid[r * cols + c] = 1;
+          }
+        }
+        const visited = new Uint8Array(cols * rows);
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const start = r * cols + c;
+            if (!grid[start] || visited[start]) continue;
+            const q = [start];
+            visited[start] = 1;
+            let minR = r, maxR = r, minC = c, maxC = c, count = 0;
+            while (q.length) {
+              const cur = q.pop();
+              const cr = Math.floor(cur / cols), cc = cur % cols;
+              count++;
+              if (cr < minR) minR = cr;
+              if (cr > maxR) maxR = cr;
+              if (cc < minC) minC = cc;
+              if (cc > maxC) maxC = cc;
+              for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                  const nr = cr + dr, nc = cc + dc;
+                  if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                    const ni = nr * cols + nc;
+                    if (grid[ni] && !visited[ni]) {
+                      visited[ni] = 1;
+                      q.push(ni);
+                    }
+                  }
                 }
               }
             }
-          }
-          const boxW = (maxC - minC + 1) * cellSize;
-          const boxH = (maxR - minR + 1) * cellSize;
-          if (boxW >= 95 && boxH >= 85 && activeCells >= 16) {
-            boxes.push({
-              x: Math.max(0, minC * cellSize - 8),
-              y: Math.max(0, minR * cellSize - 8),
-              w: Math.min(width - minC * cellSize, boxW + 16),
-              h: Math.min(height - minR * cellSize, boxH + 16)
-            });
+            const bw = (maxC - minC + 1) * cell;
+            const bh = (maxR - minR + 1) * cell;
+            if (bw >= 110 && bh >= 95 && count >= 18 && (bw * bh) < (width * height * 0.85)) {
+              candidateRects.push({
+                x: Math.max(0, minC * cell - 6),
+                y: Math.max(0, minR * cell - 6),
+                w: Math.min(width - minC * cell, bw + 12),
+                h: Math.min(height - minR * cell, bh + 12)
+              });
+            }
           }
         }
       }
-      boxes.sort((a, b) => a.y - b.y);
-      const selectedBoxes = boxes.slice(0, 3);
-      selectedBoxes.forEach((b, idx) => {
+      const uniqueRects = [];
+      candidateRects.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+      for (const rect of candidateRects) {
+        const overlaps = uniqueRects.some(u => {
+          const ix = Math.max(0, Math.min(u.x + u.w, rect.x + rect.w) - Math.max(u.x, rect.x));
+          const iy = Math.max(0, Math.min(u.y + u.h, rect.y + rect.h) - Math.max(u.y, rect.y));
+          return (ix * iy) > 0.45 * (rect.w * rect.h);
+        });
+        if (!overlaps) uniqueRects.push(rect);
+      }
+      uniqueRects.sort((a, b) => a.y - b.y);
+      uniqueRects.slice(0, 3).forEach((b, idx) => {
         const cropCanvas = document.createElement('canvas');
         cropCanvas.width = b.w;
         cropCanvas.height = b.h;
@@ -1539,8 +1562,8 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         cropCtx.fillStyle = '#ffffff';
         cropCtx.fillRect(0, 0, b.w, b.h);
         cropCtx.drawImage(srcCanvas, b.x, b.y, b.w, b.h, 0, 0, b.w, b.h);
-        const dataUrl = cropCanvas.toDataURL('image/jpeg', 0.88);
-        const imgId = `orig_pdf_p${pageNum}_fig${idx + 1}_${Date.now().toString(36)}`;
+        const dataUrl = cropCanvas.toDataURL('image/jpeg', 0.9);
+        const imgId = `orig_p${pageNum}_f${idx + 1}`;
         croppedFigures.push({
           id: imgId,
           name: `شكل مقصوص (${idx + 1}) — صفحة ${pageNum}`,
@@ -1549,27 +1572,19 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
           mimeType: 'image/jpeg',
           dataUrl,
           base64: dataUrl.split(',')[1],
-          origin: 'original',
-          isPageScan: false
+          origin: 'original'
         });
       });
     } catch (e) {
-      console.warn('[FileProcessor] تعذر قص الصور من الصفحة:', e);
+      console.warn('[FileProcessor] PDF crop warning:', e);
     }
     return croppedFigures;
   }
   async function processPDF(file, onProgress) {
-    if (!global.pdfjsLib) {
-      throw new Error('مكتبة pdf.js غير محملة. تأكد من الاتصال بالإنترنت.');
-    }
+    if (!global.pdfjsLib) throw new Error('مكتبة pdf.js غير محملة.');
     const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
     const buf = await file.arrayBuffer();
-    let pdf;
-    try {
-      pdf = await global.pdfjsLib.getDocument({ data: buf }).promise;
-    } catch (_) {
-      throw new Error(`تعذر فتح ملف PDF (${file.name}). قد يكون محمياً بكلمة مرور أو تالفاً.`);
-    }
+    const pdf = await global.pdfjsLib.getDocument({ data: buf }).promise;
     const totalPages = pdf.numPages;
     const limitPages = Math.min(totalPages, cfg.maxPdfPages);
     const blocks = [];
@@ -1579,9 +1594,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       if (onProgress) onProgress(Math.round((p / limitPages) * 100));
       const page = await pdf.getPage(p);
       const tc = await page.getTextContent();
-      let lastY = null;
-      let pageLines = [];
-      let currentLine = [];
+      let lastY = null, pageLines = [], currentLine = [];
       for (const item of tc.items) {
         const y = item.transform ? Math.round(item.transform[5]) : null;
         if (lastY !== null && y !== null && Math.abs(y - lastY) > 4) {
@@ -1593,7 +1606,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       }
       if (currentLine.length) pageLines.push(currentLine.join(' ').trim());
       let pageText = pageLines.filter(Boolean).join('\n').trim();
-      if (extractedImages.length < 24) {
+      if (extractedImages.length < 30) {
         const cropped = await extractCroppedFiguresFromPdfPage(page, p, file.name);
         for (const fig of cropped) {
           extractedImages.push(fig);
@@ -1602,53 +1615,17 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       }
       if (pageText) {
         totalChars += pageText.length;
-        blocks.push({
-          sourceFile: file.name,
-          location: `صفحة ${p}`,
-          text: pageText
-        });
-      }
-    }
-    let isScanned = false;
-    if (totalChars < 40 && limitPages > 0) {
-      isScanned = true;
-      const scanLimit = Math.min(limitPages, 6);
-      for (let p = 1; p <= scanLimit; p++) {
-        const page = await pdf.getPage(p);
-        const viewport = page.getViewport({ scale: 1.5 });
-        const canvas = document.createElement('canvas');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const ctx = canvas.getContext('2d');
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        const imgId = `orig_scan_p${p}_${Date.now().toString(36)}`;
-        extractedImages.push({
-          id: imgId,
-          name: `${file.name} - صفحة ${p}`,
-          sourceFile: file.name,
-          location: `صفحة ${p}`,
-          mimeType: 'image/jpeg',
-          dataUrl,
-          base64: dataUrl.split(',')[1],
-          origin: 'original',
-          isPageScan: true
-        });
+        blocks.push({ sourceFile: file.name, location: `صفحة ${p}`, text: pageText });
       }
     }
     return {
       blocks,
       extractedImages,
-      warnings: totalPages > limitPages
-        ? [`تمت معالجة أول ${limitPages} صفحة من أصل ${totalPages} صفحة في ${file.name}.`]
-        : (isScanned ? [`الملف ${file.name} يبدو ممسوحاً ضوئياً؛ تم تجهيز أول ${extractedImages.length} صفحات كصور للتحليل البصري.`] : []),
-      meta: { totalPages, processedPages: limitPages, isScanned }
+      warnings: [],
+      meta: { totalPages, processedPages: limitPages, isScanned: totalChars < 40 }
     };
   }
   async function processDOCX(file) {
-    if (!global.JSZip) {
-      throw new Error('مكتبة JSZip غير محملة لقراءة ملفات DOCX.');
-    }
     const zip = await global.JSZip.loadAsync(await file.arrayBuffer());
     const docXmlFile = zip.file('word/document.xml');
     if (!docXmlFile) throw new Error(`ملف DOCX غير صالح (${file.name}).`);
@@ -1659,12 +1636,12 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       const buf = await zip.files[path].async('arraybuffer');
       const mimeType = guessImageMime(path);
       const base64 = arrayBufferToBase64(buf);
-      const imgId = `orig_docx_${idx + 1}_${Date.now().toString(36)}`;
+      const imgId = `orig_docx_${idx + 1}`;
       extractedImages.push({
         id: imgId,
         name: path.split('/').pop(),
         sourceFile: file.name,
-        location: `مستند Word (صورة ${idx + 1})`,
+        location: `صورة ${idx + 1}`,
         mimeType,
         base64,
         dataUrl: `data:${mimeType};base64,${base64}`,
@@ -1672,67 +1649,50 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       });
     }
     const xmlText = await docXmlFile.async('string');
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+    const xmlDoc = new DOMParser().parseFromString(xmlText, 'application/xml');
     const blocks = [];
     const body = xmlDoc.getElementsByTagName('w:body')[0];
     let imgCursor = 0;
     if (body) {
-      const children = Array.from(body.childNodes);
-      let buffer = [];
-      let sectionIndex = 1;
-      for (const node of children) {
+      let buffer = [], sectionIndex = 1;
+      for (const node of Array.from(body.childNodes)) {
         if (node.nodeName === 'w:p') {
           const texts = Array.from(node.getElementsByTagName('w:t')).map(t => t.textContent).join('');
           if (texts.trim()) buffer.push(texts.trim());
-          const hasDrawing = node.getElementsByTagName('w:drawing').length > 0 || node.getElementsByTagName('w:pict').length > 0;
-          if (hasDrawing && imgCursor < extractedImages.length) {
+          if ((node.getElementsByTagName('w:drawing').length > 0 || node.getElementsByTagName('w:pict').length > 0) && imgCursor < extractedImages.length) {
             const im = extractedImages[imgCursor++];
-            buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - ${im.name}]`);
+            buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name}]`);
           }
         } else if (node.nodeName === 'w:tbl') {
-          const rows = Array.from(node.getElementsByTagName('w:tr'));
-          const mdRows = rows.map(tr => {
-            const cells = Array.from(tr.getElementsByTagName('w:tc')).map(tc => {
-              return Array.from(tc.getElementsByTagName('w:t')).map(t => t.textContent).join(' ').replace(/\|/g, '/').trim();
-            });
+          const rows = Array.from(node.getElementsByTagName('w:tr')).map(tr => {
+            const cells = Array.from(tr.getElementsByTagName('w:tc')).map(tc =>
+              Array.from(tc.getElementsByTagName('w:t')).map(t => t.textContent).join(' ').replace(/\|/g, '/').trim()
+            );
             return `| ${cells.join(' | ')} |`;
           });
-          if (mdRows.length > 0) {
-            const colCount = mdRows[0].split('|').length - 2;
-            const sep = `| ${Array(Math.max(colCount, 1)).fill('---').join(' | ')} |`;
-            const tableMd = [mdRows[0], sep, ...mdRows.slice(1)].join('\n');
-            buffer.push('\n' + tableMd + '\n');
+          if (rows.length > 0) {
+            const cols = rows[0].split('|').length - 2;
+            buffer.push('\n' + [rows[0], `| ${Array(Math.max(cols, 1)).fill('---').join(' | ')} |`, ...rows.slice(1)].join('\n') + '\n');
           }
         }
-        if (buffer.join('\n').length > 3500) {
+        if (buffer.join('\n').length > 2600) {
           blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex++}`, text: buffer.join('\n') });
           buffer = [];
         }
       }
       while (imgCursor < extractedImages.length) {
         const im = extractedImages[imgCursor++];
-        buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - ${im.name}]`);
+        buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name}]`);
       }
-      if (buffer.length) {
-        blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex}`, text: buffer.join('\n') });
-      }
+      if (buffer.length) blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex}`, text: buffer.join('\n') });
     }
-    return { blocks, extractedImages, warnings: [], meta: { mediaCount: extractedImages.length } };
+    return { blocks, extractedImages, warnings: [], meta: {} };
   }
   async function processPPTX(file) {
-    if (!global.JSZip) {
-      throw new Error('مكتبة JSZip غير محملة لقراءة ملفات PPTX.');
-    }
     const zip = await global.JSZip.loadAsync(await file.arrayBuffer());
     const slidePaths = Object.keys(zip.files)
       .filter(p => /^ppt\/slides\/slide\d+\.xml$/i.test(p))
-      .sort((a, b) => {
-        const na = parseInt(a.match(/slide(\d+)\.xml/i)[1], 10);
-        const nb = parseInt(b.match(/slide(\d+)\.xml/i)[1], 10);
-        return na - nb;
-      });
-    if (!slidePaths.length) throw new Error(`لم يتم العثور على شرائح في (${file.name}).`);
+      .sort((a, b) => parseInt(a.match(/slide(\d+)\.xml/i)[1], 10) - parseInt(b.match(/slide(\d+)\.xml/i)[1], 10));
     const extractedImages = [];
     const mediaFiles = Object.keys(zip.files).filter(p => /^ppt\/media\/.+\.(png|jpe?g|webp)$/i.test(p));
     for (let idx = 0; idx < mediaFiles.length; idx++) {
@@ -1740,12 +1700,11 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       const buf = await zip.files[path].async('arraybuffer');
       const mimeType = guessImageMime(path);
       const base64 = arrayBufferToBase64(buf);
-      const imgId = `orig_pptx_${idx + 1}_${Date.now().toString(36)}`;
       extractedImages.push({
-        id: imgId,
+        id: `orig_pptx_${idx + 1}`,
         name: path.split('/').pop(),
         sourceFile: file.name,
-        location: `عرض PPTX (صورة ${idx + 1})`,
+        location: `شريحة ${idx + 1}`,
         mimeType,
         base64,
         dataUrl: `data:${mimeType};base64,${base64}`,
@@ -1756,69 +1715,42 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     const blocks = [];
     let imgCursor = 0;
     for (let i = 0; i < slidePaths.length; i++) {
-      const xmlText = await zip.files[slidePaths[i]].async('string');
-      const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+      const xmlDoc = parser.parseFromString(await zip.files[slidePaths[i]].async('string'), 'application/xml');
       const paragraphs = Array.from(xmlDoc.getElementsByTagName('a:p'))
         .map(p => Array.from(p.getElementsByTagName('a:t')).map(t => t.textContent).join('').trim())
         .filter(Boolean);
-      const hasPic = xmlDoc.getElementsByTagName('p:pic').length > 0 || xmlDoc.getElementsByTagName('a:blip').length > 0;
-      if (hasPic && imgCursor < extractedImages.length) {
+      if ((xmlDoc.getElementsByTagName('p:pic').length > 0 || xmlDoc.getElementsByTagName('a:blip').length > 0) && imgCursor < extractedImages.length) {
         const im = extractedImages[imgCursor++];
-        im.location = `شريحة ${i + 1}`;
         paragraphs.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - شريحة ${i + 1}]`);
       }
-      if (paragraphs.length) {
-        blocks.push({
-          sourceFile: file.name,
-          location: `شريحة ${i + 1}`,
-          text: paragraphs.join('\n')
-        });
-      }
+      if (paragraphs.length) blocks.push({ sourceFile: file.name, location: `شريحة ${i + 1}`, text: paragraphs.join('\n') });
     }
-    while (imgCursor < extractedImages.length && blocks.length > 0) {
-      const im = extractedImages[imgCursor++];
-      blocks[blocks.length - 1].text += `\n[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - ${im.name}]`;
-    }
-    return { blocks, extractedImages, warnings: [], meta: { slideCount: slidePaths.length } };
+    return { blocks, extractedImages, warnings: [], meta: {} };
   }
   async function processTextFile(file) {
     const text = await file.text();
     if (!text.trim()) throw new Error(`الملف (${file.name}) فارغ.`);
-    return {
-      blocks: [{ sourceFile: file.name, location: 'النص الكامل', text: text.trim() }],
-      extractedImages: [],
-      warnings: [],
-      meta: { length: text.length }
-    };
+    return { blocks: [{ sourceFile: file.name, location: 'النص الكامل', text: text.trim() }], extractedImages: [], warnings: [], meta: {} };
   }
   async function processImageInput(file) {
-    const img = await readImageFile(file);
-    const imgId = `orig_img_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 5)}`;
-    return {
-      blocks: [{
-        sourceFile: file.name,
-        location: 'صورة مرفوعة',
-        text: `[ORIGINAL_IMAGE: ${imgId} | المصدر: ${file.name}]`
-      }],
-      extractedImages: [{
-        id: imgId,
-        name: file.name,
-        sourceFile: file.name,
-        location: 'صورة مرفوعة',
-        mimeType: img.mimeType,
-        base64: img.base64,
-        dataUrl: img.dataUrl,
-        origin: 'original',
-        isStandaloneImage: true
-      }],
-      warnings: [],
-      meta: { standaloneImage: true }
-    };
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result || '');
+        const base64 = dataUrl.split(',')[1] || '';
+        const imgId = `orig_img_${Date.now().toString(36)}`;
+        resolve({
+          blocks: [{ sourceFile: file.name, location: 'صورة مرفوعة', text: `[ORIGINAL_IMAGE: ${imgId} | المصدر: ${file.name}]` }],
+          extractedImages: [{ id: imgId, name: file.name, sourceFile: file.name, location: 'صورة مرفوعة', mimeType: file.type || 'image/jpeg', base64, dataUrl, origin: 'original', isStandaloneImage: true }],
+          warnings: [],
+          meta: {}
+        });
+      };
+      reader.onerror = () => reject(new Error(`فشل قراءة الصورة: ${file.name}`));
+      reader.readAsDataURL(file);
+    });
   }
   async function processFile(file, onProgress = null) {
-    const cfg = global.MEDNERD_CONFIG.GEMINI_CONFIG;
-    if (file.size === 0) throw new Error(`الملف ${file.name} فارغ (0 بايت).`);
-    if (file.size > cfg.maxFileSizeBytes) throw new Error(`حجم ${file.name} يتجاوز الحد الأقصى (12 MB).`);
     const ext = getExtension(file.name);
     if (ext === 'pdf') return processPDF(file, onProgress);
     if (ext === 'docx') return processDOCX(file);
@@ -1827,26 +1759,21 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return processImageInput(file);
     throw new Error(`صيغة غير مدعومة: ${file.name}`);
   }
-  function segmentBlocks(allBlocks, maxChars = null) {
-    const limit = maxChars || global.MEDNERD_CONFIG.GEMINI_CONFIG.maxSegmentChars;
+  
+  function segmentBlocks(allBlocks, maxChars = 3500) {
     const segments = [];
-    let current = {
-      id: 'seg_1',
-      sources: [],
-      text: ''
-    };
+    let current = { id: 'seg_1', sources: [], text: '' };
     for (const blk of allBlocks) {
-      const entry = `\n[المصدر: ${blk.sourceFile} | ${blk.location}]\n${blk.text}\n`;
-      if (current.text.length + entry.length > limit && current.text.length > 0) {
-        segments.push(current);
-        current = {
-          id: `seg_${segments.length + 1}`,
-          sources: [],
-          text: ''
-        };
+      const paras = String(blk.text || '').split(/\n{2,}/);
+      for (const p of paras) {
+        const entry = `\n[${blk.sourceFile} | ${blk.location}]\n${p}\n`;
+        if (current.text.length + entry.length > maxChars && current.text.length > 0) {
+          segments.push(current);
+          current = { id: `seg_${segments.length + 1}`, sources: [], text: '' };
+        }
+        current.text += entry;
+        if (!current.sources.includes(blk.sourceFile)) current.sources.push(blk.sourceFile);
       }
-      current.text += entry;
-      if (!current.sources.includes(blk.sourceFile)) current.sources.push(blk.sourceFile);
     }
     if (current.text.trim()) segments.push(current);
     return segments;
@@ -1882,7 +1809,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     return out.trim();
   }
   async function extractTextFromImage(imageAsset, signal = null) {
-    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة وبأسلوب تقريري طبي مباشر دون عبارات إنشائية ودون إيموجي. حافظ على المصطلحات الإنجليزية بين قوسين واستخدم <sup> و <sub> للصيغ الكيميائية. إذا كانت الصورة شكلاً أو مخططاً، صف التراكيب الظاهرة تحت عنوان [وصف الشكل الطبي الأصلي: ${imageAsset.id}].`;
+    const prompt = `استخرج جميع النصوص، العناوين، الجداول، أو المعطيات الطبية الظاهرة في هذه الصورة بدقة تامة وبأسلوب تقريري طبي مباشر دون عبارات إنشائية ودون إيموجي. حافظ على المصطلحات الإنجليزية بين قوسين واستخدم <sup> و <sub> للصيغ الكيميائية.`;
     const res = await global.GeminiClient.callGemini({
       systemInstruction: 'أنت أداة استخراج وتحرير طبي أكاديمي صارم في نظام MEDNERD A4 Engine.',
       parts: [
@@ -1895,78 +1822,108 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
   }
   async function analyzeSegment(segment, options = {}, signal = null) {
     const specialty = options.specialty || 'human_medicine';
-    const subjectName = options.subjectName || '';
-    const lectureTitle = options.customTitle || '';
+    const subjectName = options.subjectName || specialty;
+    const lectureTitle = options.customTitle || 'محاضرة طبية';
     const customMasterPrompt = (options.masterPrompt || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT || '').trim();
+    const origMatches = Array.from(segment.text.matchAll(/\[ORIGINAL_IMAGE:\s*([^\s|\]]+)/g)).map(m => m[1]);
     const systemInstruction = `${customMasterPrompt}
-بيانات القالب الإلزامي:
-[المادة]: ${subjectName || specialty}
-[عنوان المحاضرة بالعربية]: ${lectureTitle || 'يُستنتج من المحتوى المصدري'}
-تعليمات التحويل المهيكل (MEDNERD A4 Component Library):
-حول المقطع المصدري بالكامل (دون ترك أي تفصيلة أو رقم أو نسبة أو استثناء) إلى مكونات MEDNERD الأربعة القياسية:
-1. قسّم المحتوى إلى بطاقات علمية متتالية ("subtopics") بحيث تمثل كل بطاقة [المكون 1] (فقرة مركزة من 70 إلى 140 كلمة لتتناسب مع تخطيط صفحة A4 دون فيضان):
-   - ضع العنوان العلمي الفرعي في "heading" والشرح الأكاديمي التفصيلي الكامل في "contentMarkdown" بأسلوب تقريري طبي مباشر (Clinical & Direct Staccato Style)، مع المصطلحات الإنجليزية بين قوسين، ووسوم <sup> و <sub> للصيغ الكيميائية، وبدون أي إيموجي أو عبارات إنشائية.
-   - إذا وردت في الفقرة إشارة صورة أصلية مقصوصة من الملف [ORIGINAL_IMAGE: ID]، ضع معرّفها حرفياً في "attachedOriginalImages" لتظهر في حاوية الرسم الجانبي اليسرى (w-[38%]).
-   - لكل بطاقة [المكون 1]، حدد دائماً في "sideVisual" اسم الشكل الدقيق ("figureLabel") ووصف توليده ("promptEn") وعناصر المخطط ("diagramNodes" من 3 إلى 4 خطوات/تراكيب) ليتم توليد رسم طبي توضيحي لها عند عدم وجود صورة أصلية.
-2. لأي ملاحظة سريرية أو تطبيق سريري [المكون 2]: ضعه في "clinicalCases" ليُعرض داخل الصندوق السريري (Clinical Pearl Box).
-3. لأي مقارنة أو تصنيف مجدول [المكون 3]: ضعه في "tables" بعمودين أو أكثر (المعيار | التفاصيل).
-4. لأي أسئلة تقويم أو MCQs واردة في النص أو أسئلة تقويم سريري ختامية [المكون 4]: ضعها في "mcqs" بكامل خياراتها مع الرمز الصحيح والتعليل الفيزيولوجي/السريري المباشر.
-أخرج JSON صالحاً بالبنية التالية حصراً:
+مهمتك الآن تحويل المقطع المصدري التالي إلى مكونات MEDNERD الأربعة القياسية بدقة علمية كاملة (دون اختصار أي رقم أو نسبة أو تفصيل) وبأسلوب تقريري طبي مباشر (Clinical & Direct Staccato Style):
+- ضع كل فقرة علمية رئيسية في "subtopics" لتمثل [المكون 1] مع تحديد اسم الرسم التوضيحي الدقيق بالعربية والإنجليزية في "sideVisual.figureLabel" (مثال: "شكل: تفرعات العصب الثلاثي التوائم (Trigeminal Nerve Branches)")، ومصطلح البحث العلمي بالإنجليزية في "sideVisual.searchTermEn" (مثال: "Trigeminal nerve anatomy")، وخطوات المخطط في "sideVisual.diagramNodes".
+- إذا وجدت في النص إشارة [ORIGINAL_IMAGE: ID]، ضع المعرّف ID في "attachedOriginalImages".
+- ضع الملاحظات السريرية في "clinicalCases" لتمثل [المكون 2].
+- ضع الجداول في "tables" لتمثل [المكون 3].
+- ضع أسئلة MCQ بكامل خياراتها وتعليلها الفيزيولوجي في "mcqs" لتمثل [المكون 4].
+أخرج JSON صالحاً فقط بالبنية التالية:
 {
   "topics": [
     {
-      "title": "عنوان المحاضرة أو الموضوع الرئيسي",
-      "domain": "anatomy | pathology | pharmacology | physiology | clinical | dental | nursing | lab | physio | general",
-      "sourceFiles": ["اسم الملف"],
+      "title": "${lectureTitle}",
+      "domain": "${specialty}",
+      "sourceFiles": ${JSON.stringify(segment.sources || [])},
       "subtopics": [
         {
           "heading": "العنوان العلمي الفرعي",
           "contentMarkdown": "الشرح الأكاديمي التفصيلي الدقيق بدون تلخيص مع كتابة الصيغ مثل Ca<sup>2+</sup> والمصطلحات الإنجليزية بين قوسين",
           "sideVisual": {
             "figureLabel": "شكل: اسم الرسم الدقيق",
-            "suggestedType": "Anatomy Illustrations | Physiology Illustrations | Pathology Images | Pharmacology Diagrams | Medical Diagrams | Flowcharts",
+            "searchTermEn": "English medical anatomical or physiological term for figure",
+            "suggestedType": "Medical Diagrams",
             "promptEn": "Clean medical textbook illustration of ..., white background, high anatomical precision, text-free",
-            "diagramNodes": ["العنصر 1", "العنصر 2", "العنصر 3"]
+            "diagramNodes": ["الخطوة أو البنية 1", "الخطوة أو البنية 2", "الخطوة أو البنية 3"]
           },
           "attachedOriginalImages": [
-            {
-              "imageId": "معرّف الصورة الأصلية كما ورد في [ORIGINAL_IMAGE: ID]",
-              "figureTitle": "شكل: عنوان الصورة الأصلية",
-              "caption": "وصف مختصر لما يظهر في الشكل الأصلي"
-            }
+            {"imageId": "orig_id_if_present", "figureTitle": "شكل: عنوان الصورة الأصلية", "caption": "وصف الشكل"}
           ],
-          "definitions": [{"term": "Term", "definition": "التعريف التقريري الدقيق"}],
-          "tables": [{"caption": "عنوان الجدول", "markdown": "| المعيار | التفاصيل |\\n|---|---|\\n| ... | ... |"}],
-          "clinicalCases": ["التطبيق السريري المباشر للملاحظة السريرية الهامة"],
-          "mcqs": [{"question": "نص السؤال السريري", "options": ["A) الخيار الأول", "B) الخيار الثاني", "C) الخيار الثالث", "D) الخيار الرابع"], "answer": "A", "explanation": "التعليل الفيزيولوجي/السريري المباشر"}]
+          "definitions": [],
+          "tables": [{"caption": "جدول مقارنة", "markdown": "| المعيار | التفاصيل |\\n|---|---|\\n| ... | ... |"}],
+          "clinicalCases": ["التطبيق السريري المباشر"],
+          "mcqs": [{"question": "نص السؤال السريري؟", "options": ["A) ...", "B) ...", "C) ...", "D) ..."], "answer": "A", "explanation": "التعليل الفيزيولوجي/السريري المباشر"}]
         }
       ]
     }
   ],
-  "medicalTerms": ["Term1", "Term2"],
-  "keyConceptsForVisuals": []
+  "medicalTerms": []
 }`;
-    const parsed = await global.GeminiClient.callGeminiJSON({
-      systemInstruction,
-      parts: [{
-        text: `[المادة]: ${subjectName || specialty}\n[عنوان المحاضرة بالعربية]: ${lectureTitle || 'من المصدر'}\n[المحتوى المصدري]:\n${segment.text}`
-      }],
-      signal
-    });
+    let parsed = null;
+    try {
+      parsed = await global.GeminiClient.callGeminiJSON({
+        systemInstruction,
+        parts: [{
+          text: `[المادة]: ${subjectName}\n[عنوان المحاضرة بالعربية]: ${lectureTitle}\n[المحتوى المصدري]:\n${segment.text}`
+        }],
+        signal
+      });
+    } catch (_) {
+      const cleanRaw = sanitizeMedicalText(segment.text.replace(/\[ORIGINAL_IMAGE:[^\]]+\]/g, ''));
+      const paras = cleanRaw.split(/\n{2,}/).filter(p => p.trim().length > 15);
+      parsed = {
+        topics: [{
+          title: lectureTitle,
+          domain: specialty,
+          sourceFiles: segment.sources || [],
+          subtopics: paras.map((p, idx) => ({
+            heading: `${lectureTitle} — الجزء ${idx + 1}`,
+            contentMarkdown: p.trim(),
+            sideVisual: {
+              figureLabel: `شكل: توضيح ${lectureTitle} (${idx + 1})`,
+              searchTermEn: lectureTitle,
+              suggestedType: 'Medical Diagrams',
+              promptEn: `Medical textbook diagram of ${lectureTitle}`,
+              diagramNodes: [p.slice(0, 50), p.slice(50, 100)]
+            },
+            attachedOriginalImages: origMatches[idx] ? [{ imageId: origMatches[idx], figureTitle: `شكل من الملف الأصلي`, caption: '' }] : [],
+            definitions: [],
+            tables: [],
+            clinicalCases: [],
+            mcqs: []
+          }))
+        }],
+        medicalTerms: []
+      };
+    }
     if (parsed && Array.isArray(parsed.topics)) {
       if (!Array.isArray(parsed.keyConceptsForVisuals)) parsed.keyConceptsForVisuals = [];
+      let origCursor = 0;
       parsed.topics.forEach(t => {
-        t.title = sanitizeMedicalText(t.title);
+        t.title = sanitizeMedicalText(t.title || lectureTitle);
         (t.subtopics || []).forEach(st => {
           st.heading = sanitizeMedicalText(st.heading);
           st.contentMarkdown = sanitizeMedicalText(st.contentMarkdown);
           if (Array.isArray(st.clinicalCases)) {
             st.clinicalCases = st.clinicalCases.map(sanitizeMedicalText);
           }
+          if ((!st.attachedOriginalImages || !st.attachedOriginalImages.length) && origCursor < origMatches.length) {
+            st.attachedOriginalImages = [{
+              imageId: origMatches[origCursor++],
+              figureTitle: (st.sideVisual && st.sideVisual.figureLabel) || `شكل: ${st.heading}`,
+              caption: st.heading
+            }];
+          }
           const hasOrig = Array.isArray(st.attachedOriginalImages) && st.attachedOriginalImages.some(a => a && a.imageId);
           if (!hasOrig && st.sideVisual && st.sideVisual.figureLabel) {
             parsed.keyConceptsForVisuals.push({
               concept: st.heading || st.sideVisual.figureLabel,
+              searchTermEn: st.sideVisual.searchTermEn || st.heading,
               subtopicHeading: st.heading,
               suggestedType: st.sideVisual.suggestedType || 'Medical Diagrams',
               promptEn: st.sideVisual.promptEn || `Clean medical textbook illustration of ${st.heading}, white background`,
@@ -1980,93 +1937,31 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     }
     return parsed;
   }
-  async function organizeAndDetectConflicts(analyzedSegments, options = {}, signal = null) {
+  async function organizeAndDetectConflicts(analyzedSegments, options = {}) {
     const allTopics = [];
     const allTerms = new Set();
     const visualCandidates = [];
     for (const seg of analyzedSegments) {
-      if (Array.isArray(seg.topics)) {
-        seg.topics.forEach(t => allTopics.push(t));
-      }
-      if (Array.isArray(seg.medicalTerms)) {
-        seg.medicalTerms.forEach(term => allTerms.add(term));
-      }
-      if (Array.isArray(seg.keyConceptsForVisuals)) {
-        seg.keyConceptsForVisuals.forEach(vc => visualCandidates.push(vc));
-      }
+      if (Array.isArray(seg.topics)) seg.topics.forEach(t => allTopics.push(t));
+      if (Array.isArray(seg.medicalTerms)) seg.medicalTerms.forEach(term => allTerms.add(term));
+      if (Array.isArray(seg.keyConceptsForVisuals)) seg.keyConceptsForVisuals.forEach(vc => visualCandidates.push(vc));
     }
-    let chapterPlan = null;
-    if (allTopics.length > 1) {
-      const compactSummary = allTopics.map((t, idx) => ({
-        index: idx,
-        title: t.title,
-        domain: t.domain,
-        sources: t.sourceFiles,
-        subheadings: (t.subtopics || []).map(s => s.heading)
-      }));
-      try {
-        chapterPlan = await global.GeminiClient.callGeminiJSON({
-          systemInstruction: `أنت رئيس تحرير نظام MEDNERD A4 Engine. رتب الموضوعات التالية في فصول أكاديمية متسلسلة دون حذف أي محتوى، واكتشف أي تكرار أو تعارض بين المصادر.
-أخرج JSON فقط:
-{
-  "bookTitle": "عنوان المحاضرة أو الكتاب بالعربية",
-  "bookSubtitle": "اسم المادة العلمية",
-  "chapters": [
-    {
-      "chapterTitle": "عنوان الفصل",
-      "domain": "التخصص/المجال",
-      "topicIndices": [0, 1]
-    }
-  ],
-  "duplicates": ["وصف أي موضوع مكرر"],
-  "contradictions": ["تنبيه لأي تعارض علمي إن وُجد"]
-}`,
-          parts: [{ text: JSON.stringify(compactSummary, null, 2) }],
-          signal
-        });
-      } catch (_) {
-        chapterPlan = null;
-      }
-    }
-    if (!chapterPlan || !Array.isArray(chapterPlan.chapters) || !chapterPlan.chapters.length) {
-      chapterPlan = {
-        bookTitle: options.customTitle || (allTopics[0] ? allTopics[0].title : 'محاضرة طبية أكاديمية'),
-        bookSubtitle: options.subjectName || 'MEDNERD ACADEMIC',
-        chapters: allTopics.map((t, idx) => ({
-          chapterTitle: t.title || `المحور ${idx + 1}`,
-          domain: t.domain || 'general',
-          topicIndices: [idx]
-        })),
-        duplicates: [],
-        contradictions: []
-      };
-    }
-    const chapters = chapterPlan.chapters.map((ch, idx) => {
-      const mergedSubtopics = [];
-      const sourceFiles = new Set();
-      (ch.topicIndices || []).forEach(ti => {
-        const topic = allTopics[ti];
-        if (!topic) return;
-        (topic.sourceFiles || []).forEach(sf => sourceFiles.add(sf));
-        (topic.subtopics || []).forEach(st => mergedSubtopics.push(st));
-      });
-      return {
-        id: `ch_${idx + 1}`,
-        number: idx + 1,
-        title: sanitizeMedicalText(ch.chapterTitle),
-        domain: ch.domain || 'general',
-        sourceFiles: Array.from(sourceFiles),
-        subtopics: mergedSubtopics
-      };
-    }).filter(ch => ch.subtopics.length > 0);
+    const chapters = allTopics.map((t, idx) => ({
+      id: `ch_${idx + 1}`,
+      number: idx + 1,
+      title: sanitizeMedicalText(t.title || options.customTitle || `المحور ${idx + 1}`),
+      domain: t.domain || 'general',
+      sourceFiles: t.sourceFiles || [],
+      subtopics: t.subtopics || []
+    })).filter(ch => ch.subtopics.length > 0);
     return {
-      bookTitle: sanitizeMedicalText(options.customTitle || chapterPlan.bookTitle),
-      bookSubtitle: sanitizeMedicalText(options.subjectName || chapterPlan.bookSubtitle),
+      bookTitle: sanitizeMedicalText(options.customTitle || (chapters[0] && chapters[0].title) || 'محاضرة طبية أكاديمية'),
+      bookSubtitle: sanitizeMedicalText(options.subjectName || 'MEDNERD ACADEMIC'),
       chapters,
       medicalTerms: Array.from(allTerms),
       visualCandidates,
-      duplicates: chapterPlan.duplicates || [],
-      contradictions: chapterPlan.contradictions || []
+      duplicates: [],
+      contradictions: []
     };
   }
   global.ContentAnalyzer = {
@@ -2089,17 +1984,43 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     }[c]));
   }
   
+  async function fetchWikimediaMedicalImage(searchTerm, signal = null) {
+    if (!searchTerm || typeof fetch === 'undefined') return null;
+    try {
+      const cleanQuery = String(searchTerm)
+        .replace(/[^\w\s\-]/g, ' ')
+        .trim();
+      if (!cleanQuery || cleanQuery.length < 3) return null;
+      const q = encodeURIComponent(`${cleanQuery} anatomy OR physiology OR diagram OR histology`);
+      const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=filetype:bitmap|drawing%20${q}&gsrlimit=4&prop=imageinfo&iiprop=url|mime&iiurlwidth=640&format=json&origin=*`;
+      const resp = await fetch(url, { signal });
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
+      for (const p of pages) {
+        const info = p.imageinfo && p.imageinfo[0];
+        const thumbUrl = info && (info.thumburl || info.url);
+        if (thumbUrl && /\.(png|jpe?g|svg|webp)$/i.test(thumbUrl)) {
+          return {
+            ok: true,
+            dataUrl: thumbUrl,
+            mimeType: info.mime || 'image/png'
+          };
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+  
   async function generateAiCustomMedicalSvg(concept, imageType, titleAr, diagramNodes = [], signal = null) {
     try {
       const prompt = `ارسم مخططاً أو رسماً طبياً توضيحياً متجهياً (SVG) عالي الدقة لمفهوم:
 المفهوم: ${concept}
-النوع الطبي: ${imageType}
 العنوان: ${titleAr}
-العناصر العلمية المطلوب تمثيلها بصرياً: ${(diagramNodes || []).join(' ⬅ ')}
+العناصر العلمية: ${(diagramNodes || []).join(' ⬅ ')}
 قواعد رسم كود SVG:
-1. أخرج كود <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" width="100%" height="100%">...</svg> فقط دون أي نص خارجه.
-2. ارسم تراكيب تشريحية أو خلوية أو فيزيولوجية حقيقية ومعبرة (أغشية، مستقبلات، أوعية، أعصاب، أسهم مسارات، تدرجات لونية طبية #1A7398 و #14532d و #C06A23 و #F8FAFC) وليس مجرد مستطيلات نصية فارغة.
-3. أضف تسميات علمية واضحة بالعربية والإنجليزية بخط Cairo/Arial وبأحجام مقروءة (12px–15px) بحيث لا تتداخل النصوص أبداً.`;
+1. أخرج كود <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" width="100%" height="100%">...</svg> فقط.
+2. ارسم تراكيب تشريحية أو خلوية أو فيزيولوجية واضحة المعالم مع أسهم مسارات وتسميات علمية بالعربية والإنجليزية بخط واضح (12px–14px) وألوان طبية (#1A7398، #14532d، #C06A23، #F8FAFC).`;
       const res = await global.GeminiClient.callGemini({
         systemInstruction: 'أنت رسام طبي أكاديمي ومهندس رسوم SVG طبية. أخرج كود <svg>...</svg> صالحاً وكاملاً فقط.',
         parts: [{ text: prompt }],
@@ -2172,7 +2093,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
   }
   async function processBookImages(projectId, organizedBook, originalImages, options = {}, onProgress = null, signal = null) {
     const density = options.imageDensity || 'balanced';
-    const maxGenerated = density === 'none' ? 0 : density === 'minimal' ? 3 : density === 'rich' ? 10 : 6;
+    const maxGenerated = density === 'none' ? 0 : density === 'minimal' ? 4 : density === 'rich' ? 12 : 8;
     const finalImages = [];
     const seenConcepts = new Set();
     const imagePlacementMap = new Map();
@@ -2245,6 +2166,26 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
           mimeType: genRes.mimeType,
           dataUrl: genRes.dataUrl,
           model: genRes.model,
+          status: 'ready'
+        });
+        continue;
+      }
+      const wikiImg = await fetchWikimediaMedicalImage(cand.searchTermEn || cand.concept, signal);
+      if (wikiImg && wikiImg.ok && wikiImg.dataUrl) {
+        generatedCount++;
+        finalImages.push({
+          id: `gen_atlas_${Date.now()}_${i}`,
+          projectId,
+          chapterId: targetChapter ? targetChapter.id : 'ch_1',
+          chapterTitle: targetChapter ? targetChapter.title : '',
+          subtopicHeading: cand.subtopicHeading || '',
+          title: titleAr,
+          caption: `${cand.captionAr || ''} [صورة أطلس طبي توضيحية]`,
+          imageType: cand.suggestedType || 'Medical Atlas Figure',
+          prompt: promptEn,
+          origin: 'ai_generated',
+          mimeType: wikiImg.mimeType,
+          dataUrl: wikiImg.dataUrl,
           status: 'ready'
         });
         continue;
