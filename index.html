@@ -165,6 +165,9 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
 .med-comp-1{flex-direction: column}
 .med-comp-1-fig{width: 100%}
 }
+.book-document{display: flex;flex-direction: column;align-items: center;gap: 28px;width: 100%}
+.page-card{width: 210mm;height: 297mm;min-height: 297mm;max-height: 297mm;box-sizing: border-box;padding: 10mm 12mm;margin: 0 auto;display: flex;flex-direction: column;justify-content: space-between;overflow: hidden;page-break-after: always;break-after: page;break-inside: avoid;background-color: #F8F9FA;color: #1E293B;border: 1px solid #94A3B8;border-radius: 4px;box-shadow: 0 14px 32px rgba(15, 23, 42, 0.22);flex-shrink: 0;position: relative}
+.med-comp-1, .med-comp-2, .med-comp-3, .med-comp-4{flex-shrink: 0}
 </style>
 
 <!-- External Verified Libraries -->
@@ -1459,7 +1462,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
             const maxY = Math.min(height, Math.ceil(Math.max(c0[1], c1[1], c2[1], c3[1])));
             const rw = maxX - minX;
             const rh = maxY - minY;
-            if (rw >= 75 && rh >= 75 && (rw * rh) < (width * height * 0.90)) {
+            if (rw >= 75 && rh >= 75 && (rw * rh) < (width * height * 0.88)) {
               candidateRects.push({ x: minX, y: minY, w: rw, h: rh });
             }
           }
@@ -1494,8 +1497,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
             for (let y = y0; y < Math.min(height, y0 + cell); y += 2) {
               for (let x = x0; x < Math.min(width, x0 + cell); x += 2) {
                 const idx = (y * width + x) * 4;
-                const R = imgData[idx], G = imgData[idx + 1], B = imgData[idx + 2];
-                if (R < 232 || G < 232 || B < 232) colored++;
+                if (imgData[idx] < 232 || imgData[idx + 1] < 232 || imgData[idx + 2] < 232) colored++;
               }
             }
             if (colored >= 6) grid[r * cols + c] = 1;
@@ -1569,10 +1571,12 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
           name: `شكل مقصوص (${idx + 1}) — صفحة ${pageNum}`,
           sourceFile: fileName,
           location: `صفحة ${pageNum}`,
+          yRatio: (b.y + b.h * 0.5) / Math.max(height, 1),
           mimeType: 'image/jpeg',
           dataUrl,
           base64: dataUrl.split(',')[1],
-          origin: 'original'
+          origin: 'original',
+          contextSnippet: ''
         });
       });
     } catch (e) {
@@ -1593,26 +1597,53 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     for (let p = 1; p <= limitPages; p++) {
       if (onProgress) onProgress(Math.round((p / limitPages) * 100));
       const page = await pdf.getPage(p);
+      const vp = page.getViewport({ scale: 1.0 });
+      const pageH = Math.max(vp.height || 800, 1);
       const tc = await page.getTextContent();
-      let lastY = null, pageLines = [], currentLine = [];
+      let lastPdfY = null;
+      const lineObjects = [];
+      let currentTokens = [];
+      let currentTopY = 0;
       for (const item of tc.items) {
-        const y = item.transform ? Math.round(item.transform[5]) : null;
-        if (lastY !== null && y !== null && Math.abs(y - lastY) > 4) {
-          pageLines.push(currentLine.join(' ').trim());
-          currentLine = [];
+        const pdfY = item.transform ? Math.round(item.transform[5]) : null;
+        const vpPt = item.transform ? global.pdfjsLib.Util.transform(vp.transform, item.transform) : [0, 0, 0, 0, 0, 0];
+        if (lastPdfY !== null && pdfY !== null && Math.abs(pdfY - lastPdfY) > 4) {
+          const txt = currentTokens.join(' ').trim();
+          if (txt) lineObjects.push({ text: txt, yRatio: Math.max(0, Math.min(1, currentTopY / pageH)) });
+          currentTokens = [];
         }
-        if (item.str) currentLine.push(item.str);
-        lastY = y;
+        if (item.str) {
+          if (!currentTokens.length) currentTopY = vpPt[5];
+          currentTokens.push(item.str);
+        }
+        lastPdfY = pdfY;
       }
-      if (currentLine.length) pageLines.push(currentLine.join(' ').trim());
-      let pageText = pageLines.filter(Boolean).join('\n').trim();
+      if (currentTokens.length) {
+        const txt = currentTokens.join(' ').trim();
+        if (txt) lineObjects.push({ text: txt, yRatio: Math.max(0, Math.min(1, currentTopY / pageH)) });
+      }
       if (extractedImages.length < 30) {
         const cropped = await extractCroppedFiguresFromPdfPage(page, p, file.name);
         for (const fig of cropped) {
+          if (lineObjects.length > 0) {
+            let bestIdx = lineObjects.length - 1;
+            let bestDist = 999;
+            lineObjects.forEach((ln, idx) => {
+              const dist = Math.abs(ln.yRatio - fig.yRatio);
+              if (dist < bestDist) {
+                bestDist = dist;
+                bestIdx = idx;
+              }
+            });
+            const startCtx = Math.max(0, bestIdx - 2);
+            const endCtx = Math.min(lineObjects.length, bestIdx + 3);
+            fig.contextSnippet = lineObjects.slice(startCtx, endCtx).map(l => l.text).join(' ');
+            lineObjects[bestIdx].text += `\n[ORIGINAL_IMAGE: ${fig.id} | المصدر: ${file.name} - صفحة ${p}]`;
+          }
           extractedImages.push(fig);
-          pageText += `\n[ORIGINAL_IMAGE: ${fig.id} | المصدر: ${file.name} - صفحة ${p}]`;
         }
       }
+      const pageText = lineObjects.map(l => l.text).join('\n').trim();
       if (pageText) {
         totalChars += pageText.length;
         blocks.push({ sourceFile: file.name, location: `صفحة ${p}`, text: pageText });
@@ -1645,7 +1676,8 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         mimeType,
         base64,
         dataUrl: `data:${mimeType};base64,${base64}`,
-        origin: 'original'
+        origin: 'original',
+        contextSnippet: ''
       });
     }
     const xmlText = await docXmlFile.async('string');
@@ -1661,6 +1693,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
           if (texts.trim()) buffer.push(texts.trim());
           if ((node.getElementsByTagName('w:drawing').length > 0 || node.getElementsByTagName('w:pict').length > 0) && imgCursor < extractedImages.length) {
             const im = extractedImages[imgCursor++];
+            im.contextSnippet = buffer.slice(-2).join(' ');
             buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name}]`);
           }
         } else if (node.nodeName === 'w:tbl') {
@@ -1682,6 +1715,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       }
       while (imgCursor < extractedImages.length) {
         const im = extractedImages[imgCursor++];
+        im.contextSnippet = buffer.slice(-2).join(' ');
         buffer.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name}]`);
       }
       if (buffer.length) blocks.push({ sourceFile: file.name, location: `قسم ${sectionIndex}`, text: buffer.join('\n') });
@@ -1708,7 +1742,8 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         mimeType,
         base64,
         dataUrl: `data:${mimeType};base64,${base64}`,
-        origin: 'original'
+        origin: 'original',
+        contextSnippet: ''
       });
     }
     const parser = new DOMParser();
@@ -1721,6 +1756,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         .filter(Boolean);
       if ((xmlDoc.getElementsByTagName('p:pic').length > 0 || xmlDoc.getElementsByTagName('a:blip').length > 0) && imgCursor < extractedImages.length) {
         const im = extractedImages[imgCursor++];
+        im.contextSnippet = paragraphs.join(' ');
         paragraphs.push(`[ORIGINAL_IMAGE: ${im.id} | المصدر: ${file.name} - شريحة ${i + 1}]`);
       }
       if (paragraphs.length) blocks.push({ sourceFile: file.name, location: `شريحة ${i + 1}`, text: paragraphs.join('\n') });
@@ -1741,7 +1777,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         const imgId = `orig_img_${Date.now().toString(36)}`;
         resolve({
           blocks: [{ sourceFile: file.name, location: 'صورة مرفوعة', text: `[ORIGINAL_IMAGE: ${imgId} | المصدر: ${file.name}]` }],
-          extractedImages: [{ id: imgId, name: file.name, sourceFile: file.name, location: 'صورة مرفوعة', mimeType: file.type || 'image/jpeg', base64, dataUrl, origin: 'original', isStandaloneImage: true }],
+          extractedImages: [{ id: imgId, name: file.name, sourceFile: file.name, location: 'صورة مرفوعة', mimeType: file.type || 'image/jpeg', base64, dataUrl, origin: 'original', isStandaloneImage: true, contextSnippet: file.name }],
           warnings: [],
           meta: {}
         });
@@ -1759,8 +1795,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return processImageInput(file);
     throw new Error(`صيغة غير مدعومة: ${file.name}`);
   }
-  
-  function segmentBlocks(allBlocks, maxChars = 3500) {
+  function segmentBlocks(allBlocks, maxChars = 3200) {
     const segments = [];
     let current = { id: 'seg_1', sources: [], text: '' };
     for (const blk of allBlocks) {
@@ -1825,14 +1860,14 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     const subjectName = options.subjectName || specialty;
     const lectureTitle = options.customTitle || 'محاضرة طبية';
     const customMasterPrompt = (options.masterPrompt || global.MEDNERD_CONFIG.DEFAULT_MASTER_PROMPT || '').trim();
+    const segId = segment.id || `seg_${Date.now()}`;
     const origMatches = Array.from(segment.text.matchAll(/\[ORIGINAL_IMAGE:\s*([^\s|\]]+)/g)).map(m => m[1]);
     const systemInstruction = `${customMasterPrompt}
 مهمتك الآن تحويل المقطع المصدري التالي إلى مكونات MEDNERD الأربعة القياسية بدقة علمية كاملة (دون اختصار أي رقم أو نسبة أو تفصيل) وبأسلوب تقريري طبي مباشر (Clinical & Direct Staccato Style):
-- ضع كل فقرة علمية رئيسية في "subtopics" لتمثل [المكون 1] مع تحديد اسم الرسم التوضيحي الدقيق بالعربية والإنجليزية في "sideVisual.figureLabel" (مثال: "شكل: تفرعات العصب الثلاثي التوائم (Trigeminal Nerve Branches)")، ومصطلح البحث العلمي بالإنجليزية في "sideVisual.searchTermEn" (مثال: "Trigeminal nerve anatomy")، وخطوات المخطط في "sideVisual.diagramNodes".
-- إذا وجدت في النص إشارة [ORIGINAL_IMAGE: ID]، ضع المعرّف ID في "attachedOriginalImages".
-- ضع الملاحظات السريرية في "clinicalCases" لتمثل [المكون 2].
-- ضع الجداول في "tables" لتمثل [المكون 3].
-- ضع أسئلة MCQ بكامل خياراتها وتعليلها الفيزيولوجي في "mcqs" لتمثل [المكون 4].
+1. قسّم المحتوى إلى بطاقات علمية متوازنة الطول ("subtopics") بحيث لا يتجاوز طول الشرح في البطاقة الواحدة 5 إلى 6 أسطر (60 إلى 110 كلمات) حتى لا تفيض أي بطاقة داخل صفحة A4.
+2. إذا وجدت في فقرة معينة إشارة [ORIGINAL_IMAGE: ID]، ضع المعرّف ID حرفياً داخل "attachedOriginalImages" لتلك البطاقة تحديداً.
+3. لكل بطاقة [المكون 1]، حدد دائماً في "sideVisual" اسم الشكل العلمي الدقيق بالعربية والإنجليزية ("figureLabel") ومصطلح البحث العلمي بالإنجليزية ("searchTermEn") وخطوات المخطط ("diagramNodes").
+4. ضع الملاحظات السريرية في "clinicalCases" [المكون 2]، والجداول في "tables" [المكون 3]، وأسئلة التقويم في "mcqs" [المكون 4].
 أخرج JSON صالحاً فقط بالبنية التالية:
 {
   "topics": [
@@ -1843,10 +1878,10 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       "subtopics": [
         {
           "heading": "العنوان العلمي الفرعي",
-          "contentMarkdown": "الشرح الأكاديمي التفصيلي الدقيق بدون تلخيص مع كتابة الصيغ مثل Ca<sup>2+</sup> والمصطلحات الإنجليزية بين قوسين",
+          "contentMarkdown": "الشرح الأكاديمي التفصيلي الدقيق بدون تلخيص (60-110 كلمات للبطاقة) مع كتابة الصيغ مثل Ca<sup>2+</sup> والمصطلحات الإنجليزية بين قوسين",
           "sideVisual": {
             "figureLabel": "شكل: اسم الرسم الدقيق",
-            "searchTermEn": "English medical anatomical or physiological term for figure",
+            "searchTermEn": "English anatomical or physiological term",
             "suggestedType": "Medical Diagrams",
             "promptEn": "Clean medical textbook illustration of ..., white background, high anatomical precision, text-free",
             "diagramNodes": ["الخطوة أو البنية 1", "الخطوة أو البنية 2", "الخطوة أو البنية 3"]
@@ -1903,25 +1938,20 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     }
     if (parsed && Array.isArray(parsed.topics)) {
       if (!Array.isArray(parsed.keyConceptsForVisuals)) parsed.keyConceptsForVisuals = [];
-      let origCursor = 0;
-      parsed.topics.forEach(t => {
+      parsed.topics.forEach((t, tIdx) => {
         t.title = sanitizeMedicalText(t.title || lectureTitle);
-        (t.subtopics || []).forEach(st => {
+        (t.subtopics || []).forEach((st, sIdx) => {
+          const subtopicId = `${segId}_t${tIdx}_s${sIdx}`;
+          st.subtopicId = subtopicId;
           st.heading = sanitizeMedicalText(st.heading);
           st.contentMarkdown = sanitizeMedicalText(st.contentMarkdown);
           if (Array.isArray(st.clinicalCases)) {
             st.clinicalCases = st.clinicalCases.map(sanitizeMedicalText);
           }
-          if ((!st.attachedOriginalImages || !st.attachedOriginalImages.length) && origCursor < origMatches.length) {
-            st.attachedOriginalImages = [{
-              imageId: origMatches[origCursor++],
-              figureTitle: (st.sideVisual && st.sideVisual.figureLabel) || `شكل: ${st.heading}`,
-              caption: st.heading
-            }];
-          }
           const hasOrig = Array.isArray(st.attachedOriginalImages) && st.attachedOriginalImages.some(a => a && a.imageId);
           if (!hasOrig && st.sideVisual && st.sideVisual.figureLabel) {
             parsed.keyConceptsForVisuals.push({
+              subtopicId,
               concept: st.heading || st.sideVisual.figureLabel,
               searchTermEn: st.sideVisual.searchTermEn || st.heading,
               subtopicHeading: st.heading,
@@ -1983,13 +2013,26 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       "'": '&apos;'
     }[c]));
   }
-  
+  function computeLexicalOverlap(snippet, targetText) {
+    if (!snippet || !targetText) return 0;
+    const tokenize = s => String(s)
+      .toLowerCase()
+      .replace(/[^\w\u0600-\u06FF\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length >= 3);
+    const a = tokenize(snippet);
+    const bSet = new Set(tokenize(targetText));
+    if (!a.length || !bSet.size) return 0;
+    let hits = 0;
+    for (const w of a) {
+      if (bSet.has(w)) hits++;
+    }
+    return hits / a.length;
+  }
   async function fetchWikimediaMedicalImage(searchTerm, signal = null) {
     if (!searchTerm || typeof fetch === 'undefined') return null;
     try {
-      const cleanQuery = String(searchTerm)
-        .replace(/[^\w\s\-]/g, ' ')
-        .trim();
+      const cleanQuery = String(searchTerm).replace(/[^\w\s\-]/g, ' ').trim();
       if (!cleanQuery || cleanQuery.length < 3) return null;
       const q = encodeURIComponent(`${cleanQuery} anatomy OR physiology OR diagram OR histology`);
       const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=filetype:bitmap|drawing%20${q}&gsrlimit=4&prop=imageinfo&iiprop=url|mime&iiurlwidth=640&format=json&origin=*`;
@@ -2011,7 +2054,6 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     } catch (_) {}
     return null;
   }
-  
   async function generateAiCustomMedicalSvg(concept, imageType, titleAr, diagramNodes = [], signal = null) {
     try {
       const prompt = `ارسم مخططاً أو رسماً طبياً توضيحياً متجهياً (SVG) عالي الدقة لمفهوم:
@@ -2019,7 +2061,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
 العنوان: ${titleAr}
 العناصر العلمية: ${(diagramNodes || []).join(' ⬅ ')}
 قواعد رسم كود SVG:
-1. أخرج كود <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" width="100%" height="100%">...</svg> فقط.
+1. أخرج كود <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" width="100%" height="100%">...</svg> فقط.
 2. ارسم تراكيب تشريحية أو خلوية أو فيزيولوجية واضحة المعالم مع أسهم مسارات وتسميات علمية بالعربية والإنجليزية بخط واضح (12px–14px) وألوان طبية (#1A7398، #14532d، #C06A23، #F8FAFC).`;
       const res = await global.GeminiClient.callGemini({
         systemInstruction: 'أنت رسام طبي أكاديمي ومهندس رسوم SVG طبية. أخرج كود <svg>...</svg> صالحاً وكاملاً فقط.',
@@ -2041,21 +2083,20 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     } catch (_) {}
     return null;
   }
-  
   function generateAcademicSvgDiagram(cand, chapterTitle) {
     const title = cand.titleAr || cand.concept || 'مخطط توضيحي طبي';
     const typeLabel = cand.suggestedType || 'Medical Diagram';
     const rawNodes = Array.isArray(cand.diagramNodes) && cand.diagramNodes.length
-      ? cand.diagramNodes.slice(0, 5)
+      ? cand.diagramNodes.slice(0, 4)
       : [
           cand.concept || 'المفهوم الأساسي',
           cand.captionAr || 'الآلية الفيزيولوجية أو التشريحية',
           `التطبيق السريري في ${chapterTitle || 'المحاضرة'}`
         ];
-    const boxHeight = 46;
-    const gap = 22;
-    const startY = 74;
-    const totalHeight = startY + rawNodes.length * (boxHeight + gap) + 24;
+    const boxHeight = 44;
+    const gap = 20;
+    const startY = 68;
+    const totalHeight = startY + rawNodes.length * (boxHeight + gap) + 20;
     const width = 520;
     let nodesSvg = '';
     rawNodes.forEach((nodeText, idx) => {
@@ -2067,10 +2108,10 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       const badgeColor = isFirst ? '#1A7398' : isLast ? '#14532d' : '#C06A23';
       nodesSvg += `
         <g>
-          <rect x="28" y="${y}" width="${width - 56}" height="${boxHeight}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
-          <circle cx="56" cy="${y + boxHeight / 2}" r="12" fill="${badgeColor}"/>
-          <text x="56" y="${y + boxHeight / 2 + 4}" text-anchor="middle" fill="#ffffff" font-family="Cairo, Arial, sans-serif" font-size="12" font-weight="700">${idx + 1}</text>
-          <text x="${width / 2 + 10}" y="${y + boxHeight / 2 + 5}" text-anchor="middle" fill="#0F172A" font-family="Cairo, Arial, sans-serif" font-size="12.5" font-weight="700">${escXml(String(nodeText).slice(0, 58))}</text>
+          <rect x="24" y="${y}" width="${width - 48}" height="${boxHeight}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+          <circle cx="52" cy="${y + boxHeight / 2}" r="12" fill="${badgeColor}"/>
+          <text x="52" y="${y + boxHeight / 2 + 4}" text-anchor="middle" fill="#ffffff" font-family="Cairo, Arial, sans-serif" font-size="12" font-weight="700">${idx + 1}</text>
+          <text x="${width / 2 + 10}" y="${y + boxHeight / 2 + 5}" text-anchor="middle" fill="#0F172A" font-family="Cairo, Arial, sans-serif" font-size="12.5" font-weight="700">${escXml(String(nodeText).slice(0, 56))}</text>
         </g>`;
       if (idx < rawNodes.length - 1) {
         const arrowY1 = y + boxHeight + 2;
@@ -2082,10 +2123,10 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     });
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${totalHeight}" width="100%" height="100%">
       <rect width="${width}" height="${totalHeight}" rx="12" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.5"/>
-      <rect x="0" y="0" width="${width}" height="52" rx="12" fill="#1A7398"/>
-      <rect x="0" y="40" width="${width}" height="12" fill="#1A7398"/>
-      <text x="${width / 2}" y="22" text-anchor="middle" fill="#e0f2fe" font-family="Arial, sans-serif" font-size="10" font-weight="700">MEDNERD · ${escXml(typeLabel.toUpperCase())}</text>
-      <text x="${width / 2}" y="41" text-anchor="middle" fill="#ffffff" font-family="Cairo, Arial, sans-serif" font-size="13.5" font-weight="800">${escXml(String(title).slice(0, 54))}</text>
+      <rect x="0" y="0" width="${width}" height="48" rx="12" fill="#1A7398"/>
+      <rect x="0" y="36" width="${width}" height="12" fill="#1A7398"/>
+      <text x="${width / 2}" y="19" text-anchor="middle" fill="#e0f2fe" font-family="Arial, sans-serif" font-size="9.5" font-weight="700">MEDNERD · ${escXml(typeLabel.toUpperCase())}</text>
+      <text x="${width / 2}" y="37" text-anchor="middle" fill="#ffffff" font-family="Cairo, Arial, sans-serif" font-size="13" font-weight="800">${escXml(String(title).slice(0, 52))}</text>
       ${nodesSvg}
     </svg>`;
     const encoded = btoa(unescape(encodeURIComponent(svg)));
@@ -2095,13 +2136,21 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     const density = options.imageDensity || 'balanced';
     const maxGenerated = density === 'none' ? 0 : density === 'minimal' ? 4 : density === 'rich' ? 12 : 8;
     const finalImages = [];
-    const seenConcepts = new Set();
-    const imagePlacementMap = new Map();
+    const allSubtopicsFlat = [];
+    const explicitIdMap = new Map();
     (organizedBook.chapters || []).forEach(ch => {
       (ch.subtopics || []).forEach(st => {
+        allSubtopicsFlat.push({
+          subtopicId: st.subtopicId,
+          chapterId: ch.id,
+          chapterTitle: ch.title,
+          heading: st.heading,
+          text: `${st.heading || ''} ${st.contentMarkdown || ''}`
+        });
         (st.attachedOriginalImages || []).forEach(att => {
           if (att && att.imageId) {
-            imagePlacementMap.set(String(att.imageId).trim(), {
+            explicitIdMap.set(String(att.imageId).trim(), {
+              subtopicId: st.subtopicId,
               chapterId: ch.id,
               chapterTitle: ch.title,
               subtopicHeading: st.heading,
@@ -2113,21 +2162,43 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       });
     });
     const usableOriginals = (originalImages || []).filter(img => !img.isPageScan || organizedBook.chapters.length === 1);
+    const SubtopicsWithOrigImage = new Set();
     usableOriginals.forEach((img, idx) => {
-      const mapped = imagePlacementMap.get(img.id);
-      const fallbackChapter = organizedBook.chapters[idx % Math.max(organizedBook.chapters.length, 1)];
-      const targetChapterId = mapped ? mapped.chapterId : (fallbackChapter ? fallbackChapter.id : 'ch_1');
-      const targetChapterTitle = mapped ? mapped.chapterTitle : (fallbackChapter ? fallbackChapter.title : '');
+      let match = explicitIdMap.get(img.id);
+      if (!match && img.contextSnippet && allSubtopicsFlat.length > 0) {
+        let bestSub = null;
+        let bestScore = -1;
+        for (const sub of allSubtopicsFlat) {
+          const score = computeLexicalOverlap(img.contextSnippet, sub.text);
+          if (score > bestScore) {
+            bestScore = score;
+            bestSub = sub;
+          }
+        }
+        if (bestSub) {
+          match = {
+            subtopicId: bestSub.subtopicId,
+            chapterId: bestSub.chapterId,
+            chapterTitle: bestSub.chapterTitle,
+            subtopicHeading: bestSub.heading,
+            figureTitle: `شكل: ${bestSub.heading}`,
+            caption: img.location
+          };
+        }
+      }
+      const fallbackSub = allSubtopicsFlat[Math.min(idx, Math.max(0, allSubtopicsFlat.length - 1))];
+      const subtopicId = match ? match.subtopicId : (fallbackSub ? fallbackSub.subtopicId : 'st_1_0_0');
+      const chapterId = match ? match.chapterId : (fallbackSub ? fallbackSub.chapterId : 'ch_1');
+      SubtopicsWithOrigImage.add(subtopicId);
       finalImages.push({
         id: img.id || `orig_${idx + 1}`,
         projectId,
-        chapterId: targetChapterId,
-        chapterTitle: targetChapterTitle,
-        subtopicHeading: mapped ? mapped.subtopicHeading : '',
-        title: (mapped && mapped.figureTitle) ? mapped.figureTitle : `شكل (${idx + 1}): ${img.name}`,
-        caption: (mapped && mapped.caption)
-          ? `${mapped.caption} (${img.sourceFile} — ${img.location})`
-          : `مقصوص من الملف الأصلي (${img.sourceFile} — ${img.location})`,
+        subtopicId,
+        chapterId,
+        chapterTitle: match ? match.chapterTitle : '',
+        subtopicHeading: match ? match.subtopicHeading : '',
+        title: (match && match.figureTitle) ? match.figureTitle : `شكل (${idx + 1}): ${img.name}`,
+        caption: `صورة مقصوصة من الملف الأصلي (${img.sourceFile} — ${img.location})`,
         imageType: 'Original Source Figure',
         origin: 'original',
         mimeType: img.mimeType,
@@ -2135,19 +2206,17 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         status: 'ready'
       });
     });
-    const candidates = (organizedBook.visualCandidates || []).slice(0, maxGenerated);
+    const candidates = (organizedBook.visualCandidates || [])
+      .filter(c => !SubtopicsWithOrigImage.has(c.subtopicId))
+      .slice(0, maxGenerated);
     let generatedCount = 0;
-    const warnings = [];
     for (let i = 0; i < candidates.length; i++) {
       const cand = candidates[i];
-      const norm = String(cand.concept || cand.titleAr || '').trim().toLowerCase();
-      if (!norm || seenConcepts.has(norm)) continue;
-      seenConcepts.add(norm);
       if (onProgress) onProgress(`توليد الرسم الطبي ${i + 1} من ${candidates.length}: ${cand.titleAr || cand.concept}`);
-      const targetChapter = organizedBook.chapters.find(ch =>
-        (ch.subtopics || []).some(st => st.heading === cand.subtopicHeading)
-      ) || organizedBook.chapters[i % Math.max(organizedBook.chapters.length, 1)];
-      const promptEn = cand.promptEn || `Clean medical textbook illustration of ${cand.concept}, anatomical diagram, white background, high precision`;
+      const matchedSub = allSubtopicsFlat.find(s => s.subtopicId === cand.subtopicId) || allSubtopicsFlat[0];
+      const chapterId = matchedSub ? matchedSub.chapterId : 'ch_1';
+      const chapterTitle = matchedSub ? matchedSub.chapterTitle : '';
+      const promptEn = cand.promptEn || `Clean medical textbook illustration of ${cand.concept}, anatomical diagram, white background`;
       const titleAr = cand.titleAr || `شكل: ${cand.concept}`;
       const genRes = await global.GeminiClient.generateMedicalImage(promptEn, '4:3', signal);
       if (genRes.ok && genRes.dataUrl) {
@@ -2155,17 +2224,17 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         finalImages.push({
           id: `gen_${Date.now()}_${i}`,
           projectId,
-          chapterId: targetChapter ? targetChapter.id : 'ch_1',
-          chapterTitle: targetChapter ? targetChapter.title : '',
+          subtopicId: cand.subtopicId,
+          chapterId,
+          chapterTitle,
           subtopicHeading: cand.subtopicHeading || '',
           title: titleAr,
-          caption: `${cand.captionAr || ''} [صورة طبية مولدة بالذكاء الاصطناعي]`,
+          caption: 'صورة طبية مولدة بالذكاء الاصطناعي',
           imageType: cand.suggestedType || 'Medical Diagrams',
           prompt: promptEn,
           origin: 'ai_generated',
           mimeType: genRes.mimeType,
           dataUrl: genRes.dataUrl,
-          model: genRes.model,
           status: 'ready'
         });
         continue;
@@ -2176,11 +2245,12 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         finalImages.push({
           id: `gen_atlas_${Date.now()}_${i}`,
           projectId,
-          chapterId: targetChapter ? targetChapter.id : 'ch_1',
-          chapterTitle: targetChapter ? targetChapter.title : '',
+          subtopicId: cand.subtopicId,
+          chapterId,
+          chapterTitle,
           subtopicHeading: cand.subtopicHeading || '',
           title: titleAr,
-          caption: `${cand.captionAr || ''} [صورة أطلس طبي توضيحية]`,
+          caption: 'صورة أطلس طبي توضيحية',
           imageType: cand.suggestedType || 'Medical Atlas Figure',
           prompt: promptEn,
           origin: 'ai_generated',
@@ -2197,16 +2267,17 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
         cand.diagramNodes || [],
         signal
       );
-      const finalDataUrl = aiSvgUrl || generateAcademicSvgDiagram(cand, targetChapter ? targetChapter.title : '');
+      const finalDataUrl = aiSvgUrl || generateAcademicSvgDiagram(cand, chapterTitle);
       generatedCount++;
       finalImages.push({
         id: `gen_svg_${Date.now()}_${i}`,
         projectId,
-        chapterId: targetChapter ? targetChapter.id : 'ch_1',
-        chapterTitle: targetChapter ? targetChapter.title : '',
+        subtopicId: cand.subtopicId,
+        chapterId,
+        chapterTitle,
         subtopicHeading: cand.subtopicHeading || '',
         title: titleAr,
-        caption: `${cand.captionAr || ''} [رسم طبي توضيحي مولّد]`,
+        caption: 'مخطط طبي توضيحي مولّد',
         imageType: cand.suggestedType || 'Medical Diagrams',
         prompt: promptEn,
         origin: 'ai_generated',
@@ -2222,7 +2293,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       images: finalImages,
       originalCount: usableOriginals.length,
       generatedCount,
-      warnings
+      warnings: []
     };
   }
   global.ImageEngine = {
@@ -2378,7 +2449,7 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
   }
   function renderMedicalHtmlText(text) {
     if (!text) return '';
-    let s = String(text)
+    return String(text)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -2386,7 +2457,6 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       .replace(/&lt;sub&gt;(.*?)&lt;\/sub&gt;/gi, '<sub>$1</sub>')
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
-    return s;
   }
   function parseMarkdownTableRows(md) {
     const lines = String(md || '')
@@ -2412,45 +2482,49 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     if (figureObj && figureObj.dataUrl) {
       const subCaption = figureObj.origin === 'original' ? 'صورة مقصوصة من الملف الأصلي' : 'مخطط طبي توضيحي';
       visualInner = `
-    <img src="${figureObj.dataUrl}" alt="${esc(cleanLabel)}" class="w-full max-h-[155px] object-contain rounded mb-1.5" style="max-width:100%;max-height:155px;object-fit:contain;border-radius:6px;margin-bottom:6px;">
-    <span class="text-xs font-bold text-[#0F172A]">[${esc(cleanLabel)}]</span>
-    <span class="text-[10px] text-[#64748B] mt-1">${esc(subCaption)}</span>`;
+    <img src="${figureObj.dataUrl}" alt="${esc(cleanLabel)}" style="max-width:100%;max-height:122px;width:auto;height:auto;object-fit:contain;border-radius:6px;margin:0 auto 4px;">
+    <span class="text-xs font-bold text-[#0F172A]" style="display:block;line-height:1.25;">[${esc(cleanLabel.slice(0, 52))}]</span>
+    <span class="text-[10px] text-[#64748B] mt-0.5" style="display:block;">${esc(subCaption)}</span>`;
     } else {
       visualInner = `
     <svg class="w-8 h-8 text-[#1A7398] mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-    <span class="text-xs font-bold text-[#0F172A]">[${esc(cleanLabel)}]</span>
+    <span class="text-xs font-bold text-[#0F172A]">[${esc(cleanLabel.slice(0, 52))}]</span>
     <span class="text-[10px] text-[#64748B] mt-1">مساحة إدراج المخطط</span>`;
     }
-    return `<div class="bg-white rounded-xl border border-[#E2E8F0] p-4 flex flex-row items-stretch gap-3.5 shadow-xs med-comp-1">
+    return `<div class="bg-white rounded-xl border border-[#E2E8F0] p-3.5 flex flex-row items-stretch gap-3.5 shadow-xs flex-shrink-0 med-comp-1">
   <div class="flex-1 text-[13.5px] text-justify leading-relaxed text-[#1E293B] flex flex-col justify-center med-comp-1-text">
     <h3 class="font-extrabold text-[#1A7398] text-base mb-1.5 pb-1 border-b border-[#E2E8F0]">${esc(heading)}</h3>
     <p class="editable-prose" data-chapter-id="${esc(chId)}" data-sub-idx="${sIdx}">${renderMedicalHtmlText(bodyText)}</p>
   </div>
-  <div class="w-[38%] min-h-[170px] flex flex-col items-center justify-center border-2 border-dashed border-[#1A7398] rounded-lg bg-[#F8FAFC] p-2.5 text-center flex-none med-comp-1-fig">${visualInner}
+  <div class="w-[38%] h-[175px] min-h-[175px] max-h-[175px] overflow-hidden flex flex-col items-center justify-center border-2 border-dashed border-[#1A7398] rounded-lg bg-[#F8FAFC] p-2 text-center flex-none med-comp-1-fig">${visualInner}
   </div>
 </div>`;
   }
   
   function renderComponent2(clinicalText) {
-    return `<div class="border-r-4 border-[#C06A23] bg-[#FFFBEB] p-3.5 rounded-l-xl border-y border-l border-[#E2E8F0] text-[13px] leading-relaxed shadow-xs med-comp-2">
+    return `<div class="border-r-4 border-[#C06A23] bg-[#FFFBEB] p-3 rounded-l-xl border-y border-l border-[#E2E8F0] text-[13px] leading-relaxed shadow-xs flex-shrink-0 med-comp-2">
   <span class="font-black text-[#C06A23] block text-sm mb-1">ملاحظة سريرية هامة (Clinical Note):</span>
   <p class="text-[#1E293B] font-medium">${renderMedicalHtmlText(clinicalText)}</p>
 </div>`;
   }
   
-  function renderComponent3(tableObj) {
+  function renderComponent3Chunks(tableObj) {
     const parsed = parseMarkdownTableRows(tableObj.markdown);
-    if (!parsed || !parsed.rows.length) return '';
-    const ths = parsed.headers.map(h => `<th class="p-2.5 border-b border-[#E2E8F0] font-bold text-sm">${renderMedicalHtmlText(h)}</th>`).join('');
-    const trs = parsed.rows.map(r => {
-      const tds = r.map((cell, idx) =>
-        idx === 0
-          ? `<td class="p-2.5 font-bold bg-[#F8FAFC]">${renderMedicalHtmlText(cell)}</td>`
-          : `<td class="p-2.5 leading-relaxed">${renderMedicalHtmlText(cell)}</td>`
-      ).join('');
-      return `<tr>${tds}</tr>`;
-    }).join('');
-    return `<div class="overflow-hidden rounded-lg border border-[#E2E8F0] shadow-xs med-comp-3">
+    if (!parsed || !parsed.rows.length) return [];
+    const chunks = [];
+    const ROWS_PER_TABLE = 4;
+    for (let i = 0; i < parsed.rows.length; i += ROWS_PER_TABLE) {
+      const sliceRows = parsed.rows.slice(i, i + ROWS_PER_TABLE);
+      const ths = parsed.headers.map(h => `<th class="p-2 border-b border-[#E2E8F0] font-bold text-sm">${renderMedicalHtmlText(h)}</th>`).join('');
+      const trs = sliceRows.map(r => {
+        const tds = r.map((cell, idx) =>
+          idx === 0
+            ? `<td class="p-2 font-bold bg-[#F8FAFC]">${renderMedicalHtmlText(cell)}</td>`
+            : `<td class="p-2 leading-relaxed">${renderMedicalHtmlText(cell)}</td>`
+        ).join('');
+        return `<tr>${tds}</tr>`;
+      }).join('');
+      const html = `<div class="overflow-hidden rounded-lg border border-[#E2E8F0] shadow-xs flex-shrink-0 med-comp-3">
   <table class="w-full text-right text-[13px] border-collapse">
     <thead class="bg-[#1A7398] text-white">
       <tr>${ths}</tr>
@@ -2460,17 +2534,20 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     </tbody>
   </table>
 </div>`;
+      chunks.push({ html, rowsCount: sliceRows.length });
+    }
+    return chunks;
   }
   
   function renderComponent4(qNum, mcq) {
     const opts = (mcq.options || []).map(opt =>
-      `<div class="p-2 rounded border border-[#E2E8F0] bg-[#F8FAFC]">${renderMedicalHtmlText(opt)}</div>`
+      `<div class="p-1.5 rounded border border-[#E2E8F0] bg-[#F8FAFC]">${renderMedicalHtmlText(opt)}</div>`
     ).join('');
     const ans = mcq.answer || '—';
     const exp = mcq.explanation || 'وفق الآلية المذكورة في المحاضرة.';
-    return `<div class="bg-white rounded-xl border border-[#E2E8F0] p-3.5 text-[13px] shadow-xs med-comp-4">
-  <p class="font-bold text-[#0F172A] text-sm mb-2">${qNum}. ${renderMedicalHtmlText(mcq.question)}</p>
-  <div class="grid grid-cols-2 gap-2 text-xs text-[#1E293B] mb-2 med-mcq-grid">
+    return `<div class="bg-white rounded-xl border border-[#E2E8F0] p-3 text-[13px] shadow-xs flex-shrink-0 med-comp-4">
+  <p class="font-bold text-[#0F172A] text-sm mb-1.5">${qNum}. ${renderMedicalHtmlText(mcq.question)}</p>
+  <div class="grid grid-cols-2 gap-1.5 text-xs text-[#1E293B] mb-1.5 med-mcq-grid">
     ${opts}
   </div>
   <div class="text-[11px] text-[#0F172A] font-bold bg-[#F8FAFC] p-1.5 rounded border border-[#E2E8F0]">
@@ -2478,9 +2555,8 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
   </div>
 </div>`;
   }
-  
   function buildA4PageCard({ pageNum, headerRightText, cardsHtml, pageId }) {
-    return `<div class="page-card book-page" data-page="${pageNum}" id="${pageId || 'page_' + pageNum}">
+    return `<div class="page-card" data-page="${pageNum}" id="${pageId || 'page_' + pageNum}">
   <header class="flex-none pb-2">
     <div class="flex justify-between items-center border-b-2 border-[#1A7398] pb-1.5 med-page-header">
       <span class="text-2xl font-black text-[#1A7398] tracking-wider">MEDNERD</span>
@@ -2499,40 +2575,51 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
 </div>`;
   }
   
-  function packCardsIntoPages(cardQueue) {
-    const MAX_MAIN_PX = 925;
-    const GAP_PX = 12;
-    if (typeof document !== 'undefined' && document.body) {
-      try {
-        const probe = document.createElement('div');
-        probe.style.cssText = 'position:fixed;top:-10000px;left:-10000px;width:186mm;visibility:hidden;pointer-events:none;z-index:-1;';
-        probe.dir = 'rtl';
-        document.body.appendChild(probe);
-        cardQueue.forEach(item => {
-          probe.innerHTML = item.html;
-          const h = probe.firstElementChild ? probe.firstElementChild.getBoundingClientRect().height : 220;
-          item.pxHeight = Math.max(80, Math.round(h));
-        });
-        probe.remove();
-      } catch (_) {}
+  function splitLongProseIntoChunks(text, maxChars = 420) {
+    const clean = String(text || '').trim();
+    if (clean.length <= maxChars) return [clean];
+    const sentences = clean.split(/(?<=[.۔!؟\n])\s+/);
+    const chunks = [];
+    let buf = '';
+    for (const s of sentences) {
+      if ((buf + ' ' + s).trim().length > maxChars && buf.trim().length > 0) {
+        chunks.push(buf.trim());
+        buf = s;
+      } else {
+        buf = (buf ? buf + ' ' : '') + s;
+      }
     }
+    if (buf.trim()) chunks.push(buf.trim());
+    return chunks;
+  }
+  
+  function packCardsStrictBlueprint(cardQueue) {
+    const MAX_MAIN_PX = 820;
+    const GAP_PX = 12;
     const rawPages = [];
     let currentCards = [];
     let currentPx = 0;
-    cardQueue.forEach(item => {
-      const itemH = item.pxHeight || Math.round((item.weight || 30) * 9.2);
-      const addedGap = currentCards.length > 0 ? GAP_PX : 0;
-      if (currentCards.length > 0 && (currentPx + addedGap + itemH > MAX_MAIN_PX)) {
+    let currentComp1Count = 0;
+    for (const item of cardQueue) {
+      const itemH = item.estPx || 210;
+      const nextPx = currentCards.length > 0 ? currentPx + GAP_PX + itemH : itemH;
+      const nextComp1 = currentComp1Count + (item.type === 'comp1' ? 1 : 0);
+      const exceedsHeight = nextPx > MAX_MAIN_PX;
+      const exceedsComp1Limit = nextComp1 > 2 && currentCards.length >= 2;
+      const exceedsTotalCards = currentCards.length >= 3 && (item.type === 'comp1' || item.type === 'comp3');
+      if (currentCards.length > 0 && (exceedsHeight || exceedsComp1Limit || exceedsTotalCards)) {
         rawPages.push({
           cards: currentCards,
           chapterTitle: currentCards[0].chapterTitle
         });
         currentCards = [];
         currentPx = 0;
+        currentComp1Count = 0;
       }
       currentCards.push(item);
-      currentPx += (currentCards.length > 1 ? GAP_PX : 0) + itemH;
-    });
+      currentPx = currentCards.length > 1 ? currentPx + GAP_PX + itemH : itemH;
+      if (item.type === 'comp1') currentComp1Count++;
+    }
     if (currentCards.length > 0) {
       rawPages.push({
         cards: currentCards,
@@ -2552,15 +2639,12 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
       const usedImgIds = new Set();
       (ch.subtopics || []).forEach((st, sIdx) => {
         let figureObj = null;
-        if (Array.isArray(st.attachedOriginalImages) && st.attachedOriginalImages.length) {
+        if (st.subtopicId) {
+          figureObj = chImages.find(im => !usedImgIds.has(im.id) && im.subtopicId === st.subtopicId) || null;
+        }
+        if (!figureObj && Array.isArray(st.attachedOriginalImages) && st.attachedOriginalImages.length) {
           const wantedId = st.attachedOriginalImages[0].imageId;
           figureObj = chImages.find(im => im.id === wantedId) || null;
-        }
-        if (!figureObj && st.heading) {
-          figureObj = chImages.find(im => !usedImgIds.has(im.id) && im.subtopicHeading === st.heading) || null;
-        }
-        if (!figureObj) {
-          figureObj = chImages.find(im => !usedImgIds.has(im.id)) || null;
         }
         if (figureObj) usedImgIds.add(figureObj.id);
         const fallbackLabel = (st.sideVisual && st.sideVisual.figureLabel)
@@ -2585,69 +2669,74 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
           const defsLine = st.definitions.map(d => `<strong>${esc(d.term)}:</strong> ${d.definition}`).join(' | ');
           fullText += `\n\n${defsLine}`;
         }
-        const paragraphs = fullText.split(/\n{2,}/).filter(Boolean);
-        if (fullText.length > 950 && paragraphs.length >= 2) {
-          const mid = Math.ceil(paragraphs.length / 2);
-          const firstHalf = paragraphs.slice(0, mid).join('\n\n');
-          const secondHalf = paragraphs.slice(mid).join('\n\n');
+        const textChunks = splitLongProseIntoChunks(fullText, 420);
+        textChunks.forEach((chunkText, cIdx) => {
+          const headingText = cIdx === 0 ? (st.heading || ch.title) : `${st.heading || ch.title} (تابع ${cIdx + 1})`;
+          const chunkFig = cIdx === 0
+            ? figureObj
+            : (global.ImageEngine ? {
+                id: `auto_svg_${ch.id}_${sIdx}_${cIdx}`,
+                title: `${fallbackLabel} (${cIdx + 1})`,
+                origin: 'ai_generated',
+                dataUrl: global.ImageEngine.generateAcademicSvgDiagram({
+                  concept: headingText,
+                  titleAr: `${fallbackLabel} (${cIdx + 1})`,
+                  diagramNodes: chunkText.split(/[،.]/).map(s => s.trim()).filter(Boolean).slice(0, 3)
+                }, ch.title)
+              } : null);
+          const linesEst = Math.ceil(chunkText.length / 58);
+          const estPx = Math.max(215, 65 + linesEst * 23);
           cardQueue.push({
-            weight: 36,
-            html: renderComponent1(ch.id, sIdx, st.heading || ch.title, firstHalf, figureObj, fallbackLabel),
+            type: 'comp1',
+            estPx,
+            html: renderComponent1(ch.id, sIdx, headingText, chunkText, chunkFig, fallbackLabel),
             chapterTitle: ch.title
           });
-          const secondFig = chImages.find(im => !usedImgIds.has(im.id)) || null;
-          if (secondFig) usedImgIds.add(secondFig.id);
-          cardQueue.push({
-            weight: 34,
-            html: renderComponent1(ch.id, sIdx, `${st.heading || ch.title} (تابع)`, secondHalf, secondFig, `${fallbackLabel} — تفصيل`),
-            chapterTitle: ch.title
-          });
-        } else {
-          cardQueue.push({
-            weight: 34,
-            html: renderComponent1(ch.id, sIdx, st.heading || ch.title, fullText, figureObj, fallbackLabel),
-            chapterTitle: ch.title
-          });
-        }
+        });
         (st.clinicalCases || []).forEach(cc => {
           if (cc && String(cc).trim()) {
+            const linesEst = Math.ceil(String(cc).length / 85);
             cardQueue.push({
-              weight: 18,
+              type: 'comp2',
+              estPx: Math.max(92, 48 + linesEst * 22),
               html: renderComponent2(cc),
               chapterTitle: ch.title
             });
           }
         });
         (st.tables || []).forEach(tb => {
-          const tbHtml = renderComponent3(tb);
-          if (tbHtml) {
+          const tbChunks = renderComponent3Chunks(tb);
+          tbChunks.forEach(tc => {
             cardQueue.push({
-              weight: 28,
-              html: tbHtml,
+              type: 'comp3',
+              estPx: 54 + tc.rowsCount * 42,
+              html: tc.html,
               chapterTitle: ch.title
             });
-          }
+          });
         });
         (st.mcqs || []).forEach(mcq => {
           cardQueue.push({
-            weight: 24,
+            type: 'comp4',
+            estPx: 148,
             html: renderComponent4(mcqCounter++, mcq),
             chapterTitle: ch.title
           });
         });
       });
       chImages.forEach(im => {
-        if (!usedImgIds.has(im.id)) {
+        if (!usedImgIds.has(im.id) && im.origin === 'original') {
           usedImgIds.add(im.id);
           cardQueue.push({
-            weight: 32,
+            type: 'comp1',
+            estPx: 215,
             html: renderComponent1(ch.id, 0, im.title || ch.title, im.caption || ch.title, im, im.title),
             chapterTitle: ch.title
           });
         }
       });
     });
-    const rawPages = packCardsIntoPages(cardQueue);
+    const rawPages = packCardsStrictBlueprint(cardQueue);
     if (rawPages.length === 0) {
       rawPages.push({
         cards: [{
@@ -2681,14 +2770,6 @@ body{background: var(--bg-main);color: var(--dark-text);min-height: 100vh;displa
     const warnings = [];
     if (!book.chapters || book.chapters.length === 0) {
       issues.push('لا توجد فصول منشأة في الكتاب.');
-    }
-    book.chapters.forEach(ch => {
-      if (!ch.subtopics || ch.subtopics.length === 0) {
-        issues.push(`الفصل "${ch.title}" لا يحتوي على بطاقات علمية.`);
-      }
-    });
-    if (book.alerts && book.alerts.contradictions && book.alerts.contradictions.length) {
-      book.alerts.contradictions.forEach(c => warnings.push(`تعارض محتمل بين المصادر: ${c}`));
     }
     const readyOrig = (allImages || []).filter(im => im.origin === 'original' && im.status === 'ready').length;
     const readyGen = (allImages || []).filter(im => im.origin === 'ai_generated' && im.status === 'ready').length;
